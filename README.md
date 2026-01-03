@@ -90,15 +90,15 @@ con <- connect_omicidx()
 list_tables(con)
 
 # Use dplyr to build queries
-tbl(con, "sra.experiment") |>
-  filter(library_strategy == "RNA-Seq") |>
-  count(platform, sort = TRUE) |>
-  collect()
+dplyr::tbl(con, "sources.v_src_sra_experiments") |>
+  dplyr::filter(library_strategy == "RNA-Seq") |>
+  dplyr::count(platform, sort = TRUE) |>
+  dplyr::collect()
 
 # Execute SQL directly
 DBI::dbGetQuery(con, "
   SELECT platform, COUNT(*) as n 
-  FROM sra.experiment 
+  FROM sources.v_src_sra_experiments
   WHERE library_strategy = 'RNA-Seq'
   GROUP BY platform
   ORDER BY n DESC
