@@ -3,11 +3,14 @@
 > **Access the OmicIDX omics metadata database from R**
 
 The `omicidxr` package provides a convenient interface to query and
-explore the [OmicIDX](https://omicidx.cancerdatasci.org/) metadata
-database, a comprehensive resource for omics dataset metadata. Built on
-top of [DuckDB](https://duckdb.org/), it enables fast, efficient queries
-on large-scale genomics metadata without downloading the entire
-database.
+explore the OmicIDX metadata database, a comprehensive resource for
+omics dataset metadata. Built on top of [DuckDB](https://duckdb.org/),
+it enables fast, efficient queries on large-scale genomics metadata
+**without downloading the entire database.**
+
+For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern
+alternative with cloud-native access, eliminating the need to manage
+large local SQLite files.
 
 ## ✨ Features
 
