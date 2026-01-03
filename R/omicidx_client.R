@@ -43,6 +43,8 @@ connect_omicidx <- function(db_path = ":memory:") {
 #' with optional filtering by database and/or schema.
 #'
 #' @importFrom DBI dbGetQuery
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr filter
 #'
 #' @param con A DuckDB database connection object
 #'   created by [connect_omicidx()].
@@ -85,6 +87,11 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' listing tables, retrieving `dplyr` table references, 
 #' and executing SQL queries.
 #'
+#' @importFrom R6 R6Class
+#' @importFrom DBI dbGetQuery dbExecute dbDisconnect
+#' @importFrom dplyr tbl
+#' @importFrom tibble as_tibble
+#' @import duckdb
 #' @details 
 #' The `OmicidxClient` class uses R6 to encapsulate
 #' the functionality for connecting to and querying the Omicidx
@@ -93,10 +100,10 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' 
 #' A typical workflow will involve:
 #' 
-#' - Creating a new `OmicidxClient` object using `OmicidxClient$new()`.
-#' - Listing available tables using `list_tables()`.
-#' - Accessing specific tables using `tbl()` or by referencing tables
-#'  in the `tbls` field.
+#' - Creating a new OmicidxClient object using the `new()` method.
+#' - Listing available tables using the `list_tables()` method.
+#' - Accessing specific tables using the `tbl()` method or by referencing tables
+#'   in the `tbls` field.
 #' 
 #' If you need to execute custom SQL queries, you can use the `query()`
 #' method.
@@ -108,7 +115,7 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' 
 #' If you want to persist the DuckDB instance locally (e.g., to cache
 #' query results), you can provide a local file path when creating
-#' the `OmicidxClient` object. 
+#' the OmicidxClient object. 
 #' 
 #' @examples
 #' oidx <- OmicidxClient$new()
@@ -153,8 +160,7 @@ OmicidxClient <- R6::R6Class(
     con = NULL,
 
     #' @field tbls A named list of lazy `dplyr` table references.
-    #' Populated during initialization using [OmicidxClient$table_names()] and
-    #' [OmicidxClient$tbl()].
+    #' Populated during initialization.
     tbls = NULL,
 
     #' @description

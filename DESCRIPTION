@@ -2,7 +2,10 @@ Package: omicidxr
 Title: Access the OmicIDX omicx metadata database
 Version: 0.0.0.9000
 Authors@R: 
-    person("Sean", "Davis", , "seandavi@gmail.com", role = c("aut", "cre"))
+    person(given = "Sean",
+           family = "Davis",
+           email = "seandavi@gmail.com",
+           role = c("aut", "cre"))
 Description: The omicidxr package provides an interface to 
     the OmicIDX omicx metadata database.
     It allows users to query and retrieve metadata
@@ -16,7 +19,10 @@ Imports:
     R6,
     duckdb,
     DBI,
-    dplyr
+    dplyr,
+    tibble
+Suggests:
+    ggplot2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Url: https://github.com/omicidx/omicidxr

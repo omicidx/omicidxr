@@ -21,9 +21,9 @@ accessing the data stored in the database.
 
 A typical workflow will involve:
 \itemize{
-\item Creating a new \code{OmicidxClient} object using \code{OmicidxClient$new()}.
-\item Listing available tables using \code{list_tables()}.
-\item Accessing specific tables using \code{tbl()} or by referencing tables
+\item Creating a new OmicidxClient object using the \code{new()} method.
+\item Listing available tables using the \code{list_tables()} method.
+\item Accessing specific tables using the \code{tbl()} method or by referencing tables
 in the \code{tbls} field.
 }
 
@@ -37,7 +37,7 @@ the data are also stored in the cloud and queried remotely via DuckDB.
 
 If you want to persist the DuckDB instance locally (e.g., to cache
 query results), you can provide a local file path when creating
-the \code{OmicidxClient} object.
+the OmicidxClient object.
 }
 \examples{
 oidx <- OmicidxClient$new()
@@ -53,11 +53,26 @@ oidx$table_names()
 oidx$describe_table("sources.v_src_sra_studies")
 
 # create a table of SRA runs published per year
-runs_by_year <- oidx$tbls$sources.v_src_sra_accessions |>
- dplyr::filter(Type == "RUN") |>
- dplyr::mutate(Year = dplyr::sql("EXTRACT(YEAR FROM Published)")) |>
- dplyr::group_by(Year) |>
- dplyr::summarise(RunCount = dplyr::n())
+geo_studies_by_year <- oidx$tbls$sources.v_src_geo_series |>
+ dplyr::mutate(year = dplyr::sql("EXTRACT(YEAR FROM submission_date)")) |>
+ dplyr::group_by(year) |>
+ dplyr::summarise(count = dplyr::n())
+
+# The result is a lazy dplyr table
+geo_studies_by_year
+
+# use it just like any other dplyr table
+
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+geo_studies_by_year |> 
+ ggplot2::ggplot(ggplot2::aes(x = year, y = count)) +
+ ggplot2::geom_bar(stat="identity") +
+ ggplot2::theme_minimal()
+}
+
+# or get the data as a data frame
+geo_studies_by_year_df <- geo_studies_by_year |> dplyr::collect()
+head(geo_studies_by_year_df)
 
 }
 \section{Public fields}{
@@ -66,8 +81,7 @@ runs_by_year <- oidx$tbls$sources.v_src_sra_accessions |>
 \item{\code{con}}{A DuckDB connection object.}
 
 \item{\code{tbls}}{A named list of lazy \code{dplyr} table references.
-Populated during initialization using \code{\link[=OmicidxClient$table_names]{OmicidxClient$table_names()}} and
-\code{\link[=OmicidxClient$tbl]{OmicidxClient$tbl()}}.}
+Populated during initialization.}
 }
 \if{html}{\out{</div>}}
 }
