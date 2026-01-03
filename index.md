@@ -200,9 +200,9 @@ license text.
 
 ## 📬 Getting Help
 
-- **Documentation**: <https://omicidx.github.io/omicidxr/> (coming soon)
+- **Documentation**: <https://omicidx.github.io/omicidxr/>
 - **Bug reports**: [GitHub
   Issues](https://github.com/omicidx/omicidxr/issues)
 - **Questions**: Open a
-  [discussion](https://github.com/omicidx/omicidxr/discussions) or reach
+  [discussion](https://github.com/omicidx/omicidx/discussions) or reach
   out via email
