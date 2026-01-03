@@ -17,13 +17,14 @@ user-friendly interface for accessing the data stored in the database.
 
 A typical workflow will involve:
 
-- Creating a new `OmicidxClient` object using `OmicidxClient$new()`.
+- Creating a new OmicidxClient object using the `new()` method.
 
-- Listing available tables using
-  [`list_tables()`](https://omicidx.github.io/omicidxr/reference/list_tables.md).
+- Listing available tables using the
+  [`list_tables()`](https://omicidx.github.io/omicidxr/reference/list_tables.md)
+  method.
 
-- Accessing specific tables using
-  [`tbl()`](https://dplyr.tidyverse.org/reference/tbl.html) or by
+- Accessing specific tables using the
+  [`tbl()`](https://dplyr.tidyverse.org/reference/tbl.html) method or by
   referencing tables in the `tbls` field.
 
 If you need to execute custom SQL queries, you can use the `query()`
@@ -36,7 +37,7 @@ data are also stored in the cloud and queried remotely via DuckDB.
 
 If you want to persist the DuckDB instance locally (e.g., to cache query
 results), you can provide a local file path when creating the
-`OmicidxClient` object.
+OmicidxClient object.
 
 ## Public fields
 
@@ -47,8 +48,7 @@ results), you can provide a local file path when creating the
 - `tbls`:
 
   A named list of lazy `dplyr` table references. Populated during
-  initialization using `OmicidxClient$table_names()` and
-  `OmicidxClient$tbl()`.
+  initialization.
 
 ## Methods
 
@@ -278,10 +278,29 @@ oidx$describe_table("sources.v_src_sra_studies")
 #> Error: object 'oidx' not found
 
 # create a table of SRA runs published per year
-runs_by_year <- oidx$tbls$sources.v_src_sra_accessions |>
- dplyr::filter(Type == "RUN") |>
- dplyr::mutate(Year = dplyr::sql("EXTRACT(YEAR FROM Published)")) |>
- dplyr::group_by(Year) |>
- dplyr::summarise(RunCount = dplyr::n())
+geo_studies_by_year <- oidx$tbls$sources.v_src_geo_series |>
+ dplyr::mutate(year = dplyr::sql("EXTRACT(YEAR FROM submission_date)")) |>
+ dplyr::group_by(year) |>
+ dplyr::summarise(count = dplyr::n())
 #> Error: object 'oidx' not found
+
+# The result is a lazy dplyr table
+geo_studies_by_year
+#> Error: object 'geo_studies_by_year' not found
+
+# use it just like any other dplyr table
+
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+geo_studies_by_year |> 
+ ggplot2::ggplot(ggplot2::aes(x = year, y = count)) +
+ ggplot2::geom_bar(stat="identity") +
+ ggplot2::theme_minimal()
+}
+#> Error: object 'geo_studies_by_year' not found
+
+# or get the data as a data frame
+geo_studies_by_year_df <- geo_studies_by_year |> dplyr::collect()
+#> Error: object 'geo_studies_by_year' not found
+head(geo_studies_by_year_df)
+#> Error: object 'geo_studies_by_year_df' not found
 ```
