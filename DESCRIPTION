@@ -1,11 +1,24 @@
 Package: omicidxr
-Title: What the Package Does (One Line, Title Case)
+Title: Access the OmicIDX omicx metadata database
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Sean", "Davis", , "seandavi@gmail.com", role = c("aut", "cre"))
+Description: The omicidxr package provides an interface to 
+    the OmicIDX omicx metadata database.
+    It allows users to query and retrieve metadata
+    about various omics datasets stored in the OmicIDX database.
+    The package leverages DuckDB for efficient data storage 
+    and retrieval, and provides a user-friendly API for 
+    accessing the data.
+License: MIT + file LICENSE
+LicenseFile: LICENSE
+Imports:
+    R6,
+    duckdb,
+    DBI,
+    dplyr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
+Url: https://github.com/omicidx/omicidxr
+BugReports: https://github.com/omicidx/omicidxr/issues
 RoxygenNote: 7.3.2
