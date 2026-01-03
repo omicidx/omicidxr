@@ -1,6 +1,16 @@
 url: https://omicidx.github.io/omicidxr/
 template:
   bootstrap: 5
-  params:
-    light_switch: true
+  light-switch: true
+  includes:
+    in_header: |
+       <!-- Global site tag (gtag.js) - Google Analytics -->
+       <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLLV1GCF4E" ></script>
+       <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
 
+         gtag('config', 'G-KLLV1GCF4E');
+       </script>
+       <!-- Google tag (gtag.js) -->
