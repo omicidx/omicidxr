@@ -26,9 +26,24 @@ A DuckDB connection object.
 ``` r
 con <- connect_omicidx()
 DBI::dbListTables(con)
-#> [1] "v_src_geo_platforms"   "v_src_geo_samples"     "v_src_geo_series"     
-#> [4] "v_src_sra_accessions"  "v_src_sra_experiments" "v_src_sra_runs"       
-#> [7] "v_src_sra_samples"     "v_src_sra_studies"    
+#>  [1] "experiment"                        "geo_supplemental_files"           
+#>  [3] "gpl"                               "gse"                              
+#>  [5] "gse_gpl"                           "gse_gsm"                          
+#>  [7] "gsm"                               "human_runs"                       
+#>  [9] "mouse_runs"                        "rnaseq_runs"                      
+#> [11] "run"                               "run_with_study"                   
+#> [13] "sample"                            "sra"                              
+#> [15] "src_bioprojects"                   "src_biosamples"                   
+#> [17] "src_geo_platforms"                 "src_geo_samples"                  
+#> [19] "src_geo_series"                    "src_geo_series_with_rnaseq_counts"
+#> [21] "src_sra_accessions"                "src_sra_experiments"              
+#> [23] "src_sra_runs"                      "src_sra_samples"                  
+#> [25] "src_sra_studies"                   "stg_bioprojects"                  
+#> [27] "stg_biosamples"                    "stg_geo_platforms"                
+#> [29] "stg_geo_samples"                   "stg_geo_series"                   
+#> [31] "stg_sra_experiments"               "stg_sra_runs"                     
+#> [33] "stg_sra_samples"                   "stg_sra_studies"                  
+#> [35] "study"                             "wgs_runs"                         
 # or use dplyr
 # dplyr::tbl(con, "some_table")
 ```

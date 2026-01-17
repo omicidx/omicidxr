@@ -37,29 +37,35 @@ columns for database, schema, table name, and other metadata.
 con <- connect_omicidx()
 # List all tables
 list_tables(con)
-#> # A tibble: 8 × 6
-#>   database schema  name                  column_names column_types temporary
-#>   <chr>    <chr>   <chr>                 <list>       <list>       <lgl>    
-#> 1 omicidx  sources v_src_geo_platforms   <chr [20]>   <chr [20]>   FALSE    
-#> 2 omicidx  sources v_src_geo_samples     <chr [26]>   <chr [26]>   FALSE    
-#> 3 omicidx  sources v_src_geo_series      <chr [26]>   <chr [26]>   FALSE    
-#> 4 omicidx  sources v_src_sra_accessions  <chr [21]>   <chr [21]>   FALSE    
-#> 5 omicidx  sources v_src_sra_experiments <chr [28]>   <chr [28]>   FALSE    
-#> 6 omicidx  sources v_src_sra_runs        <chr [17]>   <chr [17]>   FALSE    
-#> 7 omicidx  sources v_src_sra_samples     <chr [13]>   <chr [13]>   FALSE    
-#> 8 omicidx  sources v_src_sra_studies     <chr [17]>   <chr [17]>   FALSE    
+#> # A tibble: 36 × 6
+#>    database schema    name                   column_names column_types temporary
+#>    <chr>    <chr>     <chr>                  <list>       <list>       <lgl>    
+#>  1 omicidx  geometadb geo_supplemental_files <chr [4]>    <chr [4]>    FALSE    
+#>  2 omicidx  geometadb gpl                    <chr [15]>   <chr [15]>   FALSE    
+#>  3 omicidx  geometadb gse                    <chr [20]>   <chr [20]>   FALSE    
+#>  4 omicidx  geometadb gse_gpl                <chr [2]>    <chr [2]>    FALSE    
+#>  5 omicidx  geometadb gse_gsm                <chr [2]>    <chr [2]>    FALSE    
+#>  6 omicidx  geometadb gsm                    <chr [31]>   <chr [31]>   FALSE    
+#>  7 omicidx  main      src_bioprojects        <chr [9]>    <chr [9]>    FALSE    
+#>  8 omicidx  main      src_biosamples         <chr [19]>   <chr [19]>   FALSE    
+#>  9 omicidx  main      src_geo_platforms      <chr [20]>   <chr [20]>   FALSE    
+#> 10 omicidx  main      src_geo_samples        <chr [26]>   <chr [26]>   FALSE    
+#> # ℹ 26 more rows
 
 # Filter by schema
 list_tables(con)
-#> # A tibble: 8 × 6
-#>   database schema  name                  column_names column_types temporary
-#>   <chr>    <chr>   <chr>                 <list>       <list>       <lgl>    
-#> 1 omicidx  sources v_src_geo_platforms   <chr [20]>   <chr [20]>   FALSE    
-#> 2 omicidx  sources v_src_geo_samples     <chr [26]>   <chr [26]>   FALSE    
-#> 3 omicidx  sources v_src_geo_series      <chr [26]>   <chr [26]>   FALSE    
-#> 4 omicidx  sources v_src_sra_accessions  <chr [21]>   <chr [21]>   FALSE    
-#> 5 omicidx  sources v_src_sra_experiments <chr [28]>   <chr [28]>   FALSE    
-#> 6 omicidx  sources v_src_sra_runs        <chr [17]>   <chr [17]>   FALSE    
-#> 7 omicidx  sources v_src_sra_samples     <chr [13]>   <chr [13]>   FALSE    
-#> 8 omicidx  sources v_src_sra_studies     <chr [17]>   <chr [17]>   FALSE    
+#> # A tibble: 36 × 6
+#>    database schema    name                   column_names column_types temporary
+#>    <chr>    <chr>     <chr>                  <list>       <list>       <lgl>    
+#>  1 omicidx  geometadb geo_supplemental_files <chr [4]>    <chr [4]>    FALSE    
+#>  2 omicidx  geometadb gpl                    <chr [15]>   <chr [15]>   FALSE    
+#>  3 omicidx  geometadb gse                    <chr [20]>   <chr [20]>   FALSE    
+#>  4 omicidx  geometadb gse_gpl                <chr [2]>    <chr [2]>    FALSE    
+#>  5 omicidx  geometadb gse_gsm                <chr [2]>    <chr [2]>    FALSE    
+#>  6 omicidx  geometadb gsm                    <chr [31]>   <chr [31]>   FALSE    
+#>  7 omicidx  main      src_bioprojects        <chr [9]>    <chr [9]>    FALSE    
+#>  8 omicidx  main      src_biosamples         <chr [19]>   <chr [19]>   FALSE    
+#>  9 omicidx  main      src_geo_platforms      <chr [20]>   <chr [20]>   FALSE    
+#> 10 omicidx  main      src_geo_samples        <chr [26]>   <chr [26]>   FALSE    
+#> # ℹ 26 more rows
 ```

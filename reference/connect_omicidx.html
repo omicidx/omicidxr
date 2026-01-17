@@ -80,9 +80,24 @@ Use <code>":memory:"</code> for an in-memory database (default).</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">connect_omicidx</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "v_src_geo_platforms"   "v_src_geo_samples"     "v_src_geo_series"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "v_src_sra_accessions"  "v_src_sra_experiments" "v_src_sra_runs"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "v_src_sra_samples"     "v_src_sra_studies"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "experiment"                        "geo_supplemental_files"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "gpl"                               "gse"                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "gse_gpl"                           "gse_gsm"                          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "gsm"                               "human_runs"                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "mouse_runs"                        "rnaseq_runs"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "run"                               "run_with_study"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "sample"                            "sra"                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "src_bioprojects"                   "src_biosamples"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "src_geo_platforms"                 "src_geo_samples"                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "src_geo_series"                    "src_geo_series_with_rnaseq_counts"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "src_sra_accessions"                "src_sra_experiments"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "src_sra_runs"                      "src_sra_samples"                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "src_sra_studies"                   "stg_bioprojects"                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "stg_biosamples"                    "stg_geo_platforms"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "stg_geo_samples"                   "stg_geo_series"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "stg_sra_experiments"               "stg_sra_runs"                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "stg_sra_samples"                   "stg_sra_studies"                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "study"                             "wgs_runs"                         </span>
 <span class="r-in"><span><span class="co"># or use dplyr</span></span></span>
 <span class="r-in"><span><span class="co"># dplyr::tbl(con, "some_table")</span></span></span>
 <span class="r-in"><span></span></span>
