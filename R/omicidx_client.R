@@ -23,15 +23,8 @@ connect_omicidx <- function(db_path = ":memory:") {
   DBI::dbExecute(con,
     "attach 'https://data-omicidx.cancerdatasci.org/duckdb/omicidx.duckdb' as omicidx; 
     use omicidx;")
-  DBI::dbExecute(con," CREATE or replace SECRET minio (
-    TYPE s3,
-    KEY_ID '',
-    SECRET '',
-    ENDPOINT 'minio.cancerdatasci.org',
-    URL_STYLE 'path',
-    REGION 'us-east-1',
-    USE_SSL True
-);")
+  DBI::dbExecute(con, "SET autoinstall_known_extensions = true;")
+  DBI::dbExecute(con, "SET autoload_known_extensions = true;")
   return(con)
 }
 
@@ -89,7 +82,6 @@ list_tables <- function(con, database = NA, schema = NA) {
 #'
 #' @importFrom R6 R6Class
 #' @importFrom DBI dbGetQuery dbExecute dbDisconnect
-#' @importFrom dplyr tbl
 #' @importFrom tibble as_tibble
 #' @import duckdb
 #' @details 
@@ -128,29 +120,29 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' 
 #' # Get a description of a specific table
 #' # This is the table "schema"
-#' oidx$describe_table("sources.v_src_sra_studies")
+#' oidx$describe_table("stg_sra_studies")
 #' 
 #' # create a table of SRA runs published per year
-#' geo_studies_by_year <- oidx$tbls$sources.v_src_geo_series |>
+#' geo_series_by_year <- oidx$tbl('src_geo_series') |>
 #'  dplyr::mutate(year = dplyr::sql("EXTRACT(YEAR FROM submission_date)")) |>
 #'  dplyr::group_by(year) |>
 #'  dplyr::summarise(count = dplyr::n())
 #' 
 #' # The result is a lazy dplyr table
-#' geo_studies_by_year
+#' geo_series_by_year
 #' 
 #' # use it just like any other dplyr table
 #' 
 #' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#' geo_studies_by_year |> 
+#' geo_series_by_year |> 
 #'  ggplot2::ggplot(ggplot2::aes(x = year, y = count)) +
 #'  ggplot2::geom_bar(stat="identity") +
 #'  ggplot2::theme_minimal()
 #' }
 #' 
 #' # or get the data as a data frame
-#' geo_studies_by_year_df <- geo_studies_by_year |> dplyr::collect()
-#' head(geo_studies_by_year_df)
+#' geo_series_by_year_df <- geo_series_by_year |> dplyr::collect()
+#' head(geo_series_by_year_df)
 #'
 #' @export
 OmicidxClient <- R6::R6Class(
@@ -171,12 +163,7 @@ OmicidxClient <- R6::R6Class(
     #' The default is to use `":memory:"`.
     initialize = function(db_path = ":memory:") {
       self$con <- connect_omicidx(db_path)
-      self$tbls <- sapply(
-        self$table_names(),
-        self$tbl,
-        simplify = FALSE,
-        USE.NAMES = TRUE
-      )
+      self$tbls <- list()
     },
 
     #' @description
@@ -221,7 +208,14 @@ OmicidxClient <- R6::R6Class(
     #' @param table_name character(1) A table name (optionally schema-qualified)
     #' to reference.
     tbl = function(table_name) {
-      dplyr::tbl(self$con, table_name)
+      if (missing(table_name)) {
+        stop("table_name is required")
+      }
+      if (table_name %in% self$tbls) {
+        return(self$tbls[[table_name]])
+      }
+      self$tbls[[table_name]] <- dplyr::tbl(self$con, table_name)
+      return (self$tbls[[table_name]])
     },
 
     #' @description
@@ -243,9 +237,6 @@ OmicidxClient <- R6::R6Class(
     describe_table = function(table_name) {
       if (missing(table_name)) {
         stop("table_name is required")
-      }
-      if (!(table_name %in% names(self$tbls))) {
-        stop(paste0("Table '", table_name, "' not found in database"))
       }
       self$query(paste0("DESCRIBE ", table_name, ";"))
     },

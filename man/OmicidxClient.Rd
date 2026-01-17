@@ -50,29 +50,29 @@ oidx$table_names()
 
 # Get a description of a specific table
 # This is the table "schema"
-oidx$describe_table("sources.v_src_sra_studies")
+oidx$describe_table("stg_sra_studies")
 
 # create a table of SRA runs published per year
-geo_studies_by_year <- oidx$tbls$sources.v_src_geo_series |>
+geo_series_by_year <- oidx$tbl('src_geo_series') |>
  dplyr::mutate(year = dplyr::sql("EXTRACT(YEAR FROM submission_date)")) |>
  dplyr::group_by(year) |>
  dplyr::summarise(count = dplyr::n())
 
 # The result is a lazy dplyr table
-geo_studies_by_year
+geo_series_by_year
 
 # use it just like any other dplyr table
 
 if (requireNamespace("ggplot2", quietly = TRUE)) {
-geo_studies_by_year |> 
+geo_series_by_year |> 
  ggplot2::ggplot(ggplot2::aes(x = year, y = count)) +
  ggplot2::geom_bar(stat="identity") +
  ggplot2::theme_minimal()
 }
 
 # or get the data as a data frame
-geo_studies_by_year_df <- geo_studies_by_year |> dplyr::collect()
-head(geo_studies_by_year_df)
+geo_series_by_year_df <- geo_series_by_year |> dplyr::collect()
+head(geo_series_by_year_df)
 
 }
 \section{Public fields}{
