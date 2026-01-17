@@ -262,54 +262,177 @@ The objects of this class are cloneable with this method.
 
 ``` r
 oidx <- OmicidxClient$new()
-#> Error in db_query_fields.DBIConnection(con, ...): Can't query fields.
-#> ℹ Using SQL: SELECT * FROM (FROM geometadb.geo_supplemental_files) q01 WHERE (0
-#>   = 1)
-#> Caused by error in `dbSendQuery()`:
-#> ! IO Error: No files found that match the pattern "/geo/parquet/geo_series.parquet"
-#> 
-#> LINE 3: WHERE (0 = 1)
-#>                ^
-#> ℹ Context: rapi_prepare
-#> ℹ Error type: IO
 oidx$list_tables()
-#> Error: object 'oidx' not found
+#> # A tibble: 36 × 6
+#>    database schema    name                   column_names column_types temporary
+#>    <chr>    <chr>     <chr>                  <list>       <list>       <lgl>    
+#>  1 omicidx  geometadb geo_supplemental_files <chr [4]>    <chr [4]>    FALSE    
+#>  2 omicidx  geometadb gpl                    <chr [15]>   <chr [15]>   FALSE    
+#>  3 omicidx  geometadb gse                    <chr [20]>   <chr [20]>   FALSE    
+#>  4 omicidx  geometadb gse_gpl                <chr [2]>    <chr [2]>    FALSE    
+#>  5 omicidx  geometadb gse_gsm                <chr [2]>    <chr [2]>    FALSE    
+#>  6 omicidx  geometadb gsm                    <chr [31]>   <chr [31]>   FALSE    
+#>  7 omicidx  main      src_bioprojects        <chr [9]>    <chr [9]>    FALSE    
+#>  8 omicidx  main      src_biosamples         <chr [19]>   <chr [19]>   FALSE    
+#>  9 omicidx  main      src_geo_platforms      <chr [20]>   <chr [20]>   FALSE    
+#> 10 omicidx  main      src_geo_samples        <chr [26]>   <chr [26]>   FALSE    
+#> # ℹ 26 more rows
 # tbl_ref <- oidx$tbl("some_table")
 # oidx$query("SELECT * FROM some_table LIMIT 5")
 
 # Get all table names
 oidx$table_names()
-#> Error: object 'oidx' not found
+#>         geometadb.geo_supplemental_files 
+#>       "geometadb.geo_supplemental_files" 
+#>                            geometadb.gpl 
+#>                          "geometadb.gpl" 
+#>                            geometadb.gse 
+#>                          "geometadb.gse" 
+#>                        geometadb.gse_gpl 
+#>                      "geometadb.gse_gpl" 
+#>                        geometadb.gse_gsm 
+#>                      "geometadb.gse_gsm" 
+#>                            geometadb.gsm 
+#>                          "geometadb.gsm" 
+#>                     main.src_bioprojects 
+#>                   "main.src_bioprojects" 
+#>                      main.src_biosamples 
+#>                    "main.src_biosamples" 
+#>                   main.src_geo_platforms 
+#>                 "main.src_geo_platforms" 
+#>                     main.src_geo_samples 
+#>                   "main.src_geo_samples" 
+#>                      main.src_geo_series 
+#>                    "main.src_geo_series" 
+#>   main.src_geo_series_with_rnaseq_counts 
+#> "main.src_geo_series_with_rnaseq_counts" 
+#>                  main.src_sra_accessions 
+#>                "main.src_sra_accessions" 
+#>                 main.src_sra_experiments 
+#>               "main.src_sra_experiments" 
+#>                        main.src_sra_runs 
+#>                      "main.src_sra_runs" 
+#>                     main.src_sra_samples 
+#>                   "main.src_sra_samples" 
+#>                     main.src_sra_studies 
+#>                   "main.src_sra_studies" 
+#>                     main.stg_bioprojects 
+#>                   "main.stg_bioprojects" 
+#>                      main.stg_biosamples 
+#>                    "main.stg_biosamples" 
+#>                   main.stg_geo_platforms 
+#>                 "main.stg_geo_platforms" 
+#>                     main.stg_geo_samples 
+#>                   "main.stg_geo_samples" 
+#>                      main.stg_geo_series 
+#>                    "main.stg_geo_series" 
+#>                 main.stg_sra_experiments 
+#>               "main.stg_sra_experiments" 
+#>                        main.stg_sra_runs 
+#>                      "main.stg_sra_runs" 
+#>                     main.stg_sra_samples 
+#>                   "main.stg_sra_samples" 
+#>                     main.stg_sra_studies 
+#>                   "main.stg_sra_studies" 
+#>                         sradb.experiment 
+#>                       "sradb.experiment" 
+#>                         sradb.human_runs 
+#>                       "sradb.human_runs" 
+#>                         sradb.mouse_runs 
+#>                       "sradb.mouse_runs" 
+#>                        sradb.rnaseq_runs 
+#>                      "sradb.rnaseq_runs" 
+#>                                sradb.run 
+#>                              "sradb.run" 
+#>                     sradb.run_with_study 
+#>                   "sradb.run_with_study" 
+#>                             sradb.sample 
+#>                           "sradb.sample" 
+#>                                sradb.sra 
+#>                              "sradb.sra" 
+#>                              sradb.study 
+#>                            "sradb.study" 
+#>                           sradb.wgs_runs 
+#>                         "sradb.wgs_runs" 
 
 # Get a description of a specific table
 # This is the table "schema"
-oidx$describe_table("sources.v_src_sra_studies")
-#> Error: object 'oidx' not found
+oidx$describe_table("stg_sra_studies")
+#>             column_name                                           column_type
+#> 1             accession                                               VARCHAR
+#> 2                 alias                                               VARCHAR
+#> 3                 title                                               VARCHAR
+#> 4           description                                               VARCHAR
+#> 5              abstract                                               VARCHAR
+#> 6            study_type                                               VARCHAR
+#> 7           center_name                                               VARCHAR
+#> 8           broker_name                                               VARCHAR
+#> 9  bioproject_accession                                               VARCHAR
+#> 10        geo_accession                                               VARCHAR
+#> 11          identifiers STRUCT(namespace VARCHAR, id VARCHAR, uuid VARCHAR)[]
+#> 12           attributes                STRUCT(tag VARCHAR, "value" VARCHAR)[]
+#> 13                xrefs                      STRUCT(db VARCHAR, id VARCHAR)[]
+#> 14           pubmed_ids                                             VARCHAR[]
+#>    null  key default extra
+#> 1   YES <NA>    <NA>  <NA>
+#> 2   YES <NA>    <NA>  <NA>
+#> 3   YES <NA>    <NA>  <NA>
+#> 4   YES <NA>    <NA>  <NA>
+#> 5   YES <NA>    <NA>  <NA>
+#> 6   YES <NA>    <NA>  <NA>
+#> 7   YES <NA>    <NA>  <NA>
+#> 8   YES <NA>    <NA>  <NA>
+#> 9   YES <NA>    <NA>  <NA>
+#> 10  YES <NA>    <NA>  <NA>
+#> 11  YES <NA>    <NA>  <NA>
+#> 12  YES <NA>    <NA>  <NA>
+#> 13  YES <NA>    <NA>  <NA>
+#> 14  YES <NA>    <NA>  <NA>
 
 # create a table of SRA runs published per year
-geo_studies_by_year <- oidx$tbls$sources.v_src_geo_series |>
+geo_series_by_year <- oidx$tbl('src_geo_series') |>
  dplyr::mutate(year = dplyr::sql("EXTRACT(YEAR FROM submission_date)")) |>
  dplyr::group_by(year) |>
  dplyr::summarise(count = dplyr::n())
-#> Error: object 'oidx' not found
 
 # The result is a lazy dplyr table
-geo_studies_by_year
-#> Error: object 'geo_studies_by_year' not found
+geo_series_by_year
+#> # Source:   SQL [?? x 2]
+#> # Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#>     year count
+#>    <dbl> <dbl>
+#>  1  2001    14
+#>  2  2002   124
+#>  3  2003   671
+#>  4  2004   986
+#>  5  2005  1534
+#>  6  2006  2391
+#>  7  2007  3172
+#>  8  2008  3706
+#>  9  2009  5067
+#> 10  2010  6401
+#> # ℹ more rows
 
 # use it just like any other dplyr table
 
 if (requireNamespace("ggplot2", quietly = TRUE)) {
-geo_studies_by_year |> 
+geo_series_by_year |> 
  ggplot2::ggplot(ggplot2::aes(x = year, y = count)) +
  ggplot2::geom_bar(stat="identity") +
  ggplot2::theme_minimal()
 }
-#> Error: object 'geo_studies_by_year' not found
+
 
 # or get the data as a data frame
-geo_studies_by_year_df <- geo_studies_by_year |> dplyr::collect()
-#> Error: object 'geo_studies_by_year' not found
-head(geo_studies_by_year_df)
-#> Error: object 'geo_studies_by_year_df' not found
+geo_series_by_year_df <- geo_series_by_year |> dplyr::collect()
+head(geo_series_by_year_df)
+#> # A tibble: 6 × 2
+#>    year count
+#>   <dbl> <dbl>
+#> 1  2001    14
+#> 2  2002   124
+#> 3  2003   671
+#> 4  2004   986
+#> 5  2005  1534
+#> 6  2006  2391
 ```
