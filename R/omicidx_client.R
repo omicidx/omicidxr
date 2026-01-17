@@ -21,7 +21,7 @@ connect_omicidx <- function(db_path = ":memory:") {
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = FALSE)
   DBI::dbExecute(con, "install httpfs; load httpfs;")
   DBI::dbExecute(con,
-    "attach 'https://minio.cancerdatasci.org/omicidx/db/omicidx.duckdb' as omicidx; 
+    "attach 'https://data-omicidx.cancerdatasci.org/duckdb/omicidx.duckdb' as omicidx; 
     use omicidx;")
   DBI::dbExecute(con," CREATE or replace SECRET minio (
     TYPE s3,
