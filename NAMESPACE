@@ -3,6 +3,7 @@
 export(OmicidxClient)
 export(connect_omicidx)
 export(list_tables)
+import(dbplyr)
 import(duckdb)
 importFrom(DBI,dbConnect)
 importFrom(DBI,dbDisconnect)

@@ -1,6 +1,7 @@
 Package: omicidxr
 Title: Access the OmicIDX omicx metadata database
-Version: 0.0.0.9004
+Version: 0.0.0.9005
+Date: 2026-01-17
 Authors@R: 
     person(given = "Sean",
            family = "Davis",
@@ -20,7 +21,8 @@ Imports:
     duckdb,
     DBI,
     dplyr,
-    tibble
+    tibble,
+    dbplyr
 Suggests:
     ggplot2
 Encoding: UTF-8

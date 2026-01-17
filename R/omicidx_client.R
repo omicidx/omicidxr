@@ -16,6 +16,8 @@
 #' # dplyr::tbl(con, "some_table")
 #'
 #' @importFrom DBI dbConnect dbExecute
+#' @import duckdb
+#' @import dbplyr
 #' @export
 connect_omicidx <- function(db_path = ":memory:") {
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = FALSE)
