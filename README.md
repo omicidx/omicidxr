@@ -60,18 +60,15 @@ oidx <- OmicidxClient$new()
 # See what tables are available
 oidx$list_tables()
 
-# Access all tables as lazy dplyr references
-names(oidx$tbls)
-
-# Or use the tbl() method directly
-oidx$tbl("sources.v_src_sra_studies") |>
+# Usse the tbl() method to get dplyyr table references
+oidx$tbl("src_sra_studies") |>
   dplyr::count(study_type, sort = TRUE) |>
   dplyr::collect()
 
 # Execute raw SQL queries
 oidx$query("
     SELECT COUNT(*) as transcriptome_study_count
-    FROM sources.v_src_sra_studies
+    FROM src_sra_studies
     WHERE study_type = 'Transcriptome Analysis'")
 ```
 
@@ -90,7 +87,7 @@ con <- connect_omicidx()
 list_tables(con)
 
 # Use dplyr to build queries
-dplyr::tbl(con, "sources.v_src_sra_experiments") |>
+dplyr::tbl(con, "src_sra_experiments") |>
   dplyr::filter(library_strategy == "RNA-Seq") |>
   dplyr::count(platform, sort = TRUE) |>
   dplyr::collect()
@@ -98,7 +95,7 @@ dplyr::tbl(con, "sources.v_src_sra_experiments") |>
 # Execute SQL directly
 DBI::dbGetQuery(con, "
   SELECT platform, COUNT(*) as n 
-  FROM sources.v_src_sra_experiments
+  FROM src_sra_experiments
   WHERE library_strategy = 'RNA-Seq'
   GROUP BY platform
   ORDER BY n DESC
