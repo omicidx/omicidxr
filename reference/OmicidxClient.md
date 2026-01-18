@@ -50,6 +50,11 @@ OmicidxClient object.
   A named list of lazy `dplyr` table references. Populated during
   initialization.
 
+- `db_path`:
+
+  The path to the DuckDB database file. If `":memory:"`, the database is
+  in-memory.
+
 ## Methods
 
 ### Public methods
