@@ -7,3 +7,7 @@
 docs/
 docs
 *.log
+inst/doc
+**/.quarto/
+/doc/
+/Meta/

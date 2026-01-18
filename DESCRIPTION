@@ -1,6 +1,6 @@
 Package: omicidxr
 Title: Access the OmicIDX omicx metadata database
-Version: 0.0.0.9006
+Version: 0.0.0.9007
 Date: 2026-01-17
 Authors@R: 
     person(given = "Sean",
@@ -24,10 +24,13 @@ Imports:
     tibble,
     dbplyr
 Suggests:
-    ggplot2
+    ggplot2,
+    knitr,
+    quarto
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Url: https://github.com/omicidx/omicidxr
 BugReports: https://github.com/omicidx/omicidxr/issues
 RoxygenNote: 7.3.2
 URL: https://omicidx.github.io/omicidxr/
+VignetteBuilder: quarto

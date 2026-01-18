@@ -1,0 +1,195 @@
+---
+title: "Getting Started with omicidx in R"
+vignette: >
+  %\VignetteIndexEntry{Getting Started with omicidx in R}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+```{r}
+#| label: setup
+library(omicidxr)
+```
+
+
+# omicidxr <img src="man/figures/logo.png" align="right" height="139" alt="" />
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![pkgdown-build](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml)
+<!-- badges: end -->
+
+> **Access the OmicIDX omics metadata database from R**
+
+The `omicidxr` package provides a convenient interface to query and explore the OmicIDX metadata database, a comprehensive resource for omics dataset metadata. Built on top of [DuckDB](https://duckdb.org/), it enables fast, efficient queries on large-scale genomics metadata **without downloading the entire database.**
+
+For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.
+
+## ✨ Features
+
+- 🚀 **Fast queries** powered by DuckDB's columnar storage
+- ☁️ **Cloud-native** access to remote databases via S3-compatible storage
+- 🔌 **Zero setup** – connect to the public OmicIDX database instantly
+- 🧰 **Two interfaces** – use functional-style connections or an R6 client
+- 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration
+- 💾 **In-memory or persistent** – choose your storage backend
+
+## 📦 Installation
+
+You can install the development version of omicidxr from GitHub:
+
+``` r
+# install.packages("pak")
+pak::pak("omicidx/omicidxr")
+```
+
+Or using `remotes`:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("omicidx/omicidxr")
+```
+
+or using 'BiocManager':
+
+``` r
+# install.packages("BiocManager")
+BiocManager::install("omicidx/omicidxr")
+```
+
+## 🚀 Quick Start
+
+### Using the R6 Client (Recommended)
+
+The R6 client provides an object-oriented interface with automatic table discovery:
+
+```{r}
+library(omicidxr)
+
+# Create a new client (connects to the public database)
+oidx <- OmicidxClient$new()
+
+# See what tables are available
+oidx$list_tables()
+
+# Usse the tbl() method to get dplyyr table references
+oidx$tbl("src_sra_studies") |>
+  dplyr::count(study_type, sort = TRUE) |>
+  dplyr::collect()
+
+# Execute raw SQL queries
+oidx$query("
+    SELECT COUNT(*) as transcriptome_study_count
+    FROM src_sra_studies
+    WHERE study_type = 'Transcriptome Analysis'")
+```
+
+### Using Functional Interface
+
+For more control, use the lower-level functional interface:
+
+```{r}
+library(omicidxr)
+library(dplyr)
+
+# Establish connection
+con <- connect_omicidx()
+
+# List all available tables
+list_tables(con)
+
+# Use dplyr to build queries
+dplyr::tbl(con, "src_sra_experiments") |>
+  dplyr::filter(library_strategy == "RNA-Seq") |>
+  dplyr::count(platform, sort = TRUE) |>
+  dplyr::collect()
+
+# Execute SQL directly
+DBI::dbGetQuery(con, "
+  SELECT platform, COUNT(*) as n 
+  FROM src_sra_experiments
+  WHERE library_strategy = 'RNA-Seq'
+  GROUP BY platform
+  ORDER BY n DESC
+")
+
+# Clean up when done
+DBI::dbDisconnect(con, shutdown = TRUE)
+```
+
+## 📚 Main Functions
+
+| Function / Class | Description |
+|-----------------|-------------|
+| `OmicidxClient$new()` | Create an R6 client with automatic table discovery |
+| `connect_omicidx()` | Establish a connection to the OmicIDX database |
+| `list_tables()` | List all available tables in the database |
+
+### R6 Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `$list_tables(schema, database)` | List tables with optional filtering |
+| `$table_names(schema, database)` | Get fully-qualified table names as a character vector |
+| `$tbl(table_name)` | Get a lazy `dplyr` table reference |
+| `$query(sql)` | Execute a SQL query and return results |
+| `$connection()` | Access the underlying DuckDB connection |
+| `$tbls` | Named list of all table references (populated on init) |
+
+## 🗄️ Database Schemas
+
+The OmicIDX database contains metadata from multiple public omics repositories:
+
+- **SRA** (Sequence Read Archive) – studies, experiments, samples, runs
+- **GEO** (Gene Expression Omnibus) – series, samples, platforms
+- **Biosample** – biological sample metadata
+- **Additional schemas** – use `list_tables()` to explore
+
+## 🛠️ Advanced Usage
+
+### Persistent Local Database
+
+By default, `omicidxr` uses an in-memory DuckDB instance. For persistent storage:
+
+``` r
+# Create a local database file
+client <- OmicidxClient$new(db_path = "~/omicidx_local.duckdb")
+
+# The remote database is still attached, but queries can be cached locally
+```
+
+
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. **Report bugs** – [Open an issue](https://github.com/omicidx/omicidxr/issues) with a reproducible example
+2. **Suggest features** – Share your ideas in the [issue tracker](https://github.com/omicidx/omicidxr/issues)
+3. **Submit PRs** – Fork, create a feature branch, and submit a pull request
+4. **Improve docs** – Help make the documentation clearer
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+## 📄 License
+
+MIT © Sean Davis
+
+See [LICENSE.md](LICENSE.md) for full license text.
+
+## 🙏 Acknowledgments
+
+- [DuckDB](https://duckdb.org/) for the amazing analytical database engine
+- The R community for packages like `dplyr`, `dbplyr`, and `DBI`
+
+## 📬 Getting Help
+
+- **Documentation**: [https://omicidx.github.io/omicidxr/](https://omicidx.github.io/omicidxr/)
+- **Bug reports**: [GitHub Issues](https://github.com/omicidx/omicidxr/issues)
+- **Questions**: Open a [discussion](https://github.com/omicidx/omicidx/discussions) or reach out via email
