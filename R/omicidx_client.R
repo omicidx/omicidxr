@@ -156,6 +156,11 @@ OmicidxClient <- R6::R6Class(
     #' @field tbls A named list of lazy `dplyr` table references.
     #' Populated during initialization.
     tbls = NULL,
+    
+    #' @field db_path The path to the DuckDB database file.
+    #' If `":memory:"`, the database is in-memory.
+    #' 
+    db_path = NULL,
 
     #' @description
     #' Create a new OmicidxClient.
@@ -165,6 +170,7 @@ OmicidxClient <- R6::R6Class(
     #' The default is to use `":memory:"`.
     initialize = function(db_path = ":memory:") {
       self$con <- connect_omicidx(db_path)
+      self$db_path <- db_path
       self$tbls <- list()
     },
 

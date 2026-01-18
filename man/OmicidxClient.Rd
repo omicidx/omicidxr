@@ -82,6 +82,9 @@ head(geo_series_by_year_df)
 
 \item{\code{tbls}}{A named list of lazy \code{dplyr} table references.
 Populated during initialization.}
+
+\item{\code{db_path}}{The path to the DuckDB database file.
+If \code{":memory:"}, the database is in-memory.}
 }
 \if{html}{\out{</div>}}
 }
