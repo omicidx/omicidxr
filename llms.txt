@@ -202,3 +202,9 @@ license text.
 - [`list_tables()`](https://omicidx.github.io/omicidxr/reference/list_tables.md)
   : List Tables in a DuckDB Connection
 
+# Articles
+
+### All vignettes
+
+- [Getting Started with omicidx in
+  R](https://omicidx.github.io/omicidxr/articles/introduction.md):
