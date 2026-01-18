@@ -146,18 +146,7 @@ client <- OmicidxClient$new(db_path = "~/omicidx_local.duckdb")
 # The remote database is still attached, but queries can be cached locally
 ```
 
-### Direct DBI Operations
 
-Access the underlying connection for full DBI compatibility:
-
-``` r
-client <- OmicidxClient$new()
-con <- client$connection()
-
-# Use any DBI function
-DBI::dbListTables(con)
-DBI::dbWriteTable(con, "my_temp_table", data.frame(x = 1:10))
-```
 
 ## 🤝 Contributing
 
