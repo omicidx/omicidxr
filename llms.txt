@@ -12,6 +12,10 @@ For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern
 alternative with cloud-native access, eliminating the need to manage
 large local SQLite files.
 
+Metadata coverage of over 40 million SRA experiments, 8 million GEO
+samples, and 50 million Biosamples, all accessible via SQL or `dplyr`
+syntax without any large downloads.
+
 ## ✨ Features
 
 - 🚀 **Fast queries** powered by DuckDB’s columnar storage
@@ -22,6 +26,9 @@ large local SQLite files.
   client
 - 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration
 - 💾 **In-memory or persistent** – choose your storage backend
+- 📊 **Comprehensive schemas** covering SRA, GEO, Biosample
+- 🛠️ **Extensible** – join with your own data or build data resources
+  from our data
 
 ## 📦 Installation
 

@@ -76,6 +76,7 @@
 </blockquote>
 <p>The <code>omicidxr</code> package provides a convenient interface to query and explore the OmicIDX metadata database, a comprehensive resource for omics dataset metadata. Built on top of <a href="https://duckdb.org/" class="external-link">DuckDB</a>, it enables fast, efficient queries on large-scale genomics metadata <strong>without downloading the entire database.</strong></p>
 <p>For users of GEOmetadadb and SRAdb, <code>omicidxr</code> offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.</p>
+<p>Metadata coverage of over 40 million SRA experiments, 8 million GEO samples, and 50 million Biosamples, all accessible via SQL or <code>dplyr</code> syntax without any large downloads.</p>
 <div class="section level2">
 <h2 id="id_-features">✨ Features<a class="anchor" aria-label="anchor" href="#id_-features"></a>
 </h2>
@@ -86,6 +87,8 @@
 <li>🧰 <strong>Two interfaces</strong> – use functional-style connections or an R6 client</li>
 <li>🔍 <strong>Full SQL support</strong> plus <code>dplyr</code>/<code>dbplyr</code> integration</li>
 <li>💾 <strong>In-memory or persistent</strong> – choose your storage backend</li>
+<li>📊 <strong>Comprehensive schemas</strong> covering SRA, GEO, Biosample</li>
+<li>🛠️ <strong>Extensible</strong> – join with your own data or build data resources from our data</li>
 </ul>
 </div>
 <div class="section level2">
