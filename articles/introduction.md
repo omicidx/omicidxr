@@ -1,296 +1,297 @@
 # Getting Started with omicidx in R
 
-``` r
-library(omicidxr)
-```
+OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
+publishes it as Parquet files. `omicidxr` connects DuckDB to those
+files, so you can query tens of millions of records with SQL or `dplyr`
+without downloading them.
 
-## omicidxr ![](reference/figures/logo.png)
+## Connecting
 
-[![R-CMD-check](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Project Status:
-WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![pkgdown-build](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml)
-
-> **Access the OmicIDX omics metadata database from R**
-
-The `omicidxr` package provides a convenient interface to query and
-explore the OmicIDX metadata database, a comprehensive resource for
-omics dataset metadata. Built on top of [DuckDB](https://duckdb.org/),
-it enables fast, efficient queries on large-scale genomics metadata
-**without downloading the entire database.**
-
-For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern
-alternative with cloud-native access, eliminating the need to manage
-large local SQLite files.
-
-### ✨ Features
-
-- 🚀 **Fast queries** powered by DuckDB’s columnar storage
-- ☁️ **Cloud-native** access to remote databases via S3-compatible
-  storage
-- 🔌 **Zero setup** – connect to the public OmicIDX database instantly
-- 🧰 **Two interfaces** – use functional-style connections or an R6
-  client
-- 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration
-- 💾 **In-memory or persistent** – choose your storage backend
-
-### 📦 Installation
-
-You can install the development version of omicidxr from GitHub:
+[`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md)
+returns an ordinary DuckDB DBI connection. The `version` argument picks
+the release: `"latest"` (the nightly build, the default), a dated
+nightly build `"YYYY-MM-DD"` (kept for 30 days), or a monthly release
+`"YYYY-MM"`, which is kept long term and is the one to cite. This
+vignette pins the October 2026 monthly release so its results are
+reproducible.
 
 ``` r
-# install.packages("pak")
-pak::pak("omicidx/omicidxr")
-```
 
-Or using `remotes`:
-
-``` r
-# install.packages("remotes")
-remotes::install_github("omicidx/omicidxr")
-```
-
-or using ‘BiocManager’:
-
-``` r
-# install.packages("BiocManager")
-BiocManager::install("omicidx/omicidxr")
-```
-
-### 🚀 Quick Start
-
-#### Using the R6 Client (Recommended)
-
-The R6 client provides an object-oriented interface with automatic table
-discovery:
-
-``` r
 library(omicidxr)
 
-# Create a new client (connects to the public database)
-oidx <- OmicidxClient$new()
-
-# See what tables are available
-oidx$list_tables()
-#> # A tibble: 36 × 6
-#>    database schema    name                   column_names column_types temporary
-#>    <chr>    <chr>     <chr>                  <list>       <list>       <lgl>    
-#>  1 omicidx  geometadb geo_supplemental_files <chr [4]>    <chr [4]>    FALSE    
-#>  2 omicidx  geometadb gpl                    <chr [15]>   <chr [15]>   FALSE    
-#>  3 omicidx  geometadb gse                    <chr [20]>   <chr [20]>   FALSE    
-#>  4 omicidx  geometadb gse_gpl                <chr [2]>    <chr [2]>    FALSE    
-#>  5 omicidx  geometadb gse_gsm                <chr [2]>    <chr [2]>    FALSE    
-#>  6 omicidx  geometadb gsm                    <chr [31]>   <chr [31]>   FALSE    
-#>  7 omicidx  main      src_bioprojects        <chr [9]>    <chr [9]>    FALSE    
-#>  8 omicidx  main      src_biosamples         <chr [19]>   <chr [19]>   FALSE    
-#>  9 omicidx  main      src_geo_platforms      <chr [20]>   <chr [20]>   FALSE    
-#> 10 omicidx  main      src_geo_samples        <chr [26]>   <chr [26]>   FALSE    
-#> # ℹ 26 more rows
-
-# Usse the tbl() method to get dplyyr table references
-oidx$tbl("src_sra_studies") |>
-  dplyr::count(study_type, sort = TRUE) |>
-  dplyr::collect()
-#> # A tibble: 12 × 2
-#>    study_type                      n
-#>    <chr>                       <dbl>
-#>  1 "Other"                    382944
-#>  2 "Whole Genome Sequencing"  122829
-#>  3 "Transcriptome Analysis"   116357
-#>  4 "Metagenomics"              68586
-#>  5 "Population Genomics"         834
-#>  6 "Epigenetics"                 694
-#>  7 "Cancer Genomics"             431
-#>  8 "Exome Sequencing"            372
-#>  9 "Pooled Clone Sequencing"      31
-#> 10 "Synthetic Genomics"           12
-#> 11 "Transcriptome Sequencing"      2
-#> 12 "Whole Genome Sequencing "      1
-
-# Execute raw SQL queries
-oidx$query("
-    SELECT COUNT(*) as transcriptome_study_count
-    FROM src_sra_studies
-    WHERE study_type = 'Transcriptome Analysis'")
-#>   transcriptome_study_count
-#> 1                    116357
+con <- omicidx_connect("2026-10")
 ```
 
-#### Using Functional Interface
-
-For more control, use the lower-level functional interface:
+## What is in a release
 
 ``` r
-library(omicidxr)
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 
-# Establish connection
-con <- connect_omicidx()
+omicidx_tables(con)
+#> # A tibble: 28 × 3
+#>    schema    table                  type 
+#>    <chr>     <chr>                  <chr>
+#>  1 geometadb geo_supplemental_files VIEW 
+#>  2 geometadb gpl                    VIEW 
+#>  3 geometadb gse                    VIEW 
+#>  4 geometadb gse_gpl                VIEW 
+#>  5 geometadb gse_gsm                VIEW 
+#>  6 geometadb gsm                    VIEW 
+#>  7 main      bioprojects            VIEW 
+#>  8 main      biosamples             VIEW 
+#>  9 main      geo_platforms          VIEW 
+#> 10 main      geo_samples            VIEW 
+#> # ℹ 18 more rows
+```
 
-# List all available tables
-list_tables(con)
-#> # A tibble: 36 × 6
-#>    database schema    name                   column_names column_types temporary
-#>    <chr>    <chr>     <chr>                  <list>       <list>       <lgl>    
-#>  1 omicidx  geometadb geo_supplemental_files <chr [4]>    <chr [4]>    FALSE    
-#>  2 omicidx  geometadb gpl                    <chr [15]>   <chr [15]>   FALSE    
-#>  3 omicidx  geometadb gse                    <chr [20]>   <chr [20]>   FALSE    
-#>  4 omicidx  geometadb gse_gpl                <chr [2]>    <chr [2]>    FALSE    
-#>  5 omicidx  geometadb gse_gsm                <chr [2]>    <chr [2]>    FALSE    
-#>  6 omicidx  geometadb gsm                    <chr [31]>   <chr [31]>   FALSE    
-#>  7 omicidx  main      src_bioprojects        <chr [9]>    <chr [9]>    FALSE    
-#>  8 omicidx  main      src_biosamples         <chr [19]>   <chr [19]>   FALSE    
-#>  9 omicidx  main      src_geo_platforms      <chr [20]>   <chr [20]>   FALSE    
-#> 10 omicidx  main      src_geo_samples        <chr [26]>   <chr [26]>   FALSE    
-#> # ℹ 26 more rows
+The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
+GEOmetadb packages.
+[`omicidx_describe()`](https://omicidx.github.io/omicidxr/reference/omicidx_describe.md)
+lists a table’s columns:
 
-# Use dplyr to build queries
-dplyr::tbl(con, "src_sra_experiments") |>
-  dplyr::filter(library_strategy == "RNA-Seq") |>
-  dplyr::count(platform, sort = TRUE) |>
-  dplyr::collect()
-#> # A tibble: 17 × 2
-#>    platform                n
-#>    <chr>               <dbl>
-#>  1 ILLUMINA          6113098
-#>  2 OXFORD_NANOPORE    111163
-#>  3 BGISEQ              96331
-#>  4 DNBSEQ              86509
-#>  5 ION_TORRENT         27192
-#>  6 PACBIO_SMRT         13230
-#>  7 ABI_SOLID           12510
-#>  8 LS454                7071
-#>  9 CAPILLARY            4422
-#> 10 ELEMENT              4173
-#> 11 COMPLETE_GENOMICS    1058
-#> 12 HELICOS               704
-#> 13 VELA_DIAGNOSTICS      595
-#> 14 GENEMIND              242
-#> 15 ULTIMA                233
-#> 16 TAPESTRI               45
-#> 17 GENAPSYS               34
+``` r
 
-# Execute SQL directly
+omicidx_describe(con, "sradb.study")
+#> # A tibble: 14 × 3
+#>    column_name          column_type null 
+#>    <chr>                <chr>       <chr>
+#>  1 study_id             BIGINT      YES  
+#>  2 study_alias          VARCHAR     YES  
+#>  3 study_accession      VARCHAR     YES  
+#>  4 study_title          VARCHAR     YES  
+#>  5 study_type           VARCHAR     YES  
+#>  6 study_abstract       VARCHAR     YES  
+#>  7 broker_name          VARCHAR     YES  
+#>  8 center_name          VARCHAR     YES  
+#>  9 center_project_name  VARCHAR     YES  
+#> 10 study_description    VARCHAR     YES  
+#> 11 study_attribute      VARCHAR     YES  
+#> 12 bioproject_accession VARCHAR     YES  
+#> 13 geo_accession        VARCHAR     YES  
+#> 14 pubmed_ids           VARCHAR[]   YES
+```
+
+## SQL
+
+Any DuckDB SQL works through DBI. Keep exploratory queries small with
+`LIMIT`: every query reads remote files.
+
+``` r
+
 DBI::dbGetQuery(con, "
-  SELECT platform, COUNT(*) as n 
-  FROM src_sra_experiments
-  WHERE library_strategy = 'RNA-Seq'
-  GROUP BY platform
-  ORDER BY n DESC
-")
-#>             platform       n
-#> 1           ILLUMINA 6113098
-#> 2    OXFORD_NANOPORE  111163
-#> 3             BGISEQ   96331
-#> 4             DNBSEQ   86509
-#> 5        ION_TORRENT   27192
-#> 6        PACBIO_SMRT   13230
-#> 7          ABI_SOLID   12510
-#> 8              LS454    7071
-#> 9          CAPILLARY    4422
-#> 10           ELEMENT    4173
-#> 11 COMPLETE_GENOMICS    1058
-#> 12           HELICOS     704
-#> 13  VELA_DIAGNOSTICS     595
-#> 14          GENEMIND     242
-#> 15            ULTIMA     233
-#> 16          TAPESTRI      45
-#> 17          GENAPSYS      34
-
-# Clean up when done
-DBI::dbDisconnect(con, shutdown = TRUE)
+  SELECT study_accession, study_title
+  FROM sradb.study
+  WHERE study_type = 'Transcriptome Analysis'
+  LIMIT 5")
+#>   study_accession
+#> 1       DRP000003
+#> 2       DRP000004
+#> 3       DRP000005
+#> 4       DRP000006
+#> 5       DRP000007
+#>                                                                                                                                study_title
+#> 1                                                Comprehensive identification and characterization of the nucleosome             structure
+#> 2 Comprehensive identification and characterization of the transcripts, their             expression levels and sub-cellular localizations
+#> 3 Comprehensive identification and characterization of the transcripts, their             expression levels and sub-cellular localizations
+#> 4 Comprehensive identification and characterization of the transcripts, their             expression levels and sub-cellular localizations
+#> 5                                      Comprehensive identification and characterization of the binding sites of             polymerase II
 ```
 
-### 📚 Main Functions
+## dplyr
 
-| Function / Class                                                                       | Description                                        |
-|----------------------------------------------------------------------------------------|----------------------------------------------------|
-| `OmicidxClient$new()`                                                                  | Create an R6 client with automatic table discovery |
-| [`connect_omicidx()`](https://omicidx.github.io/omicidxr/reference/connect_omicidx.md) | Establish a connection to the OmicIDX database     |
-| [`list_tables()`](https://omicidx.github.io/omicidxr/reference/list_tables.md)         | List all available tables in the database          |
-
-#### R6 Client Methods
-
-| Method                           | Description                                            |
-|----------------------------------|--------------------------------------------------------|
-| `$list_tables(schema, database)` | List tables with optional filtering                    |
-| `$table_names(schema, database)` | Get fully-qualified table names as a character vector  |
-| `$tbl(table_name)`               | Get a lazy `dplyr` table reference                     |
-| `$query(sql)`                    | Execute a SQL query and return results                 |
-| `$connection()`                  | Access the underlying DuckDB connection                |
-| `$tbls`                          | Named list of all table references (populated on init) |
-
-### 🗄️ Database Schemas
-
-The OmicIDX database contains metadata from multiple public omics
-repositories:
-
-- **SRA** (Sequence Read Archive) – studies, experiments, samples, runs
-- **GEO** (Gene Expression Omnibus) – series, samples, platforms
-- **Biosample** – biological sample metadata
-- **Additional schemas** – use
-  [`list_tables()`](https://omicidx.github.io/omicidxr/reference/list_tables.md)
-  to explore
-
-### 🛠️ Advanced Usage
-
-#### Persistent Local Database
-
-By default, `omicidxr` uses an in-memory DuckDB instance. For persistent
-storage:
+[`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md)
+wraps the connection as lazy `dplyr` tables nested by schema, so
+`db$sradb$<TAB>` completes table names. Each table is created when first
+used, and nothing is read until `collect()`.
 
 ``` r
-# Create a local database file
-client <- OmicidxClient$new(db_path = "~/omicidx_local.duckdb")
 
-# The remote database is still attached, but queries can be cached locally
+db <- omicidx_db(con)
+db
+#> <omicidx_db> OmicIDX release 2026-10 (published 2026-10-20)
+#> 
+#> geometadb
+#>   geo_supplemental_files    7,026,380
+#>   gpl                          28,819
+#>   gse                         293,571
+#>   gse_gpl                     341,054
+#>   gse_gsm                  10,447,481
+#>   gsm                       8,678,255
+#> 
+#> main
+#>   bioprojects
+#>   biosamples
+#>   geo_platforms
+#>   geo_samples
+#>   geo_series
+#>   geo_series_with_rnaseq_counts
+#>   pubmed_articles
+#>   sra_accessions
+#>   sra_experiments
+#>   sra_runs
+#>   sra_samples
+#>   sra_studies
+#> 
+#> sradb
+#>   experiment       42,615,764
+#>   human_runs        8,535,912
+#>   mouse_runs        4,413,081
+#>   rnaseq_runs       9,046,637
+#>   run              45,638,775
+#>   run_with_study   45,638,775
+#>   sample           44,636,830
+#>   sra              45,638,775
+#>   study               774,584
+#>   wgs_runs          9,589,280
+#> 
+#> Tables: db$<schema>$<table>. Connection: attr(db, "con").
+
+db$geometadb$gse |>
+  dplyr::filter(title %ILIKE% "%single cell%") |>
+  dplyr::select(gse, title, submission_date) |>
+  head(5) |>
+  dplyr::collect()
+#> # A tibble: 5 × 3
+#>   gse       title                                                submission_date
+#>   <chr>     <chr>                                                <date>         
+#> 1 GSE240638 Gene expression profile at the single cell level of… 2023-08-10     
+#> 2 GSE241743 The single cell transcriptomic profiling in iPSC de… 2023-08-26     
+#> 3 GSE241996 Single cell RNA sequencing monitoring the developme… 2023-08-30     
+#> 4 GSE241997 Single cell RNA sequencing of the in vivo mouse TME  2023-08-30     
+#> 5 GSE242428 Characterization of CD4+ and CD8+ T cells responses… 2023-09-06
 ```
 
-### 🤝 Contributing
+## SRAdb and GEOmetadb helpers
 
-Contributions are welcome! Here’s how you can help:
+A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs one
+query and returns a tibble.
 
-1.  **Report bugs** – [Open an
-    issue](https://github.com/omicidx/omicidxr/issues) with a
-    reproducible example
-2.  **Suggest features** – Share your ideas in the [issue
-    tracker](https://github.com/omicidx/omicidxr/issues)
-3.  **Submit PRs** – Fork, create a feature branch, and submit a pull
-    request
-4.  **Improve docs** – Help make the documentation clearer
+Convert accessions across SRA, GEO, BioSample and BioProject, in any
+direction:
 
-Please note that this project is released with a [Contributor Code of
-Conduct](https://omicidx.github.io/omicidxr/articles/CODE_OF_CONDUCT.md).
-By participating in this project you agree to abide by its terms.
+``` r
 
-### 📄 License
+sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
+#> # A tibble: 4 × 5
+#>   study     experiment run         gse       gsm       
+#>   <chr>     <chr>      <chr>       <chr>     <chr>     
+#> 1 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
+#> 2 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
+#> 3 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
+#> 4 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+```
 
-MIT © Sean Davis
+The samples and platform of a GEO series, and the characteristics of its
+samples:
 
-See [LICENSE.md](https://omicidx.github.io/omicidxr/articles/LICENSE.md)
-for full license text.
+``` r
 
-### 🙏 Acknowledgments
+geo_samples(con, "GSE164073") |>
+  dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
+  head()
+#> # A tibble: 6 × 5
+#>   gsm        title         gpl      platform_title                sra_experiment
+#>   <chr>      <chr>         <chr>    <chr>                         <chr>         
+#> 1 GSM4996084 Cornea_mock_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759115    
+#> 2 GSM4996085 Cornea_mock_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759116    
+#> 3 GSM4996086 Cornea_mock_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759117    
+#> 4 GSM4996087 Cornea_CoV2_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759118    
+#> 5 GSM4996088 Cornea_CoV2_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759119    
+#> 6 GSM4996089 Cornea_CoV2_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759120
 
-- [DuckDB](https://duckdb.org/) for the amazing analytical database
-  engine
-- The R community for packages like `dplyr`, `dbplyr`, and `DBI`
+geo_characteristics(con, c("GSM4996084", "GSM4996087"))
+#> # A tibble: 6 × 4
+#>   gsm        channel tag        value                
+#>   <chr>        <int> <chr>      <chr>                
+#> 1 GSM4996084       1 tissue     cornea               
+#> 2 GSM4996084       1 infection  mock                 
+#> 3 GSM4996084       1 time point 24 hours             
+#> 4 GSM4996087       1 tissue     cornea               
+#> 5 GSM4996087       1 infection  SARS-CoV-2, MOI = 1.0
+#> 6 GSM4996087       1 time point 24 hours
+```
 
-### 📬 Getting Help
+The runs to download for a study, experiment or GEO series:
 
-- **Documentation**: <https://omicidx.github.io/omicidxr/>
-- **Bug reports**: [GitHub
-  Issues](https://github.com/omicidx/omicidxr/issues)
-- **Questions**: Open a
-  [discussion](https://github.com/omicidx/omicidx/discussions) or reach
-  out via email
+``` r
+
+sra_runs(con, "GSE164073") |>
+  dplyr::select(run_accession, library_layout, spots, bases, instrument_model) |>
+  head()
+#> # A tibble: 6 × 5
+#>   run_accession library_layout   spots     bases instrument_model
+#>   <chr>         <chr>            <dbl>     <dbl> <chr>           
+#> 1 SRR13332242   SINGLE         5970564 827055768 NextSeq 500     
+#> 2 SRR13332243   SINGLE         6168624 854329747 NextSeq 500     
+#> 3 SRR13332244   SINGLE         6135802 849819102 NextSeq 500     
+#> 4 SRR13332245   SINGLE         6012012 832302560 NextSeq 500     
+#> 5 SRR13332246   SINGLE         6696443 925556551 NextSeq 500     
+#> 6 SRR13332247   SINGLE         6917201 955889361 NextSeq 500
+```
+
+Search study and series titles and abstracts:
+
+``` r
+
+sra_search(con, "single cell%glioma", limit = 5) |>
+  dplyr::select(study_accession, study_title)
+#> # A tibble: 5 × 2
+#>   study_accession study_title                                                   
+#>   <chr>           <chr>                                                         
+#> 1 ERP144083       Longitudinal scRNA-Seq of immune cells from GL261 murine brai…
+#> 2 SRP042161       Single cell RNA-seq of primary human glioblastomas            
+#> 3 SRP060524       Single cell RNA-seq analysis of oligodendroglioma             
+#> 4 SRP067604       Single cell transcriptome dynamics and subpopulation heteroge…
+#> 5 SRP081644       An automatec microwell platform for large-scale single cell R…
+geo_search(con, "glioblastoma", limit = 5) |>
+  dplyr::select(gse, title)
+#> # A tibble: 5 × 2
+#>   gse       title                                                               
+#>   <chr>     <chr>                                                               
+#> 1 GSE102136 Single Copy Loss of Tet1 disrupts neural stem cell differentiation …
+#> 2 GSE108013 Microenvironmental-derived Regulation of HIF-Signaling Drives Trans…
+#> 3 GSE241037 spatiotemporal single-cell transcriptomics in mouse and human to in…
+#> 4 GSE242790 Repeated peripheral infusions of anti-EGFRvIII CAR T cells in combi…
+#> 5 GSE248352 Antitumor effects of intravenous natural killer cell infusion in an…
+```
+
+## Migrating from SRAdb and GEOmetadb
+
+SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
+downloaded whole and are no longer updated. The `sradb` and `geometadb`
+schemas follow their tables, so most code ports by connecting with
+[`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md)
+and prefixing table names with the schema.
+
+| SRAdb / GEOmetadb | omicidxr |
+|----|----|
+| `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)` | `con <- omicidx_connect()` |
+| `dbGetQuery(sra_con, "SELECT * FROM study ...")` | `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")` |
+| `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
+| `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
+| `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
+| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_list, out_type)` |
+| `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
+| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs |
+| `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
+
+Differences to watch for:
+
+- The connection comes first in every helper, so they work with `|>`.
+- Tables are schema-qualified: `sradb.study`, not `study`.
+- Conversion also covers BioSample and BioProject, but not SRA
+  submissions or GEO DataSets (GDS); the marts have no `submission`,
+  `gds` or `sMatrix` tables.
+- `characteristics_ch1` and `characteristics_ch2` are lists of tag/value
+  pairs rather than `;\t`-separated strings, and array columns such as
+  `gse.pubmed_id` are lists.
+- [`sra_search()`](https://omicidx.github.io/omicidxr/reference/sra_search.md)
+  is a case-insensitive pattern match, not SQLite full-text search.
+- Pin a monthly release, as this vignette does, where SRAdb code pinned
+  a SQLite file.
+
+## Disconnecting
+
+``` r
+
+DBI::dbDisconnect(con)
+```

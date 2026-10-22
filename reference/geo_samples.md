@@ -1,0 +1,69 @@
+# Samples and platforms of GEO series
+
+The GEOmetadb join of `gse_gsm`, `gsm` and `gpl` as one call.
+
+## Usage
+
+``` r
+geo_samples(con, gse)
+```
+
+## Arguments
+
+- con:
+
+  A connection from
+  [`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md),
+  or an
+  [`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md).
+
+- gse:
+
+  character. GEO series accessions.
+
+## Value
+
+A tibble with one row per series and sample: `gse`, `gsm`, sample
+`title`, `gpl`, `platform_title`, organism, source, molecule, sample
+`type`, `library_source`, `biosample` and `sra_experiment`.
+
+## Examples
+
+``` r
+# \donttest{
+con <- omicidx_connect()
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/Rtmpl0TUWk/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
+geo_samples(con, "GSE164073")
+#> # A tibble: 18 × 12
+#>    gse       gsm        title  gpl   platform_title organism_ch1 source_name_ch1
+#>    <chr>     <chr>      <chr>  <chr> <chr>          <chr>        <chr>          
+#>  1 GSE164073 GSM4996084 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  2 GSE164073 GSM4996085 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  3 GSE164073 GSM4996086 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  4 GSE164073 GSM4996087 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  5 GSE164073 GSM4996088 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  6 GSE164073 GSM4996089 Corne… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  7 GSE164073 GSM4996090 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  8 GSE164073 GSM4996091 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#>  9 GSE164073 GSM4996092 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 10 GSE164073 GSM4996093 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 11 GSE164073 GSM4996094 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 12 GSE164073 GSM4996095 Limbu… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 13 GSE164073 GSM4996096 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 14 GSE164073 GSM4996097 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 15 GSE164073 GSM4996098 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 16 GSE164073 GSM4996099 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 17 GSE164073 GSM4996100 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> 18 GSE164073 GSM4996101 Scler… GPL1… Illumina Next… Homo sapiens cadaver donor …
+#> # ℹ 5 more variables: molecule_ch1 <chr>, type <chr>, library_source <chr>,
+#> #   biosample <chr>, sra_experiment <chr>
+DBI::dbDisconnect(con)
+# }
+```

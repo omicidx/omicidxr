@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Access the OmicIDX omicx metadata database • omicidxr</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access the OmicIDX omicx metadata database">
 <meta name="description" content="The omicidxr package provides an interface to the OmicIDX omicx metadata database. It allows users to query and retrieve metadata about various omics datasets stored in the OmicIDX database. The package leverages DuckDB for efficient data storage and retrieval, and provides a user-friendly API for accessing the data.">
@@ -75,24 +75,22 @@
 <p><strong>Access the OmicIDX omics metadata database from R</strong></p>
 </blockquote>
 <p>The <code>omicidxr</code> package provides a convenient interface to query and explore the OmicIDX metadata database, a comprehensive resource for omics dataset metadata. Built on top of <a href="https://duckdb.org/" class="external-link">DuckDB</a>, it enables fast, efficient queries on large-scale genomics metadata <strong>without downloading the entire database.</strong></p>
-<p>For users of GEOmetadadb and SRAdb, <code>omicidxr</code> offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.</p>
+<p>For users of GEOmetadb and SRAdb, <code>omicidxr</code> offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.</p>
 <p>Metadata coverage of over 40 million SRA experiments, 8 million GEO samples, and 50 million Biosamples, all accessible via SQL or <code>dplyr</code> syntax without any large downloads.</p>
 <div class="section level2">
-<h2 id="id_-features">✨ Features<a class="anchor" aria-label="anchor" href="#id_-features"></a>
+<h2 id="sparkles-features">✨ Features<a class="anchor" aria-label="anchor" href="#sparkles-features"></a>
 </h2>
 <ul>
-<li>🚀 <strong>Fast queries</strong> powered by DuckDB’s columnar storage</li>
-<li>☁️ <strong>Cloud-native</strong> access to remote databases via S3-compatible storage</li>
-<li>🔌 <strong>Zero setup</strong> – connect to the public OmicIDX database instantly</li>
-<li>🧰 <strong>Two interfaces</strong> – use functional-style connections or an R6 client</li>
-<li>🔍 <strong>Full SQL support</strong> plus <code>dplyr</code>/<code>dbplyr</code> integration</li>
-<li>💾 <strong>In-memory or persistent</strong> – choose your storage backend</li>
-<li>📊 <strong>Comprehensive schemas</strong> covering SRA, GEO, Biosample</li>
-<li>🛠️ <strong>Extensible</strong> – join with your own data or build data resources from our data</li>
+<li>🚀 <strong>Fast queries</strong> powered by DuckDB’s columnar engine over remote Parquet</li>
+<li>☁️ <strong>Nothing to download</strong> – queries fetch only the columns and rows they need</li>
+<li>📌 <strong>Version pinning</strong> – the nightly <code>"latest"</code>, a dated build, or a citable monthly release</li>
+<li>🔍 <strong>Full SQL support</strong> plus <code>dplyr</code>/<code>dbplyr</code> integration, with tab-completion of tables</li>
+<li>🧬 <strong>SRAdb/GEOmetadb successor</strong> – the <code>sradb</code> and <code>geometadb</code> schemas follow those packages’ tables</li>
+<li>📊 <strong>Comprehensive schemas</strong> covering SRA, GEO, BioSample and BioProject</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="id_-installation">📦 Installation<a class="anchor" aria-label="anchor" href="#id_-installation"></a>
+<h2 id="package-installation">📦 Installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
 </h2>
 <p>You can install the development version of omicidxr from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -108,164 +106,182 @@
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="st">"omicidx/omicidxr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="id_-quick-start">🚀 Quick Start<a class="anchor" aria-label="anchor" href="#id_-quick-start"></a>
+<h2 id="rocket-quick-start">🚀 Quick Start<a class="anchor" aria-label="anchor" href="#rocket-quick-start"></a>
 </h2>
-<div class="section level3">
-<h3 id="using-the-r6-client-recommended">Using the R6 Client (Recommended)<a class="anchor" aria-label="anchor" href="#using-the-r6-client-recommended"></a>
-</h3>
-<p>The R6 client provides an object-oriented interface with automatic table discovery:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://omicidx.github.io/omicidxr/">omicidxr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Create a new client (connects to the public database)</span></span>
-<span><span class="va">oidx</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/OmicidxClient.html">OmicidxClient</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Connect to the nightly build. A connection is a plain DuckDB DBI connection.</span></span>
+<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_connect.html">omicidx_connect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># See what tables are available</span></span>
-<span><span class="va">oidx</span><span class="op">$</span><span class="fu">list_tables</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># What is there?</span></span>
+<span><span class="fu"><a href="reference/omicidx_tables.html">omicidx_tables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/omicidx_describe.html">omicidx_describe</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"sradb.study"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Usse the tbl() method to get dplyyr table references</span></span>
-<span><span class="va">oidx</span><span class="op">$</span><span class="fu">tbl</span><span class="op">(</span><span class="st">"src_sra_studies"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">study_type</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># SQL</span></span>
+<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"</span></span>
+<span><span class="st">  SELECT study_type, count(*) AS n</span></span>
+<span><span class="st">  FROM sradb.study</span></span>
+<span><span class="st">  GROUP BY study_type</span></span>
+<span><span class="st">  ORDER BY n DESC</span></span>
+<span><span class="st">  LIMIT 5"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Execute raw SQL queries</span></span>
-<span><span class="va">oidx</span><span class="op">$</span><span class="fu">query</span><span class="op">(</span><span class="st">"</span></span>
-<span><span class="st">    SELECT COUNT(*) as transcriptome_study_count</span></span>
-<span><span class="st">    FROM src_sra_studies</span></span>
-<span><span class="st">    WHERE study_type = 'Transcriptome Analysis'"</span><span class="op">)</span></span></code></pre></div>
-</div>
+<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="using-functional-interface">Using Functional Interface<a class="anchor" aria-label="anchor" href="#using-functional-interface"></a>
+<h3 id="tab-completable-dplyr-tables">Tab-completable <code>dplyr</code> tables<a class="anchor" aria-label="anchor" href="#tab-completable-dplyr-tables"></a>
 </h3>
-<p>For more control, use the lower-level functional interface:</p>
+<p><code><a href="reference/omicidx_db.html">omicidx_db()</a></code> returns every table as a lazy <code>dplyr</code> table, nested by schema, so <code>db$sradb$&lt;TAB&gt;</code> completes table names:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://omicidx.github.io/omicidxr/">omicidxr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_db.html">omicidx_db</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">db</span>                         <span class="co"># schemas, tables and row counts</span></span>
 <span></span>
-<span><span class="co"># Establish connection</span></span>
-<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/connect_omicidx.html">connect_omicidx</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># List all available tables</span></span>
-<span><span class="fu"><a href="reference/list_tables.html">list_tables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use dplyr to build queries</span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"src_sra_experiments"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">db</span><span class="op">$</span><span class="va">sradb</span><span class="op">$</span><span class="va">experiment</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">library_strategy</span> <span class="op">==</span> <span class="st">"RNA-Seq"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">platform</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Execute SQL directly</span></span>
-<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"</span></span>
-<span><span class="st">  SELECT platform, COUNT(*) as n </span></span>
-<span><span class="st">  FROM src_sra_experiments</span></span>
-<span><span class="st">  WHERE library_strategy = 'RNA-Seq'</span></span>
-<span><span class="st">  GROUP BY platform</span></span>
-<span><span class="st">  ORDER BY n DESC</span></span>
-<span><span class="st">"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Clean up when done</span></span>
-<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">db</span>, <span class="st">"con"</span><span class="op">)</span>     <span class="co"># the DBI connection behind it</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="choosing-a-version">Choosing a version<a class="anchor" aria-label="anchor" href="#choosing-a-version"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th><code>version</code></th>
+<th>Source</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+<code>"latest"</code> (default)</td>
+<td>the nightly build at <code>omicidx.cancerdatasci.org/data/latest/</code>
+</td>
+</tr>
+<tr>
+<td><code>"YYYY-MM-DD"</code></td>
+<td>a dated nightly build, kept for 30 days</td>
+</tr>
+<tr>
+<td><code>"YYYY-MM"</code></td>
+<td>the monthly HuggingFace release <code>omicidx/omicidx@YYYY-MM</code>; long term and citable</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_connect.html">omicidx_connect</a></span><span class="op">(</span><span class="st">"2026-10"</span><span class="op">)</span></span></code></pre></div>
+<p>Connecting to a monthly release takes about 30 seconds, since DuckDB inspects each Parquet file while it creates the views. HuggingFace limits anonymous requests to 3000 per 5 minutes per IP address, and a query can make hundreds, so heavy use can fail with HTTP 429 for a few minutes.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="id_-main-functions">📚 Main Functions<a class="anchor" aria-label="anchor" href="#id_-main-functions"></a>
+<h2 id="books-main-functions">📚 Main Functions<a class="anchor" aria-label="anchor" href="#books-main-functions"></a>
 </h2>
 <table class="table">
 <colgroup>
-<col width="56%">
 <col width="43%">
+<col width="56%">
 </colgroup>
-<thead><tr class="header">
-<th>Function / Class</th>
+<thead><tr>
+<th>Function</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td><code>OmicidxClient$new()</code></td>
-<td>Create an R6 client with automatic table discovery</td>
+<tr>
+<td><code>omicidx_connect(version)</code></td>
+<td>Connect to an OmicIDX release; returns a DuckDB DBI connection</td>
 </tr>
-<tr class="even">
-<td><code><a href="reference/connect_omicidx.html">connect_omicidx()</a></code></td>
-<td>Establish a connection to the OmicIDX database</td>
+<tr>
+<td><code>omicidx_db(con)</code></td>
+<td>Lazy <code>dplyr</code> tables, nested by schema, for tab-completion</td>
 </tr>
-<tr class="odd">
-<td><code><a href="reference/list_tables.html">list_tables()</a></code></td>
-<td>List all available tables in the database</td>
+<tr>
+<td><code>omicidx_tables(con)</code></td>
+<td>List the tables in a connection</td>
+</tr>
+<tr>
+<td><code>omicidx_describe(con, table)</code></td>
+<td>Column names and types of a table</td>
 </tr>
 </tbody>
 </table>
 <div class="section level3">
-<h3 id="r6-client-methods">R6 Client Methods<a class="anchor" aria-label="anchor" href="#r6-client-methods"></a>
+<h3 id="sradb-and-geometadb-helpers">SRAdb and GEOmetadb helpers<a class="anchor" aria-label="anchor" href="#sradb-and-geometadb-helpers"></a>
 </h3>
 <table class="table">
 <colgroup>
-<col width="38%">
-<col width="61%">
+<col width="30%">
+<col width="39%">
+<col width="30%">
 </colgroup>
-<thead><tr class="header">
-<th>Method</th>
+<thead><tr>
+<th>Function</th>
 <th>Description</th>
+<th>Replaces</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td><code>$list_tables(schema, database)</code></td>
-<td>List tables with optional filtering</td>
+<tr>
+<td><code>sra_convert(con, in_acc, out_type)</code></td>
+<td>Convert between SRA, GEO, BioSample and BioProject accessions</td>
+<td><code>SRAdb::sraConvert()</code></td>
 </tr>
-<tr class="even">
-<td><code>$table_names(schema, database)</code></td>
-<td>Get fully-qualified table names as a character vector</td>
+<tr>
+<td><code>geo_convert(con, in_list, out_type)</code></td>
+<td>The same, defaulting to GEO output types</td>
+<td><code>GEOmetadb::geoConvert()</code></td>
 </tr>
-<tr class="odd">
-<td><code>$tbl(table_name)</code></td>
-<td>Get a lazy <code>dplyr</code> table reference</td>
+<tr>
+<td><code>sra_runs(con, in_acc)</code></td>
+<td>Runs, with download fields, for studies, experiments, samples or GSEs</td>
+<td>
+<code>SRAdb::getSRAinfo()</code>; <code>listSRAfile()</code> (gives run accessions for the SRA Toolkit, not file URLs)</td>
 </tr>
-<tr class="even">
-<td><code>$query(sql)</code></td>
-<td>Execute a SQL query and return results</td>
+<tr>
+<td><code>geo_samples(con, gse)</code></td>
+<td>Samples and platforms of GEO series</td>
+<td>joins of <code>gse_gsm</code>, <code>gsm</code>, <code>gpl</code>
+</td>
 </tr>
-<tr class="odd">
-<td><code>$connection()</code></td>
-<td>Access the underlying DuckDB connection</td>
+<tr>
+<td><code>geo_characteristics(con, gsm)</code></td>
+<td>Sample characteristics as tag/value rows</td>
+<td>parsing <code>characteristics_ch1</code>
+</td>
 </tr>
-<tr class="even">
-<td><code>$tbls</code></td>
-<td>Named list of all table references (populated on init)</td>
+<tr>
+<td>
+<code>sra_search(con, query)</code>, <code>geo_search(con, query)</code>
+</td>
+<td>
+<code>ILIKE</code> search of study and series titles and abstracts</td>
+<td><code>SRAdb::getSRA()</code></td>
 </tr>
 </tbody>
 </table>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_connect.html">omicidx_connect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/sra_convert.html">sra_convert</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSM4996084"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gse"</span>, <span class="st">"study"</span>, <span class="st">"run"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/sra_runs.html">sra_runs</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSE164073"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/geo_characteristics.html">geo_characteristics</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSM4996084"</span><span class="op">)</span></span></code></pre></div>
+<p>Migrating from SRAdb or GEOmetadb? See the “Migrating” section of the <a href="https://omicidx.github.io/omicidxr/articles/introduction.html">Getting Started vignette</a>.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="id_️-database-schemas">🗄️ Database Schemas<a class="anchor" aria-label="anchor" href="#id_%EF%B8%8F-database-schemas"></a>
+<h2 id="file_cabinet-database-schemas">🗄️ Database Schemas<a class="anchor" aria-label="anchor" href="#file_cabinet-database-schemas"></a>
 </h2>
-<p>The OmicIDX database contains metadata from multiple public omics repositories:</p>
 <ul>
 <li>
-<strong>SRA</strong> (Sequence Read Archive) – studies, experiments, samples, runs</li>
+<strong><code>sradb</code></strong> – SRA <code>study</code>, <code>sample</code>, <code>experiment</code>, <code>run</code> and the joined <code>sra</code> table, in the shape of SRAdb’s tables, plus run subsets (<code>human_runs</code>, <code>mouse_runs</code>, <code>rnaseq_runs</code>, <code>wgs_runs</code>)</li>
 <li>
-<strong>GEO</strong> (Gene Expression Omnibus) – series, samples, platforms</li>
+<strong><code>geometadb</code></strong> – GEO <code>gse</code>, <code>gsm</code>, <code>gpl</code>, <code>gse_gsm</code>, <code>gse_gpl</code>, in the shape of GEOmetadb’s tables</li>
 <li>
-<strong>Biosample</strong> – biological sample metadata</li>
-<li>
-<strong>Additional schemas</strong> – use <code><a href="reference/list_tables.html">list_tables()</a></code> to explore</li>
+<strong><code>main</code></strong> – the base OmicIDX tables, where the release includes them (use <code><a href="reference/omicidx_tables.html">omicidx_tables()</a></code>)</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="id_️-advanced-usage">🛠️ Advanced Usage<a class="anchor" aria-label="anchor" href="#id_%EF%B8%8F-advanced-usage"></a>
-</h2>
-<div class="section level3">
-<h3 id="persistent-local-database">Persistent Local Database<a class="anchor" aria-label="anchor" href="#persistent-local-database"></a>
-</h3>
-<p>By default, <code>omicidxr</code> uses an in-memory DuckDB instance. For persistent storage:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a local database file</span></span>
-<span><span class="va">client</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/OmicidxClient.html">OmicidxClient</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>db_path <span class="op">=</span> <span class="st">"~/omicidx_local.duckdb"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># The remote database is still attached, but queries can be cached locally</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="id_-contributing">🤝 Contributing<a class="anchor" aria-label="anchor" href="#id_-contributing"></a>
+<h2 id="handshake-contributing">🤝 Contributing<a class="anchor" aria-label="anchor" href="#handshake-contributing"></a>
 </h2>
 <p>Contributions are welcome! Here’s how you can help:</p>
 <ol style="list-style-type: decimal">
@@ -282,13 +298,13 @@
 <p>Please note that this project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
 <div class="section level2">
-<h2 id="id_-license">📄 License<a class="anchor" aria-label="anchor" href="#id_-license"></a>
+<h2 id="page_facing_up-license">📄 License<a class="anchor" aria-label="anchor" href="#page_facing_up-license"></a>
 </h2>
 <p>MIT © Sean Davis</p>
 <p>See <a href="LICENSE.html">LICENSE.md</a> for full license text.</p>
 </div>
 <div class="section level2">
-<h2 id="id_-acknowledgments">🙏 Acknowledgments<a class="anchor" aria-label="anchor" href="#id_-acknowledgments"></a>
+<h2 id="pray-acknowledgments">🙏 Acknowledgments<a class="anchor" aria-label="anchor" href="#pray-acknowledgments"></a>
 </h2>
 <ul>
 <li>
@@ -298,7 +314,7 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="id_-getting-help">📬 Getting Help<a class="anchor" aria-label="anchor" href="#id_-getting-help"></a>
+<h2 id="mailbox_with_mail-getting-help">📬 Getting Help<a class="anchor" aria-label="anchor" href="#mailbox_with_mail-getting-help"></a>
 </h2>
 <ul>
 <li>
@@ -362,7 +378,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

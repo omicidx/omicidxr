@@ -6,9 +6,15 @@
 <url><loc>https://omicidx.github.io/omicidxr/articles/introduction.html</loc></url>
 <url><loc>https://omicidx.github.io/omicidxr/authors.html</loc></url>
 <url><loc>https://omicidx.github.io/omicidxr/index.html</loc></url>
-<url><loc>https://omicidx.github.io/omicidxr/reference/OmicidxClient.html</loc></url>
-<url><loc>https://omicidx.github.io/omicidxr/reference/connect_omicidx.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/geo_characteristics.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/geo_samples.html</loc></url>
 <url><loc>https://omicidx.github.io/omicidxr/reference/index.html</loc></url>
-<url><loc>https://omicidx.github.io/omicidxr/reference/list_tables.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/omicidx_connect.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/omicidx_db.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/omicidx_describe.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/omicidx_tables.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/sra_convert.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/sra_runs.html</loc></url>
+<url><loc>https://omicidx.github.io/omicidxr/reference/sra_search.html</loc></url>
 </urlset>
 
