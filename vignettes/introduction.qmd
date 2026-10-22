@@ -3,19 +3,20 @@ title: "Getting started with omicidxr"
 author:
 - name: Sean Davis
   email: seandavi@gmail.com
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
-package: omicidxr
-output:
-  BiocStyle::html_document
+date: today
+date-format: long
+format:
+  biocstyle-html:
+    embed-resources: true
 vignette: >
   %\VignetteIndexEntry{Getting started with omicidxr}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::format}
   %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-```
 
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those files,
@@ -24,7 +25,9 @@ downloading them.
 
 # Installation
 
-```{r install, eval=FALSE}
+```{r}
+#| label: install
+#| eval: false
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -43,7 +46,9 @@ monthly release `"YYYY-MM"`, which is kept long term and is the one to
 cite. This vignette pins the October 2026 monthly release so its results
 are reproducible.
 
-```{r connect, message=FALSE}
+```{r}
+#| label: connect
+#| message: false
 library(omicidxr)
 
 con <- omicidx_connect("2026-10")
@@ -52,7 +57,8 @@ con <- omicidx_connect("2026-10")
 `omicidx_release()` reports which release a connection is on, with the
 provenance from the release's `manifest.json`:
 
-```{r release}
+```{r}
+#| label: release
 release <- omicidx_release(con)
 release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
 ```
@@ -62,14 +68,16 @@ the HuggingFace dataset page for its tag, and state the tag (`2026-10`).
 
 # What is in a release
 
-```{r tables}
+```{r}
+#| label: tables
 omicidx_tables(con)
 ```
 
 The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
 GEOmetadb packages. `omicidx_describe()` lists a table's columns:
 
-```{r describe}
+```{r}
+#| label: describe
 omicidx_describe(con, "sradb.study")
 ```
 
@@ -78,7 +86,8 @@ omicidx_describe(con, "sradb.study")
 Any DuckDB SQL works through DBI. Keep exploratory queries small with
 `LIMIT`: every query reads remote files.
 
-```{r sql}
+```{r}
+#| label: sql
 DBI::dbGetQuery(con, "
     SELECT study_accession, study_title
     FROM sradb.study
@@ -92,7 +101,8 @@ DBI::dbGetQuery(con, "
 schema, so `db$sradb$<TAB>` completes table names. Each table is created
 when first used, and nothing is read until `collect()`.
 
-```{r db}
+```{r}
+#| label: db
 db <- omicidx_db(con)
 db
 
@@ -111,14 +121,16 @@ query and returns a tibble.
 Convert accessions across SRA, GEO, BioSample and BioProject, in any
 direction:
 
-```{r convert}
+```{r}
+#| label: convert
 sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
 ```
 
 The samples and platform of a GEO series, and the characteristics of
 its samples:
 
-```{r geo}
+```{r}
+#| label: geo
 geo_samples(con, "GSE164073") |>
     dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
     head()
@@ -128,7 +140,8 @@ geo_characteristics(con, c("GSM4996084", "GSM4996087"))
 
 The runs to download for a study, experiment or GEO series:
 
-```{r runs}
+```{r}
+#| label: runs
 sra_runs(con, "GSE164073") |>
     dplyr::select(
         run_accession, library_layout, spots, bases, instrument_model
@@ -138,7 +151,8 @@ sra_runs(con, "GSE164073") |>
 
 Search study and series titles and abstracts:
 
-```{r search}
+```{r}
+#| label: search
 sra_search(con, "single cell%glioma", limit = 5) |>
     dplyr::select(study_accession, study_title)
 geo_search(con, "glioblastoma", limit = 5) |>
@@ -153,7 +167,8 @@ Some columns hold several values per row: in `geo_search()` results,
 gives one row per value. Rows with an empty list, such as series without
 SRA studies, drop out unless you pass `keep_empty = TRUE`:
 
-```{r list-columns}
+```{r}
+#| label: list-columns
 geo_search(con, "glioblastoma", limit = 5) |>
     dplyr::select(gse, sra_studies) |>
     tidyr::unnest_longer(sra_studies)
@@ -164,7 +179,9 @@ geo_search(con, "glioblastoma", limit = 5) |>
 omicidxr finds runs; the SRA Toolkit downloads them. Write the run
 accessions from `sra_runs()` to a file:
 
-```{r fastq, eval=FALSE}
+```{r}
+#| label: fastq
+#| eval: false
 runs <- sra_runs(con, "GSE164073")
 writeLines(runs$run_accession, "runs.txt")
 ```
@@ -223,12 +240,14 @@ Differences to watch for:
 
 # Disconnecting
 
-```{r disconnect}
+```{r}
+#| label: disconnect
 DBI::dbDisconnect(con)
 ```
 
 # Session information
 
-```{r session-info}
+```{r}
+#| label: session-info
 sessionInfo()
 ```
