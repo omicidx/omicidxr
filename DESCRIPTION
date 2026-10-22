@@ -1,12 +1,15 @@
 Package: omicidxr
 Title: Query SRA, GEO, BioSample and BioProject Metadata from OmicIDX
 Version: 0.99.0
-Authors@R: 
+Authors@R: c(
     person(given = "Sean",
            family = "Davis",
            email = "seandavi@gmail.com",
            role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-8991-6458"))
+           comment = c(ORCID = "0000-0002-8991-6458")),
+    person(given = "National Cancer Institute",
+           role = "fnd",
+           comment = "ITCR award U24CA289073"))
 Description: OmicIDX publishes metadata from NCBI SRA, GEO, BioSample
     and BioProject as Parquet files, rebuilt nightly and released
     monthly. omicidxr connects DuckDB to a chosen release, so tens of
