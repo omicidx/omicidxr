@@ -11,20 +11,18 @@
 
 The `omicidxr` package provides a convenient interface to query and explore the OmicIDX metadata database, a comprehensive resource for omics dataset metadata. Built on top of [DuckDB](https://duckdb.org/), it enables fast, efficient queries on large-scale genomics metadata **without downloading the entire database.**
 
-For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.
+For users of GEOmetadb and SRAdb, `omicidxr` offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.
 
 Metadata coverage of over 40 million SRA experiments, 8 million GEO samples, and 50 million Biosamples, all accessible via SQL or `dplyr` syntax without any large downloads.
 
 ## ✨ Features
 
-- 🚀 **Fast queries** powered by DuckDB's columnar storage
-- ☁️ **Cloud-native** access to remote databases via S3-compatible storage
-- 🔌 **Zero setup** – connect to the public OmicIDX database instantly
-- 🧰 **Two interfaces** – use functional-style connections or an R6 client
-- 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration
-- 💾 **In-memory or persistent** – choose your storage backend
-- 📊 **Comprehensive schemas** covering SRA, GEO, Biosample
-- 🛠️ **Extensible** – join with your own data or build data resources from our data
+- 🚀 **Fast queries** powered by DuckDB's columnar engine over remote Parquet
+- ☁️ **Nothing to download** – queries fetch only the columns and rows they need
+- 📌 **Version pinning** – the nightly `"latest"`, a dated build, or a citable monthly release
+- 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration, with tab-completion of tables
+- 🧬 **SRAdb/GEOmetadb successor** – the `sradb` and `geometadb` schemas follow those packages' tables
+- 📊 **Comprehensive schemas** covering SRA, GEO, BioSample and BioProject
 
 ## 📦 Installation
 
@@ -51,106 +49,97 @@ BiocManager::install("omicidx/omicidxr")
 
 ## 🚀 Quick Start
 
-### Using the R6 Client (Recommended)
-
-The R6 client provides an object-oriented interface with automatic table discovery:
-
 ``` r
 library(omicidxr)
 
-# Create a new client (connects to the public database)
-oidx <- OmicidxClient$new()
+# Connect to the nightly build. A connection is a plain DuckDB DBI connection.
+con <- omicidx_connect()
 
-# See what tables are available
-oidx$list_tables()
+# What is there?
+omicidx_tables(con)
+omicidx_describe(con, "sradb.study")
 
-# Usse the tbl() method to get dplyyr table references
-oidx$tbl("src_sra_studies") |>
-  dplyr::count(study_type, sort = TRUE) |>
-  dplyr::collect()
+# SQL
+DBI::dbGetQuery(con, "
+  SELECT study_type, count(*) AS n
+  FROM sradb.study
+  GROUP BY study_type
+  ORDER BY n DESC
+  LIMIT 5")
 
-# Execute raw SQL queries
-oidx$query("
-    SELECT COUNT(*) as transcriptome_study_count
-    FROM src_sra_studies
-    WHERE study_type = 'Transcriptome Analysis'")
+DBI::dbDisconnect(con)
 ```
 
-### Using Functional Interface
+### Tab-completable `dplyr` tables
 
-For more control, use the lower-level functional interface:
+`omicidx_db()` returns every table as a lazy `dplyr` table, nested by
+schema, so `db$sradb$<TAB>` completes table names:
 
 ``` r
-library(omicidxr)
-library(dplyr)
+db <- omicidx_db()
+db                         # schemas, tables and row counts
 
-# Establish connection
-con <- connect_omicidx()
-
-# List all available tables
-list_tables(con)
-
-# Use dplyr to build queries
-dplyr::tbl(con, "src_sra_experiments") |>
+db$sradb$experiment |>
   dplyr::filter(library_strategy == "RNA-Seq") |>
   dplyr::count(platform, sort = TRUE) |>
   dplyr::collect()
 
-# Execute SQL directly
-DBI::dbGetQuery(con, "
-  SELECT platform, COUNT(*) as n 
-  FROM src_sra_experiments
-  WHERE library_strategy = 'RNA-Seq'
-  GROUP BY platform
-  ORDER BY n DESC
-")
-
-# Clean up when done
-DBI::dbDisconnect(con, shutdown = TRUE)
+con <- attr(db, "con")     # the DBI connection behind it
 ```
+
+### Choosing a version
+
+| `version` | Source |
+|---|---|
+| `"latest"` (default) | the nightly build at `omicidx.cancerdatasci.org/data/latest/` |
+| `"YYYY-MM-DD"` | a dated nightly build, kept for 30 days |
+| `"YYYY-MM"` | the monthly HuggingFace release `omicidx/omicidx@YYYY-MM`; long term and citable |
+
+``` r
+con <- omicidx_connect("2026-10")
+```
+
+Connecting to a monthly release takes about 30 seconds, since DuckDB
+inspects each Parquet file while it creates the views. HuggingFace
+limits anonymous requests to 3000 per 5 minutes per IP address, and a
+query can make hundreds, so heavy use can fail with HTTP 429 for a few
+minutes.
 
 ## 📚 Main Functions
 
-| Function / Class | Description |
-|-----------------|-------------|
-| `OmicidxClient$new()` | Create an R6 client with automatic table discovery |
-| `connect_omicidx()` | Establish a connection to the OmicIDX database |
-| `list_tables()` | List all available tables in the database |
+| Function | Description |
+|----------|-------------|
+| `omicidx_connect(version)` | Connect to an OmicIDX release; returns a DuckDB DBI connection |
+| `omicidx_db(con)` | Lazy `dplyr` tables, nested by schema, for tab-completion |
+| `omicidx_tables(con)` | List the tables in a connection |
+| `omicidx_describe(con, table)` | Column names and types of a table |
 
-### R6 Client Methods
+### SRAdb and GEOmetadb helpers
 
-| Method | Description |
-|--------|-------------|
-| `$list_tables(schema, database)` | List tables with optional filtering |
-| `$table_names(schema, database)` | Get fully-qualified table names as a character vector |
-| `$tbl(table_name)` | Get a lazy `dplyr` table reference |
-| `$query(sql)` | Execute a SQL query and return results |
-| `$connection()` | Access the underlying DuckDB connection |
-| `$tbls` | Named list of all table references (populated on init) |
+| Function | Description | Replaces |
+|----------|-------------|----------|
+| `sra_convert(con, in_acc, out_type)` | Convert between SRA, GEO, BioSample and BioProject accessions | `SRAdb::sraConvert()` |
+| `geo_convert(con, in_list, out_type)` | The same, defaulting to GEO output types | `GEOmetadb::geoConvert()` |
+| `sra_runs(con, in_acc)` | Runs, with download fields, for studies, experiments, samples or GSEs | `SRAdb::getSRAinfo()`; `listSRAfile()` (gives run accessions for the SRA Toolkit, not file URLs) |
+| `geo_samples(con, gse)` | Samples and platforms of GEO series | joins of `gse_gsm`, `gsm`, `gpl` |
+| `geo_characteristics(con, gsm)` | Sample characteristics as tag/value rows | parsing `characteristics_ch1` |
+| `sra_search(con, query)`, `geo_search(con, query)` | `ILIKE` search of study and series titles and abstracts | `SRAdb::getSRA()` |
+
+``` r
+con <- omicidx_connect()
+sra_convert(con, "GSM4996084", c("gse", "study", "run"))
+sra_runs(con, "GSE164073")
+geo_characteristics(con, "GSM4996084")
+```
+
+Migrating from SRAdb or GEOmetadb? See the "Migrating" section of the
+[Getting Started vignette](https://omicidx.github.io/omicidxr/articles/introduction.html).
 
 ## 🗄️ Database Schemas
 
-The OmicIDX database contains metadata from multiple public omics repositories:
-
-- **SRA** (Sequence Read Archive) – studies, experiments, samples, runs
-- **GEO** (Gene Expression Omnibus) – series, samples, platforms
-- **Biosample** – biological sample metadata
-- **Additional schemas** – use `list_tables()` to explore
-
-## 🛠️ Advanced Usage
-
-### Persistent Local Database
-
-By default, `omicidxr` uses an in-memory DuckDB instance. For persistent storage:
-
-``` r
-# Create a local database file
-client <- OmicidxClient$new(db_path = "~/omicidx_local.duckdb")
-
-# The remote database is still attached, but queries can be cached locally
-```
-
-
+- **`sradb`** – SRA `study`, `sample`, `experiment`, `run` and the joined `sra` table, in the shape of SRAdb's tables, plus run subsets (`human_runs`, `mouse_runs`, `rnaseq_runs`, `wgs_runs`)
+- **`geometadb`** – GEO `gse`, `gsm`, `gpl`, `gse_gsm`, `gse_gpl`, in the shape of GEOmetadb's tables
+- **`main`** – the base OmicIDX tables, where the release includes them (use `omicidx_tables()`)
 
 ## 🤝 Contributing
 

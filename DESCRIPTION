@@ -16,21 +16,25 @@ Description: The omicidxr package provides an interface to
     accessing the data.
 License: MIT + file LICENSE
 LicenseFile: LICENSE
+Depends:
+    R (>= 4.1.0)
 Imports:
-    R6,
     duckdb,
     DBI,
     dplyr,
     tibble,
-    dbplyr
+    dbplyr,
+    utils
 Suggests:
-    ggplot2,
+    curl,
     knitr,
-    quarto
+    quarto,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Url: https://github.com/omicidx/omicidxr
 BugReports: https://github.com/omicidx/omicidxr/issues
-RoxygenNote: 7.3.2
 URL: https://omicidx.github.io/omicidxr/
 VignetteBuilder: quarto
+Config/roxygen2/version: 8.1.0

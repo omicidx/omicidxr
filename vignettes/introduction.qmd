@@ -10,186 +10,156 @@ knitr:
     comment: '#>'
 ---
 
-```{r}
-#| label: setup
-library(omicidxr)
-```
+OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
+publishes it as Parquet files. `omicidxr` connects DuckDB to those files,
+so you can query tens of millions of records with SQL or `dplyr` without
+downloading them.
 
+## Connecting
 
-# omicidxr <img src="man/figures/logo.png" align="right" height="139" alt="" />
-
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![pkgdown-build](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml)
-<!-- badges: end -->
-
-> **Access the OmicIDX omics metadata database from R**
-
-The `omicidxr` package provides a convenient interface to query and explore the OmicIDX metadata database, a comprehensive resource for omics dataset metadata. Built on top of [DuckDB](https://duckdb.org/), it enables fast, efficient queries on large-scale genomics metadata **without downloading the entire database.**
-
-For users of GEOmetadadb and SRAdb, `omicidxr` offers a modern alternative with cloud-native access, eliminating the need to manage large local SQLite files.
-
-## ✨ Features
-
-- 🚀 **Fast queries** powered by DuckDB's columnar storage
-- ☁️ **Cloud-native** access to remote databases via S3-compatible storage
-- 🔌 **Zero setup** – connect to the public OmicIDX database instantly
-- 🧰 **Two interfaces** – use functional-style connections or an R6 client
-- 🔍 **Full SQL support** plus `dplyr`/`dbplyr` integration
-- 💾 **In-memory or persistent** – choose your storage backend
-
-## 📦 Installation
-
-You can install the development version of omicidxr from GitHub:
-
-``` r
-# install.packages("pak")
-pak::pak("omicidx/omicidxr")
-```
-
-Or using `remotes`:
-
-``` r
-# install.packages("remotes")
-remotes::install_github("omicidx/omicidxr")
-```
-
-or using 'BiocManager':
-
-``` r
-# install.packages("BiocManager")
-BiocManager::install("omicidx/omicidxr")
-```
-
-## 🚀 Quick Start
-
-### Using the R6 Client (Recommended)
-
-The R6 client provides an object-oriented interface with automatic table discovery:
+`omicidx_connect()` returns an ordinary DuckDB DBI connection. The
+`version` argument picks the release: `"latest"` (the nightly build, the
+default), a dated nightly build `"YYYY-MM-DD"` (kept for 30 days), or a
+monthly release `"YYYY-MM"`, which is kept long term and is the one to
+cite. This vignette pins the October 2026 monthly release so its results
+are reproducible.
 
 ```{r}
+#| label: connect
+#| message: false
 library(omicidxr)
 
-# Create a new client (connects to the public database)
-oidx <- OmicidxClient$new()
-
-# See what tables are available
-oidx$list_tables()
-
-# Usse the tbl() method to get dplyyr table references
-oidx$tbl("src_sra_studies") |>
-  dplyr::count(study_type, sort = TRUE) |>
-  dplyr::collect()
-
-# Execute raw SQL queries
-oidx$query("
-    SELECT COUNT(*) as transcriptome_study_count
-    FROM src_sra_studies
-    WHERE study_type = 'Transcriptome Analysis'")
+con <- omicidx_connect("2026-10")
 ```
 
-### Using Functional Interface
-
-For more control, use the lower-level functional interface:
+## What is in a release
 
 ```{r}
-library(omicidxr)
-library(dplyr)
+#| label: tables
+omicidx_tables(con)
+```
 
-# Establish connection
-con <- connect_omicidx()
+The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
+GEOmetadb packages. `omicidx_describe()` lists a table's columns:
 
-# List all available tables
-list_tables(con)
+```{r}
+#| label: describe
+omicidx_describe(con, "sradb.study")
+```
 
-# Use dplyr to build queries
-dplyr::tbl(con, "src_sra_experiments") |>
-  dplyr::filter(library_strategy == "RNA-Seq") |>
-  dplyr::count(platform, sort = TRUE) |>
-  dplyr::collect()
+## SQL
 
-# Execute SQL directly
+Any DuckDB SQL works through DBI. Keep exploratory queries small with
+`LIMIT`: every query reads remote files.
+
+```{r}
+#| label: sql
 DBI::dbGetQuery(con, "
-  SELECT platform, COUNT(*) as n 
-  FROM src_sra_experiments
-  WHERE library_strategy = 'RNA-Seq'
-  GROUP BY platform
-  ORDER BY n DESC
-")
-
-# Clean up when done
-DBI::dbDisconnect(con, shutdown = TRUE)
+  SELECT study_accession, study_title
+  FROM sradb.study
+  WHERE study_type = 'Transcriptome Analysis'
+  LIMIT 5")
 ```
 
-## 📚 Main Functions
+## dplyr
 
-| Function / Class | Description |
-|-----------------|-------------|
-| `OmicidxClient$new()` | Create an R6 client with automatic table discovery |
-| `connect_omicidx()` | Establish a connection to the OmicIDX database |
-| `list_tables()` | List all available tables in the database |
+`omicidx_db()` wraps the connection as lazy `dplyr` tables nested by
+schema, so `db$sradb$<TAB>` completes table names. Each table is created
+when first used, and nothing is read until `collect()`.
 
-### R6 Client Methods
+```{r}
+#| label: db
+db <- omicidx_db(con)
+db
 
-| Method | Description |
-|--------|-------------|
-| `$list_tables(schema, database)` | List tables with optional filtering |
-| `$table_names(schema, database)` | Get fully-qualified table names as a character vector |
-| `$tbl(table_name)` | Get a lazy `dplyr` table reference |
-| `$query(sql)` | Execute a SQL query and return results |
-| `$connection()` | Access the underlying DuckDB connection |
-| `$tbls` | Named list of all table references (populated on init) |
-
-## 🗄️ Database Schemas
-
-The OmicIDX database contains metadata from multiple public omics repositories:
-
-- **SRA** (Sequence Read Archive) – studies, experiments, samples, runs
-- **GEO** (Gene Expression Omnibus) – series, samples, platforms
-- **Biosample** – biological sample metadata
-- **Additional schemas** – use `list_tables()` to explore
-
-## 🛠️ Advanced Usage
-
-### Persistent Local Database
-
-By default, `omicidxr` uses an in-memory DuckDB instance. For persistent storage:
-
-``` r
-# Create a local database file
-client <- OmicidxClient$new(db_path = "~/omicidx_local.duckdb")
-
-# The remote database is still attached, but queries can be cached locally
+db$geometadb$gse |>
+  dplyr::filter(title %ILIKE% "%single cell%") |>
+  dplyr::select(gse, title, submission_date) |>
+  head(5) |>
+  dplyr::collect()
 ```
 
+## SRAdb and GEOmetadb helpers
 
+A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs one
+query and returns a tibble.
 
-## 🤝 Contributing
+Convert accessions across SRA, GEO, BioSample and BioProject, in any
+direction:
 
-Contributions are welcome! Here's how you can help:
+```{r}
+#| label: convert
+sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
+```
 
-1. **Report bugs** – [Open an issue](https://github.com/omicidx/omicidxr/issues) with a reproducible example
-2. **Suggest features** – Share your ideas in the [issue tracker](https://github.com/omicidx/omicidxr/issues)
-3. **Submit PRs** – Fork, create a feature branch, and submit a pull request
-4. **Improve docs** – Help make the documentation clearer
+The samples and platform of a GEO series, and the characteristics of
+its samples:
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+```{r}
+#| label: geo
+geo_samples(con, "GSE164073") |>
+  dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
+  head()
 
-## 📄 License
+geo_characteristics(con, c("GSM4996084", "GSM4996087"))
+```
 
-MIT © Sean Davis
+The runs to download for a study, experiment or GEO series:
 
-See [LICENSE.md](LICENSE.md) for full license text.
+```{r}
+#| label: runs
+sra_runs(con, "GSE164073") |>
+  dplyr::select(run_accession, library_layout, spots, bases, instrument_model) |>
+  head()
+```
 
-## 🙏 Acknowledgments
+Search study and series titles and abstracts:
 
-- [DuckDB](https://duckdb.org/) for the amazing analytical database engine
-- The R community for packages like `dplyr`, `dbplyr`, and `DBI`
+```{r}
+#| label: search
+sra_search(con, "single cell%glioma", limit = 5) |>
+  dplyr::select(study_accession, study_title)
+geo_search(con, "glioblastoma", limit = 5) |>
+  dplyr::select(gse, title)
+```
 
-## 📬 Getting Help
+## Migrating from SRAdb and GEOmetadb
 
-- **Documentation**: [https://omicidx.github.io/omicidxr/](https://omicidx.github.io/omicidxr/)
-- **Bug reports**: [GitHub Issues](https://github.com/omicidx/omicidxr/issues)
-- **Questions**: Open a [discussion](https://github.com/omicidx/omicidx/discussions) or reach out via email
+SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
+downloaded whole and are no longer updated. The `sradb` and `geometadb`
+schemas follow their tables, so most code ports by connecting with
+`omicidx_connect()` and prefixing table names with the schema.
+
+| SRAdb / GEOmetadb | omicidxr |
+|---|---|
+| `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)` | `con <- omicidx_connect()` |
+| `dbGetQuery(sra_con, "SELECT * FROM study ...")` | `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")` |
+| `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
+| `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
+| `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
+| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_list, out_type)` |
+| `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
+| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs |
+| `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
+
+Differences to watch for:
+
+- The connection comes first in every helper, so they work with `|>`.
+- Tables are schema-qualified: `sradb.study`, not `study`.
+- Conversion also covers BioSample and BioProject, but not SRA
+  submissions or GEO DataSets (GDS); the marts have no `submission`,
+  `gds` or `sMatrix` tables.
+- `characteristics_ch1` and `characteristics_ch2` are lists of
+  tag/value pairs rather than `;\t`-separated strings, and array columns
+  such as `gse.pubmed_id` are lists.
+- `sra_search()` is a case-insensitive pattern match, not SQLite
+  full-text search.
+- Pin a monthly release, as this vignette does, where SRAdb code pinned
+  a SQLite file.
+
+## Disconnecting
+
+```{r}
+#| label: disconnect
+DBI::dbDisconnect(con)
+```
