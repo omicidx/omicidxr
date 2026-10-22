@@ -15,9 +15,9 @@ geo_characteristics(con, gsm)
 - con:
 
   A connection from
-  [`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md),
+  [`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md),
   or an
-  [`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md).
+  [`omicidx_db()`](https://seandavi.github.io/omicidxr/reference/omicidx_db.md).
 
 - gsm:
 

@@ -17,13 +17,13 @@ omicidx_db(con = NULL, version = "latest")
 - con:
 
   A connection from
-  [`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md),
+  [`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md),
   or a version string to open a new one. Defaults to `version`.
 
 - version:
 
   character(1). Release to connect to when `con` is `NULL`; see
-  [`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md).
+  [`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md).
 
 ## Value
 

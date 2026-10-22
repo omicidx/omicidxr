@@ -38,7 +38,7 @@ Install the development version from GitHub with `pak`:
 ``` r
 
 install.packages("pak")
-pak::pak("omicidx/omicidxr")
+pak::pak("seandavi/omicidxr")
 ```
 
 omicidxr needs the `duckdb` package. CRAN has `duckdb` binaries for
@@ -73,7 +73,7 @@ DBI::dbDisconnect(con)
 
 ### Tab-completable `dplyr` tables
 
-[`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md)
+[`omicidx_db()`](https://seandavi.github.io/omicidxr/reference/omicidx_db.md)
 returns every table as a lazy `dplyr` table, nested by schema, so
 `db$sradb$<TAB>` completes table names:
 
@@ -141,7 +141,7 @@ geo_characteristics(con, "GSM4996084")
 
 Migrating from SRAdb or GEOmetadb? See the “Migrating” section of the
 [Getting Started
-vignette](https://omicidx.github.io/omicidxr/articles/introduction.html).
+vignette](https://seandavi.github.io/omicidxr/articles/introduction.html).
 
 ## 🗄️ Database Schemas
 
@@ -152,31 +152,31 @@ vignette](https://omicidx.github.io/omicidxr/articles/introduction.html).
   the shape of GEOmetadb’s tables
 - **`main`** – the base OmicIDX tables, where the release includes them
   (use
-  [`omicidx_tables()`](https://omicidx.github.io/omicidxr/reference/omicidx_tables.md))
+  [`omicidx_tables()`](https://seandavi.github.io/omicidxr/reference/omicidx_tables.md))
 
 ## 🤝 Contributing
 
 Contributions are welcome! Here’s how you can help:
 
 1.  **Report bugs** – [Open an
-    issue](https://github.com/omicidx/omicidxr/issues) with a
+    issue](https://github.com/seandavi/omicidxr/issues) with a
     reproducible example
 2.  **Suggest features** – Share your ideas in the [issue
-    tracker](https://github.com/omicidx/omicidxr/issues)
+    tracker](https://github.com/seandavi/omicidxr/issues)
 3.  **Submit PRs** – Fork, create a feature branch, and submit a pull
     request
 4.  **Improve docs** – Help make the documentation clearer
 
 Please note that this project is released with a [Contributor Code of
-Conduct](https://omicidx.github.io/omicidxr/CODE_OF_CONDUCT.md). By
+Conduct](https://seandavi.github.io/omicidxr/CODE_OF_CONDUCT.md). By
 participating in this project you agree to abide by its terms.
 
 ## 📄 License
 
 MIT © Sean Davis
 
-See [LICENSE.md](https://omicidx.github.io/omicidxr/LICENSE.md) for full
-license text.
+See [LICENSE.md](https://seandavi.github.io/omicidxr/LICENSE.md) for
+full license text.
 
 ## 🙏 Acknowledgments
 
@@ -186,9 +186,9 @@ license text.
 
 ## 📬 Getting Help
 
-- **Documentation**: <https://omicidx.github.io/omicidxr/>
+- **Documentation**: <https://seandavi.github.io/omicidxr/>
 - **Bug reports**: [GitHub
-  Issues](https://github.com/omicidx/omicidxr/issues)
+  Issues](https://github.com/seandavi/omicidxr/issues)
 - **Questions**: Open a
   [discussion](https://github.com/omicidx/omicidx/discussions) or reach
   out via email

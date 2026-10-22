@@ -24,16 +24,16 @@ A DuckDB
 [DBI::DBIConnection](https://dbi.r-dbi.org/reference/DBIConnection-class.html).
 Close it with
 [`DBI::dbDisconnect()`](https://dbi.r-dbi.org/reference/dbDisconnect.html).
-[`omicidx_release()`](https://omicidx.github.io/omicidxr/reference/omicidx_release.md)
+[`omicidx_release()`](https://seandavi.github.io/omicidxr/reference/omicidx_release.md)
 tells which release it is connected to.
 
 ## Details
 
 After connecting, tables are referenced as `schema.table`, for example
 `sradb.study` or `geometadb.gsm`. Use
-[`omicidx_tables()`](https://omicidx.github.io/omicidxr/reference/omicidx_tables.md)
+[`omicidx_tables()`](https://seandavi.github.io/omicidxr/reference/omicidx_tables.md)
 to list them and
-[`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md)
+[`omicidx_db()`](https://seandavi.github.io/omicidxr/reference/omicidx_db.md)
 for tab-completable `dplyr` tables.
 
 ## Versions

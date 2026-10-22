@@ -1,14 +1,4 @@
-# 
-
 # Getting started with omicidxr
-
-Author
-
-Sean Davis [](mailto:seandavi@gmail.com)
-
-Published
-
-October 22, 2026
 
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those
@@ -26,11 +16,11 @@ BiocManager::install("omicidxr")
 ```
 
 Until omicidxr is in Bioconductor,
-`BiocManager::install("omicidx/omicidxr")` installs it from GitHub.
+`BiocManager::install("seandavi/omicidxr")` installs it from GitHub.
 
 ## Connecting
 
-[`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md)
+[`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md)
 returns an ordinary DuckDB DBI connection. The `version` argument picks
 the release: `"latest"` (the nightly build, the default), a dated
 nightly build `"YYYY-MM-DD"` (kept for 30 days), or a monthly release
@@ -45,7 +35,7 @@ library(omicidxr)
 con <- omicidx_connect("2026-10")
 ```
 
-[`omicidx_release()`](https://omicidx.github.io/omicidxr/reference/omicidx_release.md)
+[`omicidx_release()`](https://seandavi.github.io/omicidxr/reference/omicidx_release.md)
 reports which release a connection is on, with the provenance from the
 release’s `manifest.json`:
 
@@ -92,7 +82,7 @@ omicidx_tables(con)
 
 The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
 GEOmetadb packages.
-[`omicidx_describe()`](https://omicidx.github.io/omicidxr/reference/omicidx_describe.md)
+[`omicidx_describe()`](https://seandavi.github.io/omicidxr/reference/omicidx_describe.md)
 lists a table’s columns:
 
 ``` r
@@ -145,7 +135,7 @@ DBI::dbGetQuery(con, "
 
 ## dplyr
 
-[`omicidx_db()`](https://omicidx.github.io/omicidxr/reference/omicidx_db.md)
+[`omicidx_db()`](https://seandavi.github.io/omicidxr/reference/omicidx_db.md)
 wraps the connection as lazy `dplyr` tables nested by schema, so
 `db$sradb$<TAB>` completes table names. Each table is created when first
 used, and nothing is read until `collect()`.
@@ -306,7 +296,7 @@ geo_search(con, "glioblastoma", limit = 5) |>
 ### List-columns
 
 Some columns hold several values per row: in
-[`geo_search()`](https://omicidx.github.io/omicidxr/reference/sra_search.md)
+[`geo_search()`](https://seandavi.github.io/omicidxr/reference/sra_search.md)
 results, `type`, `bioprojects` and `sra_studies` are list-columns, as
 are `pubmed_id` and `contributor` in `geometadb.gse`.
 [`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html)
@@ -329,7 +319,7 @@ geo_search(con, "glioblastoma", limit = 5) |>
 
 omicidxr finds runs; the SRA Toolkit downloads them. Write the run
 accessions from
-[`sra_runs()`](https://omicidx.github.io/omicidxr/reference/sra_runs.md)
+[`sra_runs()`](https://seandavi.github.io/omicidxr/reference/sra_runs.md)
 to a file:
 
 ``` r
@@ -353,7 +343,7 @@ out of scope.
 SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
 downloaded whole and are no longer updated. The `sradb` and `geometadb`
 schemas follow their tables, so most code ports by connecting with
-[`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md)
+[`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md)
 and prefixing table names with the schema.
 
 Each SRAdb or GEOmetadb call is followed by its omicidxr equivalent:
@@ -386,7 +376,7 @@ Differences to watch for:
 - `characteristics_ch1` and `characteristics_ch2` are lists of tag/value
   pairs rather than `;\t`-separated strings, and array columns such as
   `gse.pubmed_id` are lists.
-- [`sra_search()`](https://omicidx.github.io/omicidxr/reference/sra_search.md)
+- [`sra_search()`](https://seandavi.github.io/omicidxr/reference/sra_search.md)
   is a case-insensitive pattern match, not SQLite full-text search.
 - Pin a monthly release, as this vignette does, where SRAdb code pinned
   a SQLite file.
