@@ -17,7 +17,6 @@ Description: The omicidxr package provides an interface to
 License: MIT + file LICENSE
 LicenseFile: LICENSE
 Imports:
-    R6,
     duckdb,
     DBI,
     dplyr,
