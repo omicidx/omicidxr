@@ -1,10 +1,10 @@
 # omicidxr <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/seandavi/omicidxr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seandavi/omicidxr/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![pkgdown-build](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/omicidx/omicidxr/actions/workflows/pkgdown.yaml)
+[![pkgdown-build](https://github.com/seandavi/omicidxr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/seandavi/omicidxr/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 > **Access the OmicIDX omics metadata database from R**
@@ -30,7 +30,7 @@ Install the development version from GitHub with `pak`:
 
 ``` r
 install.packages("pak")
-pak::pak("omicidx/omicidxr")
+pak::pak("seandavi/omicidxr")
 ```
 
 omicidxr needs the `duckdb` package. CRAN has `duckdb` binaries for
@@ -127,7 +127,7 @@ geo_characteristics(con, "GSM4996084")
 ```
 
 Migrating from SRAdb or GEOmetadb? See the "Migrating" section of the
-[Getting Started vignette](https://omicidx.github.io/omicidxr/articles/introduction.html).
+[Getting Started vignette](https://seandavi.github.io/omicidxr/articles/introduction.html).
 
 ## 🗄️ Database Schemas
 
@@ -139,8 +139,8 @@ Migrating from SRAdb or GEOmetadb? See the "Migrating" section of the
 
 Contributions are welcome! Here's how you can help:
 
-1. **Report bugs** – [Open an issue](https://github.com/omicidx/omicidxr/issues) with a reproducible example
-2. **Suggest features** – Share your ideas in the [issue tracker](https://github.com/omicidx/omicidxr/issues)
+1. **Report bugs** – [Open an issue](https://github.com/seandavi/omicidxr/issues) with a reproducible example
+2. **Suggest features** – Share your ideas in the [issue tracker](https://github.com/seandavi/omicidxr/issues)
 3. **Submit PRs** – Fork, create a feature branch, and submit a pull request
 4. **Improve docs** – Help make the documentation clearer
 
@@ -159,6 +159,6 @@ See [LICENSE.md](LICENSE.md) for full license text.
 
 ## 📬 Getting Help
 
-- **Documentation**: [https://omicidx.github.io/omicidxr/](https://omicidx.github.io/omicidxr/)
-- **Bug reports**: [GitHub Issues](https://github.com/omicidx/omicidxr/issues)
+- **Documentation**: [https://seandavi.github.io/omicidxr/](https://seandavi.github.io/omicidxr/)
+- **Bug reports**: [GitHub Issues](https://github.com/seandavi/omicidxr/issues)
 - **Questions**: Open a [discussion](https://github.com/omicidx/omicidx/discussions) or reach out via email

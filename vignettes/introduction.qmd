@@ -34,7 +34,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("omicidxr")
 ```
 
-Until omicidxr is in Bioconductor, `BiocManager::install("omicidx/omicidxr")`
+Until omicidxr is in Bioconductor, `BiocManager::install("seandavi/omicidxr")`
 installs it from GitHub.
 
 # Connecting

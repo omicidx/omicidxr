@@ -39,8 +39,8 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/omicidx/omicidxr, https://omicidx.github.io/omicidxr/
-BugReports: https://github.com/omicidx/omicidxr/issues
+URL: https://github.com/seandavi/omicidxr, https://seandavi.github.io/omicidxr/
+BugReports: https://github.com/seandavi/omicidxr/issues
 SystemRequirements: Quarto command line tool
     (<https://github.com/quarto-dev/quarto-cli>)
 VignetteBuilder: quarto
