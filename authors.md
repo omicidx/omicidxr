@@ -5,6 +5,9 @@
 - **Sean Davis**. Author, maintainer.
   [](https://orcid.org/0000-0002-8991-6458)
 
+- **National Cancer Institute**. Funder.  
+  ITCR award U24CA289073
+
 ## Citation
 
 Source:
