@@ -48,7 +48,17 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # rcmdcheck runs R CMD build through callr, whose temporary
+      # R_PROFILE and R_PROFILE_USER call .libPaths() with the library
+      # paths of the calling session. The R that Quarto starts to knit the
+      # vignette inherits them, and on Windows nothing clears them (on
+      # Unix, the --vanilla of R CMD build's vignette process does), so
+      # they drop the temporary library R CMD build installed omicidxr
+      # into: "there is no package called 'omicidxr'". Skip both profiles.
+      # https://github.com/quarto-dev/quarto-r/issues/217
       - uses: r-lib/actions/check-r-package@v2
+        env:
+          QUARTO_KNITR_RSCRIPT_ARGS: --no-site-file,--no-init-file
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
