@@ -10,7 +10,9 @@ sra_convert(con, in_acc, out_type = c("study", "sample", "experiment", "run"))
 geo_convert(con, in_acc, out_type = c("gse", "gpl", "gsm"))
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}}.}
 
 \item{in_acc}{character. Accessions to convert; \code{in_list} in
 \code{GEOmetadb::geoConvert()}.}
@@ -37,11 +39,9 @@ samples link to SRA through their SRA experiment. Converting a GPL
 returns every sample on that platform, which can be large.
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 sra_convert(con, "SRP000001")
 geo_convert(con, "GSE164073", c("gsm", "run"))
 DBI::dbDisconnect(con)
-}
 
 }

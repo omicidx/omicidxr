@@ -7,7 +7,9 @@
 geo_characteristics(con, gsm)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}}.}
 
 \item{gsm}{character. GEO sample accessions.}
 }
@@ -21,10 +23,8 @@ of each sample, one row per pair. In GEOmetadb these were one
 \verb{;\\t}-separated string per channel.
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 geo_characteristics(con, c("GSM4996084", "GSM4996085"))
 DBI::dbDisconnect(con)
-}
 
 }

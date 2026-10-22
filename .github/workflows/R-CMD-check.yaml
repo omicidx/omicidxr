@@ -52,3 +52,32 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+  BiocCheck:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: bioc::BiocCheck
+          needs: check
+
+      # Fails on ERROR only. The mailing-list and support-site checks need
+      # the maintainer's credentials, so they are skipped here.
+      - name: BiocCheck
+        run: |
+          BiocCheck::BiocCheck(
+            ".",
+            `quit-with-status` = TRUE,
+            `no-check-bioc-help` = TRUE
+          )
+        shell: Rscript {0}

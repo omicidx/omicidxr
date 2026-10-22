@@ -1,21 +1,21 @@
 Package: omicidxr
-Title: Access the OmicIDX omicx metadata database
-Version: 0.0.0.9007
-Date: 2026-01-17
+Title: Query SRA, GEO, BioSample and BioProject Metadata from OmicIDX
+Version: 0.99.0
 Authors@R: 
     person(given = "Sean",
            family = "Davis",
            email = "seandavi@gmail.com",
-           role = c("aut", "cre"))
-Description: The omicidxr package provides an interface to 
-    the OmicIDX omicx metadata database.
-    It allows users to query and retrieve metadata
-    about various omics datasets stored in the OmicIDX database.
-    The package leverages DuckDB for efficient data storage 
-    and retrieval, and provides a user-friendly API for 
-    accessing the data.
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8991-6458"))
+Description: OmicIDX publishes metadata from NCBI SRA, GEO, BioSample
+    and BioProject as Parquet files, rebuilt nightly and released
+    monthly. omicidxr connects DuckDB to a chosen release, so tens of
+    millions of records can be queried with SQL or dplyr without
+    downloading them. Helpers for accession conversion, run listing,
+    GEO sample annotation and text search replace the main functions of
+    the SRAdb and GEOmetadb packages, and releases can be pinned for
+    reproducible analyses.
 License: MIT + file LICENSE
-LicenseFile: LICENSE
 Depends:
     R (>= 4.1.0)
 Imports:
@@ -27,16 +27,17 @@ Imports:
     tools,
     utils
 Suggests:
+    BiocStyle,
     curl,
     knitr,
-    quarto,
+    rmarkdown,
     testthat (>= 3.0.0),
     tidyr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Url: https://github.com/omicidx/omicidxr
+URL: https://github.com/omicidx/omicidxr, https://omicidx.github.io/omicidxr/
 BugReports: https://github.com/omicidx/omicidxr/issues
-URL: https://omicidx.github.io/omicidxr/
-VignetteBuilder: quarto
+VignetteBuilder: knitr
+biocViews: Software, DataImport, ThirdPartyClient, Sequencing, GeneExpression
 Config/roxygen2/version: 8.1.0

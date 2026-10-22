@@ -7,7 +7,8 @@
 omicidx_db(con = NULL, version = "latest")
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or a version
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or a version
 string to open a new one. Defaults to \code{version}.}
 
 \item{version}{character(1). Release to connect to when \code{con} is
@@ -24,17 +25,16 @@ as \code{omicidx_release(db)}. All omicidxr helpers accept an
 Returns every table in the release as a lazy \code{dplyr} table, nested
 by schema, so that \verb{db$sradb$<TAB>} completes table names. Each
 table is built the first time it is accessed, and no data are read
-until a query is run (for example with \code{\link[dplyr:collect]{dplyr::collect()}}).
+until a query is run (for example with
+\code{\link[dplyr:collect]{dplyr::collect()}}).
 }
 \examples{
-\donttest{
 db <- omicidx_db()
 db
 db$sradb$study |>
-  dplyr::count(study_type, sort = TRUE) |>
-  head() |>
-  dplyr::collect()
+    dplyr::count(study_type, sort = TRUE) |>
+    head() |>
+    dplyr::collect()
 DBI::dbDisconnect(attr(db, "con"))
-}
 
 }

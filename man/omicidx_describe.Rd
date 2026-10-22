@@ -7,8 +7,9 @@
 omicidx_describe(con, table)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}
-object.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}} object.}
 
 \item{table}{character(1). A table name, schema-qualified as in
 \code{"sradb.study"}. Unqualified names are looked up in \code{main}.}
@@ -21,10 +22,8 @@ A tibble with one row per column: \code{column_name},
 Describe the columns of an OmicIDX table
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 omicidx_describe(con, "sradb.study")
 DBI::dbDisconnect(con)
-}
 
 }

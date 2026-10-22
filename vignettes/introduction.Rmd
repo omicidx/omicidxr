@@ -1,21 +1,40 @@
 ---
-title: "Getting Started with omicidx in R"
+title: "Getting started with omicidxr"
+author:
+- name: Sean Davis
+  email: seandavi@gmail.com
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: omicidxr
+output:
+  BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Getting Started with omicidx in R}
-  %\VignetteEngine{quarto::html}
+  %\VignetteIndexEntry{Getting started with omicidxr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-knitr:
-  opts_chunk:
-    collapse: true
-    comment: '#>'
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
 
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those files,
 so you can query tens of millions of records with SQL or `dplyr` without
 downloading them.
 
-## Connecting
+# Installation
+
+```{r install, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("omicidxr")
+```
+
+Until omicidxr is in Bioconductor, `BiocManager::install("omicidx/omicidxr")`
+installs it from GitHub.
+
+# Connecting
 
 `omicidx_connect()` returns an ordinary DuckDB DBI connection. The
 `version` argument picks the release: `"latest"` (the nightly build, the
@@ -24,62 +43,67 @@ monthly release `"YYYY-MM"`, which is kept long term and is the one to
 cite. This vignette pins the October 2026 monthly release so its results
 are reproducible.
 
-```{r}
-#| label: connect
-#| message: false
+```{r connect, message=FALSE}
 library(omicidxr)
 
 con <- omicidx_connect("2026-10")
 ```
 
-## What is in a release
+`omicidx_release()` reports which release a connection is on, with the
+provenance from the release's `manifest.json`:
 
-```{r}
-#| label: tables
+```{r release}
+release <- omicidx_release(con)
+release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
+```
+
+To cite OmicIDX, cite the DOI of the monthly release you used, listed on
+the HuggingFace dataset page for its tag, and state the tag (`2026-10`).
+
+# What is in a release
+
+```{r tables}
 omicidx_tables(con)
 ```
 
 The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
 GEOmetadb packages. `omicidx_describe()` lists a table's columns:
 
-```{r}
-#| label: describe
+```{r describe}
 omicidx_describe(con, "sradb.study")
 ```
 
-## SQL
+# SQL
 
 Any DuckDB SQL works through DBI. Keep exploratory queries small with
 `LIMIT`: every query reads remote files.
 
-```{r}
-#| label: sql
+```{r sql}
 DBI::dbGetQuery(con, "
-  SELECT study_accession, study_title
-  FROM sradb.study
-  WHERE study_type = 'Transcriptome Analysis'
-  LIMIT 5")
+    SELECT study_accession, study_title
+    FROM sradb.study
+    WHERE study_type = 'Transcriptome Analysis'
+    LIMIT 5")
 ```
 
-## dplyr
+# dplyr
 
 `omicidx_db()` wraps the connection as lazy `dplyr` tables nested by
 schema, so `db$sradb$<TAB>` completes table names. Each table is created
 when first used, and nothing is read until `collect()`.
 
-```{r}
-#| label: db
+```{r db}
 db <- omicidx_db(con)
 db
 
 db$geometadb$gse |>
-  dplyr::filter(title %ILIKE% "%single cell%") |>
-  dplyr::select(gse, title, submission_date) |>
-  head(5) |>
-  dplyr::collect()
+    dplyr::filter(title %ILIKE% "%single cell%") |>
+    dplyr::select(gse, title, submission_date) |>
+    head(5) |>
+    dplyr::collect()
 ```
 
-## SRAdb and GEOmetadb helpers
+# SRAdb and GEOmetadb helpers
 
 A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs one
 query and returns a tibble.
@@ -87,43 +111,41 @@ query and returns a tibble.
 Convert accessions across SRA, GEO, BioSample and BioProject, in any
 direction:
 
-```{r}
-#| label: convert
+```{r convert}
 sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
 ```
 
 The samples and platform of a GEO series, and the characteristics of
 its samples:
 
-```{r}
-#| label: geo
+```{r geo}
 geo_samples(con, "GSE164073") |>
-  dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
-  head()
+    dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
+    head()
 
 geo_characteristics(con, c("GSM4996084", "GSM4996087"))
 ```
 
 The runs to download for a study, experiment or GEO series:
 
-```{r}
-#| label: runs
+```{r runs}
 sra_runs(con, "GSE164073") |>
-  dplyr::select(run_accession, library_layout, spots, bases, instrument_model) |>
-  head()
+    dplyr::select(
+        run_accession, library_layout, spots, bases, instrument_model
+    ) |>
+    head()
 ```
 
 Search study and series titles and abstracts:
 
-```{r}
-#| label: search
+```{r search}
 sra_search(con, "single cell%glioma", limit = 5) |>
-  dplyr::select(study_accession, study_title)
+    dplyr::select(study_accession, study_title)
 geo_search(con, "glioblastoma", limit = 5) |>
-  dplyr::select(gse, title)
+    dplyr::select(gse, title)
 ```
 
-### List-columns
+## List-columns
 
 Some columns hold several values per row: in `geo_search()` results,
 `type`, `bioprojects` and `sra_studies` are list-columns, as are
@@ -131,21 +153,18 @@ Some columns hold several values per row: in `geo_search()` results,
 gives one row per value. Rows with an empty list, such as series without
 SRA studies, drop out unless you pass `keep_empty = TRUE`:
 
-```{r}
-#| label: list-columns
+```{r list-columns}
 geo_search(con, "glioblastoma", limit = 5) |>
-  dplyr::select(gse, sra_studies) |>
-  tidyr::unnest_longer(sra_studies)
+    dplyr::select(gse, sra_studies) |>
+    tidyr::unnest_longer(sra_studies)
 ```
 
-## Downloading FASTQs
+# Downloading FASTQs
 
 omicidxr finds runs; the SRA Toolkit downloads them. Write the run
 accessions from `sra_runs()` to a file:
 
-```{r}
-#| label: fastq
-#| eval: false
+```{r fastq, eval=FALSE}
 runs <- sra_runs(con, "GSE164073")
 writeLines(runs$run_accession, "runs.txt")
 ```
@@ -160,43 +179,56 @@ fasterq-dump --split-files SRR13332242
 File URLs, sizes and checksums, as given by SRAdb's `listSRAfile()`,
 are out of scope.
 
-## Migrating from SRAdb and GEOmetadb
+# Migrating from SRAdb and GEOmetadb
 
 SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
 downloaded whole and are no longer updated. The `sradb` and `geometadb`
 schemas follow their tables, so most code ports by connecting with
 `omicidx_connect()` and prefixing table names with the schema.
 
-| SRAdb / GEOmetadb | omicidxr |
-|---|---|
-| `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)` | `con <- omicidx_connect()` |
-| `dbGetQuery(sra_con, "SELECT * FROM study ...")` | `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")` |
-| `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
-| `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
-| `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
-| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_acc, out_type)` |
-| `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
-| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs (see Downloading FASTQs) |
-| `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
+Each SRAdb or GEOmetadb call is followed by its omicidxr equivalent:
+
+- `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)`:
+    `con <- omicidx_connect()`
+- `dbGetQuery(sra_con, "SELECT * FROM study ...")`:
+    `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")`
+- `dbGetQuery(geo_con, "SELECT * FROM gsm ...")`:
+    `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")`
+- `dbListTables()`, `dbListFields()`:
+    `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")`
+- `sraConvert(in_acc, out_type, sra_con)`:
+    `sra_convert(con, in_acc, out_type)`
+- `geoConvert(in_list, out_type, geo_con)`:
+    `geo_convert(con, in_acc, out_type)`
+- `getSRA(search_terms, out_types, sra_con)`: `sra_search(con, query)`
+- `getSRAinfo()`, `listSRAfile()`: `sra_runs(con, in_acc)`, which gives
+    run accessions for the SRA Toolkit, not file URLs (see Downloading
+    FASTQs)
+- `characteristics_ch1` parsed by hand: `geo_characteristics(con, gsm)`
 
 Differences to watch for:
 
 - The connection comes first in every helper, so they work with `|>`.
 - Tables are schema-qualified: `sradb.study`, not `study`.
 - Conversion also covers BioSample and BioProject, but not SRA
-  submissions or GEO DataSets (GDS); the marts have no `submission`,
-  `gds` or `sMatrix` tables.
+    submissions or GEO DataSets (GDS); the marts have no `submission`,
+    `gds` or `sMatrix` tables.
 - `characteristics_ch1` and `characteristics_ch2` are lists of
-  tag/value pairs rather than `;\t`-separated strings, and array columns
-  such as `gse.pubmed_id` are lists.
+    tag/value pairs rather than `;\t`-separated strings, and array columns
+    such as `gse.pubmed_id` are lists.
 - `sra_search()` is a case-insensitive pattern match, not SQLite
-  full-text search.
+    full-text search.
 - Pin a monthly release, as this vignette does, where SRAdb code pinned
-  a SQLite file.
+    a SQLite file.
 
-## Disconnecting
+# Disconnecting
 
-```{r}
-#| label: disconnect
+```{r disconnect}
 DBI::dbDisconnect(con)
+```
+
+# Session information
+
+```{r session-info}
+sessionInfo()
 ```

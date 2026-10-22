@@ -12,8 +12,9 @@ omicidx_connect(version = "latest")
 }
 \value{
 A DuckDB \link[DBI:DBIConnection-class]{DBI::DBIConnection}. Close it with
-\code{\link[DBI:dbDisconnect]{DBI::dbDisconnect()}}. \code{\link[=omicidx_release]{omicidx_release()}} tells which release it
-is connected to.
+\code{\link[DBI:dbDisconnect]{DBI::dbDisconnect()}}.
+\code{\link[=omicidx_release]{omicidx_release()}} tells which release it is
+connected to.
 }
 \description{
 Opens an in-memory DuckDB database and makes an OmicIDX release
@@ -23,8 +24,9 @@ groups they need.
 }
 \details{
 After connecting, tables are referenced as \code{schema.table}, for
-example \code{sradb.study} or \code{geometadb.gsm}. Use \code{\link[=omicidx_tables]{omicidx_tables()}} to
-list them and \code{\link[=omicidx_db]{omicidx_db()}} for tab-completable \code{dplyr} tables.
+example \code{sradb.study} or \code{geometadb.gsm}. Use
+\code{\link[=omicidx_tables]{omicidx_tables()}} to list them and
+\code{\link[=omicidx_db]{omicidx_db()}} for tab-completable \code{dplyr} tables.
 }
 \section{Versions}{
 
@@ -48,10 +50,8 @@ extensions (\code{httpfs}, \code{json}) are downloaded once and cached in
 }
 
 \examples{
-\donttest{
 con <- omicidx_connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
 DBI::dbDisconnect(con)
-}
 
 }

@@ -7,7 +7,9 @@
 geo_samples(con, gse)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}}.}
 
 \item{gse}{character. GEO series accessions.}
 }
@@ -21,10 +23,8 @@ molecule, sample \code{type}, \code{library_source}, \code{biosample} and
 The GEOmetadb join of \code{gse_gsm}, \code{gsm} and \code{gpl} as one call.
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 geo_samples(con, "GSE164073")
 DBI::dbDisconnect(con)
-}
 
 }

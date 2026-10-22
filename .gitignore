@@ -3,11 +3,9 @@
 .Rdata
 .httr-oauth
 .DS_Store
-.quarto
 docs/
 docs
 *.log
 inst/doc
-**/.quarto/
 /doc/
 /Meta/
