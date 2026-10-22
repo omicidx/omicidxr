@@ -24,6 +24,8 @@ A DuckDB
 [DBI::DBIConnection](https://dbi.r-dbi.org/reference/DBIConnection-class.html).
 Close it with
 [`DBI::dbDisconnect()`](https://dbi.r-dbi.org/reference/dbDisconnect.html).
+[`omicidx_release()`](https://omicidx.github.io/omicidxr/reference/omicidx_release.md)
+tells which release it is connected to.
 
 ## Details
 
@@ -49,25 +51,17 @@ for tab-completable `dplyr` tables.
   address) and one query can make hundreds, so heavy use can fail with
   HTTP 429 until the window resets.
 
-Requests carry the User-Agent `omicidxr/<package version>`. The
-connection ignores any DuckDB secrets persisted in `~/.duckdb`.
+Requests carry the User-Agent `omicidxr/<package version>`. DuckDB
+extensions (`httpfs`, `json`) are downloaded once and cached in
+`tools::R_user_dir("omicidxr", "cache")`. The connection neither uses
+`~/.duckdb` nor reads DuckDB secrets persisted there.
 
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
 #>        n
 #> 1 774773
 DBI::dbDisconnect(con)
-# }
 ```

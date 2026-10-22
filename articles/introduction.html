@@ -5,14 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Getting Started with omicidx in R • omicidxr</title>
+<title>Getting started with omicidxr • omicidxr</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="introduction_files/libs/quarto-html/popper.min.js"></script><script src="introduction_files/libs/quarto-html/tippy.umd.min.js"></script><link href="introduction_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="introduction_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started with omicidx in R">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting started with omicidxr">
 <!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-KLLV1GCF4E"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -29,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">omicidxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,9 +40,10 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/introduction.html">Getting Started with omicidx in R</a></li>
+<li><a class="dropdown-item" href="../articles/introduction.html">Getting started with omicidxr</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -64,86 +63,131 @@
 
 
   </div>
-</nav><div class="container template-quarto">
+</nav><div class="container template-article">
+
+
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Getting Started with omicidx in R</h1>
-
-
-
-
-      <small class="dont-index">Source: <a href="https://github.com/omicidx/omicidxr/blob/main/vignettes/introduction.qmd" class="external-link"><code>vignettes/introduction.qmd</code></a></small>
-      <div class="d-none name"><code></code></div>
+      <h1>Getting started with omicidxr</h1>
+                        <h4 data-toc-skip class="author">Sean Davis</h4>
+                  <a class="author_email" href="mailto:#"></a><a href="mailto:seandavi@gmail.com" class="email">seandavi@gmail.com</a>
+      
+                  
+            <h4 data-toc-skip class="date">October 22, 2026</h4>
+      
+      <small class="dont-index">Source: <a href="https://github.com/omicidx/omicidxr/blob/main/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <div class="d-none name"><code>introduction.Rmd</code></div>
     </div>
 
-
-
-
-
-
-    <p>OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and publishes it as Parquet files. <code>omicidxr</code> connects DuckDB to those files, so you can query tens of millions of records with SQL or <code>dplyr</code> without downloading them.</p>
-<section class="level2"><h2 id="connecting">Connecting<a class="anchor" aria-label="anchor" href="#connecting"></a>
+    
+    
+<p>OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
+publishes it as Parquet files. <code>omicidxr</code> connects DuckDB to
+those files, so you can query tens of millions of records with SQL or
+<code>dplyr</code> without downloading them.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><code><a href="../reference/omicidx_connect.html">omicidx_connect()</a></code> returns an ordinary DuckDB DBI connection. The <code>version</code> argument picks the release: <code>"latest"</code> (the nightly build, the default), a dated nightly build <code>"YYYY-MM-DD"</code> (kept for 30 days), or a monthly release <code>"YYYY-MM"</code>, which is kept long term and is the one to cite. This vignette pins the October 2026 monthly release so its results are reproducible.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://omicidx.github.io/omicidxr/">omicidxr</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"omicidxr"</span><span class="op">)</span></span></code></pre></div>
+<p>Until omicidxr is in Bioconductor,
+<code>BiocManager::install("omicidx/omicidxr")</code> installs it from
+GitHub.</p>
+</div>
+<div class="section level2">
+<h2 id="connecting">Connecting<a class="anchor" aria-label="anchor" href="#connecting"></a>
+</h2>
+<p><code><a href="../reference/omicidx_connect.html">omicidx_connect()</a></code> returns an ordinary DuckDB DBI
+connection. The <code>version</code> argument picks the release:
+<code>"latest"</code> (the nightly build, the default), a dated nightly
+build <code>"YYYY-MM-DD"</code> (kept for 30 days), or a monthly release
+<code>"YYYY-MM"</code>, which is kept long term and is the one to cite.
+This vignette pins the October 2026 monthly release so its results are
+reproducible.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/omicidx/omicidxr" class="external-link">omicidxr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_connect.html">omicidx_connect</a></span><span class="op">(</span><span class="st">"2026-10"</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/omicidx_release.html">omicidx_release()</a></code> reports which release a connection is
+on, with the provenance from the release’s
+<code>manifest.json</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">release</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_release.html">omicidx_release</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
+<span><span class="va">release</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"version"</span>, <span class="st">"publish_date"</span>, <span class="st">"transform_sha"</span>, <span class="st">"lake_snapshot_id"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; $version</span></span>
+<span><span class="co">#&gt; [1] "2026-10"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $publish_date</span></span>
+<span><span class="co">#&gt; [1] "2026-10-20"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $transform_sha</span></span>
+<span><span class="co">#&gt; [1] "90688e92966330aac9ecd5a4fb8dc1d126f7982f"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $lake_snapshot_id</span></span>
+<span><span class="co">#&gt; [1] 4171</span></span></code></pre></div>
+<p>To cite OmicIDX, cite the DOI of the monthly release you used, listed
+on the HuggingFace dataset page for its tag, and state the tag
+(<code>2026-10</code>).</p>
 </div>
-</section><section class="level2"><h2 id="what-is-in-a-release">What is in a release<a class="anchor" aria-label="anchor" href="#what-is-in-a-release"></a>
+<div class="section level2">
+<h2 id="what-is-in-a-release">What is in a release<a class="anchor" aria-label="anchor" href="#what-is-in-a-release"></a>
 </h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/omicidx_tables.html">omicidx_tables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 28 × 3</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 28 × 3</span></span></span>
 <span><span class="co">#&gt;    schema    table                  type </span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;                  &lt;chr&gt;</span></span>
-<span><span class="co">#&gt;  1 geometadb geo_supplemental_files VIEW </span></span>
-<span><span class="co">#&gt;  2 geometadb gpl                    VIEW </span></span>
-<span><span class="co">#&gt;  3 geometadb gse                    VIEW </span></span>
-<span><span class="co">#&gt;  4 geometadb gse_gpl                VIEW </span></span>
-<span><span class="co">#&gt;  5 geometadb gse_gsm                VIEW </span></span>
-<span><span class="co">#&gt;  6 geometadb gsm                    VIEW </span></span>
-<span><span class="co">#&gt;  7 main      bioprojects            VIEW </span></span>
-<span><span class="co">#&gt;  8 main      biosamples             VIEW </span></span>
-<span><span class="co">#&gt;  9 main      geo_platforms          VIEW </span></span>
-<span><span class="co">#&gt; 10 main      geo_samples            VIEW </span></span>
-<span><span class="co">#&gt; # ℹ 18 more rows</span></span></code></pre></div>
-</div>
-<p>The <code>sradb</code> and <code>geometadb</code> schemas follow the tables of the SRAdb and GEOmetadb packages. <code><a href="../reference/omicidx_describe.html">omicidx_describe()</a></code> lists a table’s columns:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> geometadb geo_supplemental_files VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> geometadb gpl                    VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> geometadb gse                    VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> geometadb gse_gpl                VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> geometadb gse_gsm                VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> geometadb gsm                    VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> main      bioprojects            VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> main      biosamples             VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> main      geo_platforms          VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> main      geo_samples            VIEW </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 18 more rows</span></span></span></code></pre></div>
+<p>The <code>sradb</code> and <code>geometadb</code> schemas follow the
+tables of the SRAdb and GEOmetadb packages.
+<code><a href="../reference/omicidx_describe.html">omicidx_describe()</a></code> lists a table’s columns:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/omicidx_describe.html">omicidx_describe</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"sradb.study"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 14 × 3</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 × 3</span></span></span>
 <span><span class="co">#&gt;    column_name          column_type null </span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                &lt;chr&gt;       &lt;chr&gt;</span></span>
-<span><span class="co">#&gt;  1 study_id             BIGINT      YES  </span></span>
-<span><span class="co">#&gt;  2 study_alias          VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  3 study_accession      VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  4 study_title          VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  5 study_type           VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  6 study_abstract       VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  7 broker_name          VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  8 center_name          VARCHAR     YES  </span></span>
-<span><span class="co">#&gt;  9 center_project_name  VARCHAR     YES  </span></span>
-<span><span class="co">#&gt; 10 study_description    VARCHAR     YES  </span></span>
-<span><span class="co">#&gt; 11 study_attribute      VARCHAR     YES  </span></span>
-<span><span class="co">#&gt; 12 bioproject_accession VARCHAR     YES  </span></span>
-<span><span class="co">#&gt; 13 geo_accession        VARCHAR     YES  </span></span>
-<span><span class="co">#&gt; 14 pubmed_ids           VARCHAR[]   YES</span></span></code></pre></div>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> study_id             BIGINT      YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> study_alias          VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> study_accession      VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> study_title          VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> study_type           VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> study_abstract       VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> broker_name          VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> center_name          VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> center_project_name  VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> study_description    VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> study_attribute      VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> bioproject_accession VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> geo_accession        VARCHAR     YES  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> pubmed_ids           VARCHAR[]   YES</span></span></code></pre></div>
 </div>
-</section><section class="level2"><h2 id="sql">SQL<a class="anchor" aria-label="anchor" href="#sql"></a>
+<div class="section level2">
+<h2 id="sql">SQL<a class="anchor" aria-label="anchor" href="#sql"></a>
 </h2>
-<p>Any DuckDB SQL works through DBI. Keep exploratory queries small with <code>LIMIT</code>: every query reads remote files.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<p>Any DuckDB SQL works through DBI. Keep exploratory queries small with
+<code>LIMIT</code>: every query reads remote files.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"</span></span>
-<span><span class="st">  SELECT study_accession, study_title</span></span>
-<span><span class="st">  FROM sradb.study</span></span>
-<span><span class="st">  WHERE study_type = 'Transcriptome Analysis'</span></span>
-<span><span class="st">  LIMIT 5"</span><span class="op">)</span></span>
+<span><span class="st">    SELECT study_accession, study_title</span></span>
+<span><span class="st">    FROM sradb.study</span></span>
+<span><span class="st">    WHERE study_type = 'Transcriptome Analysis'</span></span>
+<span><span class="st">    LIMIT 5"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   study_accession</span></span>
 <span><span class="co">#&gt; 1       DRP000003</span></span>
 <span><span class="co">#&gt; 2       DRP000004</span></span>
@@ -157,11 +201,15 @@
 <span><span class="co">#&gt; 4 Comprehensive identification and characterization of the transcripts, their             expression levels and sub-cellular localizations</span></span>
 <span><span class="co">#&gt; 5                                      Comprehensive identification and characterization of the binding sites of             polymerase II</span></span></code></pre></div>
 </div>
-</section><section class="level2"><h2 id="dplyr">dplyr<a class="anchor" aria-label="anchor" href="#dplyr"></a>
+<div class="section level2">
+<h2 id="dplyr">dplyr<a class="anchor" aria-label="anchor" href="#dplyr"></a>
 </h2>
-<p><code><a href="../reference/omicidx_db.html">omicidx_db()</a></code> wraps the connection as lazy <code>dplyr</code> tables nested by schema, so <code>db$sradb$&lt;TAB&gt;</code> completes table names. Each table is created when first used, and nothing is read until <code>collect()</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
+<p><code><a href="../reference/omicidx_db.html">omicidx_db()</a></code> wraps the connection as lazy
+<code>dplyr</code> tables nested by schema, so
+<code>db$sradb$&lt;TAB&gt;</code> completes table names. Each table is
+created when first used, and nothing is read until
+<code>collect()</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_db.html">omicidx_db</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
 <span><span class="va">db</span></span>
 <span><span class="co">#&gt; &lt;omicidx_db&gt; OmicIDX release 2026-10 (published 2026-10-20)</span></span>
@@ -203,264 +251,261 @@
 <span><span class="co">#&gt; Tables: db$&lt;schema&gt;$&lt;table&gt;. Connection: attr(db, "con").</span></span>
 <span></span>
 <span><span class="va">db</span><span class="op">$</span><span class="va">geometadb</span><span class="op">$</span><span class="va">gse</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">title</span> <span class="op">%ILIKE%</span> <span class="st">"%single cell%"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gse</span>, <span class="va">title</span>, <span class="va">submission_date</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 3</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">title</span> <span class="op">%ILIKE%</span> <span class="st">"%single cell%"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gse</span>, <span class="va">title</span>, <span class="va">submission_date</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 3</span></span></span>
 <span><span class="co">#&gt;   gse       title                                                submission_date</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;                                                &lt;date&gt;         </span></span>
-<span><span class="co">#&gt; 1 GSE240638 Gene expression profile at the single cell level of… 2023-08-10     </span></span>
-<span><span class="co">#&gt; 2 GSE241743 The single cell transcriptomic profiling in iPSC de… 2023-08-26     </span></span>
-<span><span class="co">#&gt; 3 GSE241996 Single cell RNA sequencing monitoring the developme… 2023-08-30     </span></span>
-<span><span class="co">#&gt; 4 GSE241997 Single cell RNA sequencing of the in vivo mouse TME  2023-08-30     </span></span>
-<span><span class="co">#&gt; 5 GSE242428 Characterization of CD4+ and CD8+ T cells responses… 2023-09-06</span></span></code></pre></div>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> GSE240638 Gene expression profile at the single cell level of… 2023-08-10     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> GSE241743 The single cell transcriptomic profiling in iPSC de… 2023-08-26     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GSE241996 Single cell RNA sequencing monitoring the developme… 2023-08-30     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> GSE241997 Single cell RNA sequencing of the in vivo mouse TME  2023-08-30     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> GSE242428 Characterization of CD4+ and CD8+ T cells responses… 2023-09-06</span></span></code></pre></div>
 </div>
-</section><section class="level2"><h2 id="sradb-and-geometadb-helpers">SRAdb and GEOmetadb helpers<a class="anchor" aria-label="anchor" href="#sradb-and-geometadb-helpers"></a>
+<div class="section level2">
+<h2 id="sradb-and-geometadb-helpers">SRAdb and GEOmetadb helpers<a class="anchor" aria-label="anchor" href="#sradb-and-geometadb-helpers"></a>
 </h2>
-<p>A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs one query and returns a tibble.</p>
-<p>Convert accessions across SRA, GEO, BioSample and BioProject, in any direction:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
+<p>A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs
+one query and returns a tibble.</p>
+<p>Convert accessions across SRA, GEO, BioSample and BioProject, in any
+direction:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sra_convert.html">sra_convert</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSM4996084"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gse"</span>, <span class="st">"study"</span>, <span class="st">"experiment"</span>, <span class="st">"run"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 4 × 5</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 5</span></span></span>
 <span><span class="co">#&gt;   study     experiment run         gse       gsm       </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;     </span></span>
-<span><span class="co">#&gt; 1 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084</span></span>
-<span><span class="co">#&gt; 2 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084</span></span>
-<span><span class="co">#&gt; 3 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084</span></span>
-<span><span class="co">#&gt; 4 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084</span></span></code></pre></div>
-</div>
-<p>The samples and platform of a GEO series, and the characteristics of its samples:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084</span></span></code></pre></div>
+<p>The samples and platform of a GEO series, and the characteristics of
+its samples:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/geo_samples.html">geo_samples</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSE164073"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gsm</span>, <span class="va">title</span>, <span class="va">gpl</span>, <span class="va">platform_title</span>, <span class="va">sra_experiment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gsm</span>, <span class="va">title</span>, <span class="va">gpl</span>, <span class="va">platform_title</span>, <span class="va">sra_experiment</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
 <span><span class="co">#&gt;   gsm        title         gpl      platform_title                sra_experiment</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;                         &lt;chr&gt;         </span></span>
-<span><span class="co">#&gt; 1 GSM4996084 Cornea_mock_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759115    </span></span>
-<span><span class="co">#&gt; 2 GSM4996085 Cornea_mock_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759116    </span></span>
-<span><span class="co">#&gt; 3 GSM4996086 Cornea_mock_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759117    </span></span>
-<span><span class="co">#&gt; 4 GSM4996087 Cornea_CoV2_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759118    </span></span>
-<span><span class="co">#&gt; 5 GSM4996088 Cornea_CoV2_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759119    </span></span>
-<span><span class="co">#&gt; 6 GSM4996089 Cornea_CoV2_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759120</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> GSM4996084 Cornea_mock_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759115    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> GSM4996085 Cornea_mock_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759116    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GSM4996086 Cornea_mock_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759117    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> GSM4996087 Cornea_CoV2_1 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759118    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> GSM4996088 Cornea_CoV2_2 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759119    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> GSM4996089 Cornea_CoV2_3 GPL18573 Illumina NextSeq 500 (Homo s… SRX9759120</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/geo_characteristics.html">geo_characteristics</a></span><span class="op">(</span><span class="va">con</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GSM4996084"</span>, <span class="st">"GSM4996087"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
 <span><span class="co">#&gt;   gsm        channel tag        value                </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;                </span></span>
-<span><span class="co">#&gt; 1 GSM4996084       1 tissue     cornea               </span></span>
-<span><span class="co">#&gt; 2 GSM4996084       1 infection  mock                 </span></span>
-<span><span class="co">#&gt; 3 GSM4996084       1 time point 24 hours             </span></span>
-<span><span class="co">#&gt; 4 GSM4996087       1 tissue     cornea               </span></span>
-<span><span class="co">#&gt; 5 GSM4996087       1 infection  SARS-CoV-2, MOI = 1.0</span></span>
-<span><span class="co">#&gt; 6 GSM4996087       1 time point 24 hours</span></span></code></pre></div>
-</div>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> GSM4996084       1 tissue     cornea               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> GSM4996084       1 infection  mock                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GSM4996084       1 time point 24 hours             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> GSM4996087       1 tissue     cornea               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> GSM4996087       1 infection  SARS-CoV-2, MOI = 1.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> GSM4996087       1 time point 24 hours</span></span></code></pre></div>
 <p>The runs to download for a study, experiment or GEO series:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sra_runs.html">sra_runs</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSE164073"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">run_accession</span>, <span class="va">library_layout</span>, <span class="va">spots</span>, <span class="va">bases</span>, <span class="va">instrument_model</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>        <span class="va">run_accession</span>, <span class="va">library_layout</span>, <span class="va">spots</span>, <span class="va">bases</span>, <span class="va">instrument_model</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
 <span><span class="co">#&gt;   run_accession library_layout   spots     bases instrument_model</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;           </span></span>
-<span><span class="co">#&gt; 1 SRR13332242   SINGLE         5970564 827055768 NextSeq 500     </span></span>
-<span><span class="co">#&gt; 2 SRR13332243   SINGLE         6168624 854329747 NextSeq 500     </span></span>
-<span><span class="co">#&gt; 3 SRR13332244   SINGLE         6135802 849819102 NextSeq 500     </span></span>
-<span><span class="co">#&gt; 4 SRR13332245   SINGLE         6012012 832302560 NextSeq 500     </span></span>
-<span><span class="co">#&gt; 5 SRR13332246   SINGLE         6696443 925556551 NextSeq 500     </span></span>
-<span><span class="co">#&gt; 6 SRR13332247   SINGLE         6917201 955889361 NextSeq 500</span></span></code></pre></div>
-</div>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> SRR13332242   SINGLE         5<span style="text-decoration: underline;">970</span>564 827<span style="text-decoration: underline;">055</span>768 NextSeq 500     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> SRR13332243   SINGLE         6<span style="text-decoration: underline;">168</span>624 854<span style="text-decoration: underline;">329</span>747 NextSeq 500     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> SRR13332244   SINGLE         6<span style="text-decoration: underline;">135</span>802 849<span style="text-decoration: underline;">819</span>102 NextSeq 500     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> SRR13332245   SINGLE         6<span style="text-decoration: underline;">012</span>012 832<span style="text-decoration: underline;">302</span>560 NextSeq 500     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> SRR13332246   SINGLE         6<span style="text-decoration: underline;">696</span>443 925<span style="text-decoration: underline;">556</span>551 NextSeq 500     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> SRR13332247   SINGLE         6<span style="text-decoration: underline;">917</span>201 955<span style="text-decoration: underline;">889</span>361 NextSeq 500</span></span></code></pre></div>
 <p>Search study and series titles and abstracts:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/sra_search.html">sra_search</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"single cell%glioma"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">study_accession</span>, <span class="va">study_title</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 2</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">study_accession</span>, <span class="va">study_title</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   study_accession study_title                                                   </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt;                                                         </span></span>
-<span><span class="co">#&gt; 1 ERP144083       Longitudinal scRNA-Seq of immune cells from GL261 murine brai…</span></span>
-<span><span class="co">#&gt; 2 SRP042161       Single cell RNA-seq of primary human glioblastomas            </span></span>
-<span><span class="co">#&gt; 3 SRP060524       Single cell RNA-seq analysis of oligodendroglioma             </span></span>
-<span><span class="co">#&gt; 4 SRP067604       Single cell transcriptome dynamics and subpopulation heteroge…</span></span>
-<span><span class="co">#&gt; 5 SRP081644       An automatec microwell platform for large-scale single cell R…</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ERP144083       Longitudinal scRNA-Seq of immune cells from GL261 murine brai…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> SRP042161       Single cell RNA-seq of primary human glioblastomas            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> SRP060524       Single cell RNA-seq analysis of oligodendroglioma             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> SRP067604       Single cell transcriptome dynamics and subpopulation heteroge…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> SRP081644       An automatec microwell platform for large-scale single cell R…</span></span>
 <span><span class="fu"><a href="../reference/sra_search.html">geo_search</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"glioblastoma"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gse</span>, <span class="va">title</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 5 × 2</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gse</span>, <span class="va">title</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   gse       title                                                               </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;                                                               </span></span>
-<span><span class="co">#&gt; 1 GSE102136 Single Copy Loss of Tet1 disrupts neural stem cell differentiation …</span></span>
-<span><span class="co">#&gt; 2 GSE108013 Microenvironmental-derived Regulation of HIF-Signaling Drives Trans…</span></span>
-<span><span class="co">#&gt; 3 GSE241037 spatiotemporal single-cell transcriptomics in mouse and human to in…</span></span>
-<span><span class="co">#&gt; 4 GSE242790 Repeated peripheral infusions of anti-EGFRvIII CAR T cells in combi…</span></span>
-<span><span class="co">#&gt; 5 GSE248352 Antitumor effects of intravenous natural killer cell infusion in an…</span></span></code></pre></div>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> GSE102136 Single Copy Loss of Tet1 disrupts neural stem cell differentiation …</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> GSE108013 Microenvironmental-derived Regulation of HIF-Signaling Drives Trans…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GSE241037 spatiotemporal single-cell transcriptomics in mouse and human to in…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> GSE242790 Repeated peripheral infusions of anti-EGFRvIII CAR T cells in combi…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> GSE248352 Antitumor effects of intravenous natural killer cell infusion in an…</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="list-columns">List-columns<a class="anchor" aria-label="anchor" href="#list-columns"></a>
+</h3>
+<p>Some columns hold several values per row: in
+<code><a href="../reference/sra_search.html">geo_search()</a></code> results, <code>type</code>,
+<code>bioprojects</code> and <code>sra_studies</code> are list-columns,
+as are <code>pubmed_id</code> and <code>contributor</code> in
+<code>geometadb.gse</code>. <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link">tidyr::unnest_longer()</a></code> gives
+one row per value. Rows with an empty list, such as series without SRA
+studies, drop out unless you pass <code>keep_empty = TRUE</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/sra_search.html">geo_search</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"glioblastoma"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gse</span>, <span class="va">sra_studies</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html" class="external-link">unnest_longer</a></span><span class="op">(</span><span class="va">sra_studies</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
+<span><span class="co">#&gt;   gse       sra_studies</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> GSE102136 SRP114556  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> GSE108013 SRP126639</span></span></code></pre></div>
 </div>
-</section><section class="level2"><h2 id="migrating-from-sradb-and-geometadb">Migrating from SRAdb and GEOmetadb<a class="anchor" aria-label="anchor" href="#migrating-from-sradb-and-geometadb"></a>
+</div>
+<div class="section level2">
+<h2 id="downloading-fastqs">Downloading FASTQs<a class="anchor" aria-label="anchor" href="#downloading-fastqs"></a>
 </h2>
-<p>SRAdb and GEOmetadb are deprecated. Their SQLite files had to be downloaded whole and are no longer updated. The <code>sradb</code> and <code>geometadb</code> schemas follow their tables, so most code ports by connecting with <code><a href="../reference/omicidx_connect.html">omicidx_connect()</a></code> and prefixing table names with the schema.</p>
-<table class="table caption-top">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead><tr class="header">
-<th>SRAdb / GEOmetadb</th>
-<th>omicidxr</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>
-<code>getSRAdbFile()</code>, <code>getSQLiteFile()</code>, then <code>dbConnect(SQLite(), ...)</code>
-</td>
-<td><code>con &lt;- omicidx_connect()</code></td>
-</tr>
-<tr class="even">
-<td><code>dbGetQuery(sra_con, "SELECT * FROM study ...")</code></td>
-<td><code>DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")</code></td>
-</tr>
-<tr class="odd">
-<td><code>dbGetQuery(geo_con, "SELECT * FROM gsm ...")</code></td>
-<td><code>DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")</code></td>
-</tr>
-<tr class="even">
-<td>
-<code>dbListTables()</code>, <code>dbListFields()</code>
-</td>
-<td>
-<code>omicidx_tables(con)</code>, <code>omicidx_describe(con, "sradb.run")</code>
-</td>
-</tr>
-<tr class="odd">
-<td><code>sraConvert(in_acc, out_type, sra_con)</code></td>
-<td><code>sra_convert(con, in_acc, out_type)</code></td>
-</tr>
-<tr class="even">
-<td><code>geoConvert(in_list, out_type, geo_con)</code></td>
-<td><code>geo_convert(con, in_list, out_type)</code></td>
-</tr>
-<tr class="odd">
-<td><code>getSRA(search_terms, out_types, sra_con)</code></td>
-<td><code>sra_search(con, query)</code></td>
-</tr>
-<tr class="even">
-<td>
-<code>getSRAinfo()</code>, <code>listSRAfile()</code>
-</td>
-<td>
-<code>sra_runs(con, in_acc)</code>: run accessions for the SRA Toolkit, not file URLs</td>
-</tr>
-<tr class="odd">
-<td>
-<code>characteristics_ch1</code> parsed by hand</td>
-<td><code>geo_characteristics(con, gsm)</code></td>
-</tr>
-</tbody>
-</table>
+<p>omicidxr finds runs; the SRA Toolkit downloads them. Write the run
+accessions from <code><a href="../reference/sra_runs.html">sra_runs()</a></code> to a file:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">runs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sra_runs.html">sra_runs</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"GSE164073"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">runs</span><span class="op">$</span><span class="va">run_accession</span>, <span class="st">"runs.txt"</span><span class="op">)</span></span></code></pre></div>
+<p>then fetch and convert them in a shell:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="ex">prefetch</span> <span class="at">--option-file</span> runs.txt</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">fasterq-dump</span> <span class="at">--split-files</span> SRR13332242</span></code></pre></div>
+<p>File URLs, sizes and checksums, as given by SRAdb’s
+<code>listSRAfile()</code>, are out of scope.</p>
+</div>
+<div class="section level2">
+<h2 id="migrating-from-sradb-and-geometadb">Migrating from SRAdb and GEOmetadb<a class="anchor" aria-label="anchor" href="#migrating-from-sradb-and-geometadb"></a>
+</h2>
+<p>SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
+downloaded whole and are no longer updated. The <code>sradb</code> and
+<code>geometadb</code> schemas follow their tables, so most code ports
+by connecting with <code><a href="../reference/omicidx_connect.html">omicidx_connect()</a></code> and prefixing table
+names with the schema.</p>
+<p>Each SRAdb or GEOmetadb call is followed by its omicidxr
+equivalent:</p>
+<ul>
+<li>
+<code>getSRAdbFile()</code>, <code>getSQLiteFile()</code>, then
+<code>dbConnect(SQLite(), ...)</code>:
+<code>con &lt;- omicidx_connect()</code>
+</li>
+<li>
+<code>dbGetQuery(sra_con, "SELECT * FROM study ...")</code>:
+<code>DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")</code>
+</li>
+<li>
+<code>dbGetQuery(geo_con, "SELECT * FROM gsm ...")</code>:
+<code>DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")</code>
+</li>
+<li>
+<code>dbListTables()</code>, <code>dbListFields()</code>:
+<code>omicidx_tables(con)</code>,
+<code>omicidx_describe(con, "sradb.run")</code>
+</li>
+<li>
+<code>sraConvert(in_acc, out_type, sra_con)</code>:
+<code>sra_convert(con, in_acc, out_type)</code>
+</li>
+<li>
+<code>geoConvert(in_list, out_type, geo_con)</code>:
+<code>geo_convert(con, in_acc, out_type)</code>
+</li>
+<li>
+<code>getSRA(search_terms, out_types, sra_con)</code>:
+<code>sra_search(con, query)</code>
+</li>
+<li>
+<code>getSRAinfo()</code>, <code>listSRAfile()</code>:
+<code>sra_runs(con, in_acc)</code>, which gives run accessions for the
+SRA Toolkit, not file URLs (see Downloading FASTQs)</li>
+<li>
+<code>characteristics_ch1</code> parsed by hand:
+<code>geo_characteristics(con, gsm)</code>
+</li>
+</ul>
 <p>Differences to watch for:</p>
 <ul>
-<li>The connection comes first in every helper, so they work with <code>|&gt;</code>.</li>
-<li>Tables are schema-qualified: <code>sradb.study</code>, not <code>study</code>.</li>
-<li>Conversion also covers BioSample and BioProject, but not SRA submissions or GEO DataSets (GDS); the marts have no <code>submission</code>, <code>gds</code> or <code>sMatrix</code> tables.</li>
+<li>The connection comes first in every helper, so they work with
+<code>|&gt;</code>.</li>
+<li>Tables are schema-qualified: <code>sradb.study</code>, not
+<code>study</code>.</li>
+<li>Conversion also covers BioSample and BioProject, but not SRA
+submissions or GEO DataSets (GDS); the marts have no
+<code>submission</code>, <code>gds</code> or <code>sMatrix</code>
+tables.</li>
 <li>
-<code>characteristics_ch1</code> and <code>characteristics_ch2</code> are lists of tag/value pairs rather than <code>;\t</code>-separated strings, and array columns such as <code>gse.pubmed_id</code> are lists.</li>
+<code>characteristics_ch1</code> and
+<code>characteristics_ch2</code> are lists of tag/value pairs rather
+than <code>;\t</code>-separated strings, and array columns such as
+<code>gse.pubmed_id</code> are lists.</li>
 <li>
-<code><a href="../reference/sra_search.html">sra_search()</a></code> is a case-insensitive pattern match, not SQLite full-text search.</li>
-<li>Pin a monthly release, as this vignette does, where SRAdb code pinned a SQLite file.</li>
-</ul></section><section class="level2"><h2 id="disconnecting">Disconnecting<a class="anchor" aria-label="anchor" href="#disconnecting"></a>
+<code><a href="../reference/sra_search.html">sra_search()</a></code> is a case-insensitive pattern match, not
+SQLite full-text search.</li>
+<li>Pin a monthly release, as this vignette does, where SRAdb code
+pinned a SQLite file.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="disconnecting">Disconnecting<a class="anchor" aria-label="anchor" href="#disconnecting"></a>
 </h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-        }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'light-border',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config);
-    }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
-      } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
-        });
-      }
-    }
-  });
-  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+<div class="section level2">
+<h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h2>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] omicidxr_0.99.0  BiocStyle_2.40.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] jsonlite_2.0.0      dplyr_1.2.1         compiler_4.6.1     </span></span>
+<span><span class="co">#&gt;  [4] BiocManager_1.30.27 tidyselect_1.2.1    blob_1.3.0         </span></span>
+<span><span class="co">#&gt;  [7] tidyr_1.3.2         jquerylib_0.1.4     systemfonts_1.3.2  </span></span>
+<span><span class="co">#&gt; [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      </span></span>
+<span><span class="co">#&gt; [13] R6_2.6.1            generics_0.1.4      knitr_1.52         </span></span>
+<span><span class="co">#&gt; [16] tibble_3.3.1        bookdown_0.48       desc_1.4.3         </span></span>
+<span><span class="co">#&gt; [19] DBI_1.3.0           bslib_0.12.0        pillar_1.11.1      </span></span>
+<span><span class="co">#&gt; [22] rlang_1.3.0         utf8_1.2.6          cachem_1.1.0       </span></span>
+<span><span class="co">#&gt; [25] xfun_0.62           fs_2.1.0            sass_0.4.10        </span></span>
+<span><span class="co">#&gt; [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      </span></span>
+<span><span class="co">#&gt; [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      </span></span>
+<span><span class="co">#&gt; [34] dbplyr_2.6.0        lifecycle_1.0.5     vctrs_0.7.3        </span></span>
+<span><span class="co">#&gt; [37] evaluate_1.0.5      glue_1.8.1          duckdb_1.5.6       </span></span>
+<span><span class="co">#&gt; [40] ragg_1.5.2          rmarkdown_2.32      purrr_1.2.2        </span></span>
+<span><span class="co">#&gt; [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
+
 
 
     <footer><div class="pkgdown-footer-left">

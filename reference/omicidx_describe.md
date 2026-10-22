@@ -31,16 +31,7 @@ A tibble with one row per column: `column_name`, `column_type` and
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 omicidx_describe(con, "sradb.study")
 #> # A tibble: 14 × 3
 #>    column_name          column_type null 
@@ -60,5 +51,4 @@ omicidx_describe(con, "sradb.study")
 #> 13 geo_accession        VARCHAR     YES  
 #> 14 pubmed_ids           VARCHAR[]   YES  
 DBI::dbDisconnect(con)
-# }
 ```

@@ -2,7 +2,8 @@
 
 The runs behind each accession, with the fields needed to choose and
 download them: pass `run_accession` to `prefetch` or `fasterq-dump` from
-the SRA Toolkit.
+the SRA Toolkit. File URLs, sizes and checksums, as given by
+`SRAdb::listSRAfile()`, are out of scope.
 
 ## Usage
 
@@ -34,16 +35,7 @@ organism.
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 sra_runs(con, "SRP000001")
 #> # A tibble: 83 × 17
 #>    run_accession experiment_accession sample_accession study_accession
@@ -65,5 +57,4 @@ sra_runs(con, "SRP000001")
 #> #   instrument_model <chr>, scientific_name <chr>, taxon_id <int>,
 #> #   experiment_title <chr>
 DBI::dbDisconnect(con)
-# }
 ```

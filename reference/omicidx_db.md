@@ -29,23 +29,14 @@ omicidx_db(con = NULL, version = "latest")
 
 An `omicidx_db` object: a named list with one element per schema, each
 an environment of lazy tables. The connection is available as
-`attr(db, "con")`, and the release manifest (with row counts), when
-available, as `attr(db, "manifest")`. All omicidxr helpers accept an
-`omicidx_db` in place of a connection.
+`attr(db, "con")`, and its release, with row counts, as
+`omicidx_release(db)`. All omicidxr helpers accept an `omicidx_db` in
+place of a connection.
 
 ## Examples
 
 ``` r
-# \donttest{
 db <- omicidx_db()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 db
 #> <omicidx_db> OmicIDX release latest (published 2026-10-20)
 #> 
@@ -74,9 +65,9 @@ db
 #> 
 #> Tables: db$<schema>$<table>. Connection: attr(db, "con").
 db$sradb$study |>
-  dplyr::count(study_type, sort = TRUE) |>
-  head() |>
-  dplyr::collect()
+    dplyr::count(study_type, sort = TRUE) |>
+    head() |>
+    dplyr::collect()
 #> # A tibble: 6 × 2
 #>   study_type                   n
 #>   <chr>                    <dbl>
@@ -87,5 +78,4 @@ db$sradb$study |>
 #> 5 Population Genomics        836
 #> 6 Epigenetics                707
 DBI::dbDisconnect(attr(db, "con"))
-# }
 ```

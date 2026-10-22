@@ -12,6 +12,8 @@
   : Tab-completable lazy tables for an OmicIDX release
 - [`omicidx_describe()`](https://omicidx.github.io/omicidxr/reference/omicidx_describe.md)
   : Describe the columns of an OmicIDX table
+- [`omicidx_release()`](https://omicidx.github.io/omicidxr/reference/omicidx_release.md)
+  : Which OmicIDX release a connection is on
 - [`omicidx_tables()`](https://omicidx.github.io/omicidxr/reference/omicidx_tables.md)
   : List the tables in an OmicIDX connection
 - [`sra_convert()`](https://omicidx.github.io/omicidxr/reference/sra_convert.md)

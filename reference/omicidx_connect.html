@@ -19,7 +19,7 @@ groups they need."><!-- Global site tag (gtag.js) - Google Analytics --><script 
 
     <a class="navbar-brand me-2" href="../index.html">omicidxr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.99.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,8 +30,9 @@ groups they need."><!-- Global site tag (gtag.js) - Google Analytics --><script 
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Getting Started with omicidx in R</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Getting started with omicidxr</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/omicidx/omicidxr/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -78,13 +79,16 @@ groups they need.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A DuckDB <a href="https://dbi.r-dbi.org/reference/DBIConnection-class.html" class="external-link">DBI::DBIConnection</a>. Close it with
-<code><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">DBI::dbDisconnect()</a></code>.</p>
+<code><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">DBI::dbDisconnect()</a></code>.
+<code><a href="omicidx_release.html">omicidx_release()</a></code> tells which release it is
+connected to.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>After connecting, tables are referenced as <code>schema.table</code>, for
-example <code>sradb.study</code> or <code>geometadb.gsm</code>. Use <code><a href="omicidx_tables.html">omicidx_tables()</a></code> to
-list them and <code><a href="omicidx_db.html">omicidx_db()</a></code> for tab-completable <code>dplyr</code> tables.</p>
+example <code>sradb.study</code> or <code>geometadb.gsm</code>. Use
+<code><a href="omicidx_tables.html">omicidx_tables()</a></code> to list them and
+<code><a href="omicidx_db.html">omicidx_db()</a></code> for tab-completable <code>dplyr</code> tables.</p>
     </div>
     <div class="section level2">
     <h2 id="versions">Versions<a class="anchor" aria-label="anchor" href="#versions"></a></h2>
@@ -100,27 +104,19 @@ seconds) because DuckDB inspects every Parquet file while it
 creates the views. HuggingFace limits anonymous requests (3000 per
 5 minutes per IP address) and one query can make hundreds, so heavy
 use can fail with HTTP 429 until the window resets.</p></li>
-</ul><p>Requests carry the User-Agent <code>omicidxr/&lt;package version&gt;</code>. The
-connection ignores any DuckDB secrets persisted in <code>~/.duckdb</code>.</p>
+</ul><p>Requests carry the User-Agent <code>omicidxr/&lt;package version&gt;</code>. DuckDB
+extensions (<code>httpfs</code>, <code>json</code>) are downloaded once and cached in
+<code>tools::R_user_dir("omicidxr", "cache")</code>. The connection neither uses
+<code>~/.duckdb</code> nor reads DuckDB secrets persisted there.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">omicidx_connect</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> duckdb keeps downloaded extensions and secrets in a temporary directory:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> /tmp/Rtmpl0TUWk/duckdb</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This is removed when the R session ends.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Secrets are lost.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> See ?duckdb_storage for details and alternatives.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">omicidx_connect</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT count(*) AS n FROM sradb.study"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 774773</span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

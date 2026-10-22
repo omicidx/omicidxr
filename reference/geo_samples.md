@@ -30,16 +30,7 @@ A tibble with one row per series and sample: `gse`, `gsm`, sample
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 geo_samples(con, "GSE164073")
 #> # A tibble: 18 × 12
 #>    gse       gsm        title  gpl   platform_title organism_ch1 source_name_ch1
@@ -65,5 +56,4 @@ geo_samples(con, "GSE164073")
 #> # ℹ 5 more variables: molecule_ch1 <chr>, type <chr>, library_source <chr>,
 #> #   biosample <chr>, sra_experiment <chr>
 DBI::dbDisconnect(con)
-# }
 ```

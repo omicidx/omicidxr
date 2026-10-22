@@ -30,16 +30,7 @@ A tibble with columns `gsm`, `channel` (1 or 2), `tag` and `value`.
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 geo_characteristics(con, c("GSM4996084", "GSM4996085"))
 #> # A tibble: 6 × 4
 #>   gsm        channel tag        value   
@@ -51,5 +42,4 @@ geo_characteristics(con, c("GSM4996084", "GSM4996085"))
 #> 5 GSM4996085       1 infection  mock    
 #> 6 GSM4996085       1 time point 24 hours
 DBI::dbDisconnect(con)
-# }
 ```

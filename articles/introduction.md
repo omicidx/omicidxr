@@ -1,9 +1,22 @@
-# Getting Started with omicidx in R
+# Getting started with omicidxr
 
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those
 files, so you can query tens of millions of records with SQL or `dplyr`
 without downloading them.
+
+## Installation
+
+``` r
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("omicidxr")
+```
+
+Until omicidxr is in Bioconductor,
+`BiocManager::install("omicidx/omicidxr")` installs it from GitHub.
 
 ## Connecting
 
@@ -21,6 +34,30 @@ library(omicidxr)
 
 con <- omicidx_connect("2026-10")
 ```
+
+[`omicidx_release()`](https://omicidx.github.io/omicidxr/reference/omicidx_release.md)
+reports which release a connection is on, with the provenance from the
+release’s `manifest.json`:
+
+``` r
+
+release <- omicidx_release(con)
+release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
+#> $version
+#> [1] "2026-10"
+#> 
+#> $publish_date
+#> [1] "2026-10-20"
+#> 
+#> $transform_sha
+#> [1] "90688e92966330aac9ecd5a4fb8dc1d126f7982f"
+#> 
+#> $lake_snapshot_id
+#> [1] 4171
+```
+
+To cite OmicIDX, cite the DOI of the monthly release you used, listed on
+the HuggingFace dataset page for its tag, and state the tag (`2026-10`).
 
 ## What is in a release
 
@@ -78,10 +115,10 @@ Any DuckDB SQL works through DBI. Keep exploratory queries small with
 ``` r
 
 DBI::dbGetQuery(con, "
-  SELECT study_accession, study_title
-  FROM sradb.study
-  WHERE study_type = 'Transcriptome Analysis'
-  LIMIT 5")
+    SELECT study_accession, study_title
+    FROM sradb.study
+    WHERE study_type = 'Transcriptome Analysis'
+    LIMIT 5")
 #>   study_accession
 #> 1       DRP000003
 #> 2       DRP000004
@@ -146,10 +183,10 @@ db
 #> Tables: db$<schema>$<table>. Connection: attr(db, "con").
 
 db$geometadb$gse |>
-  dplyr::filter(title %ILIKE% "%single cell%") |>
-  dplyr::select(gse, title, submission_date) |>
-  head(5) |>
-  dplyr::collect()
+    dplyr::filter(title %ILIKE% "%single cell%") |>
+    dplyr::select(gse, title, submission_date) |>
+    head(5) |>
+    dplyr::collect()
 #> # A tibble: 5 × 3
 #>   gse       title                                                submission_date
 #>   <chr>     <chr>                                                <date>         
@@ -175,9 +212,9 @@ sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
 #>   study     experiment run         gse       gsm       
 #>   <chr>     <chr>      <chr>       <chr>     <chr>     
 #> 1 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
-#> 2 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
-#> 3 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
-#> 4 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 2 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
+#> 3 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 4 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
 ```
 
 The samples and platform of a GEO series, and the characteristics of its
@@ -186,8 +223,8 @@ samples:
 ``` r
 
 geo_samples(con, "GSE164073") |>
-  dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
-  head()
+    dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
+    head()
 #> # A tibble: 6 × 5
 #>   gsm        title         gpl      platform_title                sra_experiment
 #>   <chr>      <chr>         <chr>    <chr>                         <chr>         
@@ -215,8 +252,10 @@ The runs to download for a study, experiment or GEO series:
 ``` r
 
 sra_runs(con, "GSE164073") |>
-  dplyr::select(run_accession, library_layout, spots, bases, instrument_model) |>
-  head()
+    dplyr::select(
+        run_accession, library_layout, spots, bases, instrument_model
+    ) |>
+    head()
 #> # A tibble: 6 × 5
 #>   run_accession library_layout   spots     bases instrument_model
 #>   <chr>         <chr>            <dbl>     <dbl> <chr>           
@@ -233,7 +272,7 @@ Search study and series titles and abstracts:
 ``` r
 
 sra_search(con, "single cell%glioma", limit = 5) |>
-  dplyr::select(study_accession, study_title)
+    dplyr::select(study_accession, study_title)
 #> # A tibble: 5 × 2
 #>   study_accession study_title                                                   
 #>   <chr>           <chr>                                                         
@@ -243,7 +282,7 @@ sra_search(con, "single cell%glioma", limit = 5) |>
 #> 4 SRP067604       Single cell transcriptome dynamics and subpopulation heteroge…
 #> 5 SRP081644       An automatec microwell platform for large-scale single cell R…
 geo_search(con, "glioblastoma", limit = 5) |>
-  dplyr::select(gse, title)
+    dplyr::select(gse, title)
 #> # A tibble: 5 × 2
 #>   gse       title                                                               
 #>   <chr>     <chr>                                                               
@@ -254,6 +293,51 @@ geo_search(con, "glioblastoma", limit = 5) |>
 #> 5 GSE248352 Antitumor effects of intravenous natural killer cell infusion in an…
 ```
 
+### List-columns
+
+Some columns hold several values per row: in
+[`geo_search()`](https://omicidx.github.io/omicidxr/reference/sra_search.md)
+results, `type`, `bioprojects` and `sra_studies` are list-columns, as
+are `pubmed_id` and `contributor` in `geometadb.gse`.
+[`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html)
+gives one row per value. Rows with an empty list, such as series without
+SRA studies, drop out unless you pass `keep_empty = TRUE`:
+
+``` r
+
+geo_search(con, "glioblastoma", limit = 5) |>
+    dplyr::select(gse, sra_studies) |>
+    tidyr::unnest_longer(sra_studies)
+#> # A tibble: 2 × 2
+#>   gse       sra_studies
+#>   <chr>     <chr>      
+#> 1 GSE102136 SRP114556  
+#> 2 GSE108013 SRP126639
+```
+
+## Downloading FASTQs
+
+omicidxr finds runs; the SRA Toolkit downloads them. Write the run
+accessions from
+[`sra_runs()`](https://omicidx.github.io/omicidxr/reference/sra_runs.md)
+to a file:
+
+``` r
+
+runs <- sra_runs(con, "GSE164073")
+writeLines(runs$run_accession, "runs.txt")
+```
+
+then fetch and convert them in a shell:
+
+``` sh
+prefetch --option-file runs.txt
+fasterq-dump --split-files SRR13332242
+```
+
+File URLs, sizes and checksums, as given by SRAdb’s `listSRAfile()`, are
+out of scope.
+
 ## Migrating from SRAdb and GEOmetadb
 
 SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
@@ -262,17 +346,25 @@ schemas follow their tables, so most code ports by connecting with
 [`omicidx_connect()`](https://omicidx.github.io/omicidxr/reference/omicidx_connect.md)
 and prefixing table names with the schema.
 
-| SRAdb / GEOmetadb | omicidxr |
-|----|----|
-| `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)` | `con <- omicidx_connect()` |
-| `dbGetQuery(sra_con, "SELECT * FROM study ...")` | `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")` |
-| `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
-| `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
-| `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
-| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_list, out_type)` |
-| `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
-| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs |
-| `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
+Each SRAdb or GEOmetadb call is followed by its omicidxr equivalent:
+
+- `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)`:
+  `con <- omicidx_connect()`
+- `dbGetQuery(sra_con, "SELECT * FROM study ...")`:
+  `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")`
+- `dbGetQuery(geo_con, "SELECT * FROM gsm ...")`:
+  `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")`
+- `dbListTables()`, `dbListFields()`: `omicidx_tables(con)`,
+  `omicidx_describe(con, "sradb.run")`
+- `sraConvert(in_acc, out_type, sra_con)`:
+  `sra_convert(con, in_acc, out_type)`
+- `geoConvert(in_list, out_type, geo_con)`:
+  `geo_convert(con, in_acc, out_type)`
+- `getSRA(search_terms, out_types, sra_con)`: `sra_search(con, query)`
+- `getSRAinfo()`, `listSRAfile()`: `sra_runs(con, in_acc)`, which gives
+  run accessions for the SRA Toolkit, not file URLs (see Downloading
+  FASTQs)
+- `characteristics_ch1` parsed by hand: `geo_characteristics(con, gsm)`
 
 Differences to watch for:
 
@@ -294,4 +386,50 @@ Differences to watch for:
 ``` r
 
 DBI::dbDisconnect(con)
+```
+
+## Session information
+
+``` r
+
+sessionInfo()
+#> R version 4.6.1 (2026-06-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.5 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: UTC
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] omicidxr_0.99.0  BiocStyle_2.40.0
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] jsonlite_2.0.0      dplyr_1.2.1         compiler_4.6.1     
+#>  [4] BiocManager_1.30.27 tidyselect_1.2.1    blob_1.3.0         
+#>  [7] tidyr_1.3.2         jquerylib_0.1.4     systemfonts_1.3.2  
+#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#> [13] R6_2.6.1            generics_0.1.4      knitr_1.52         
+#> [16] tibble_3.3.1        bookdown_0.48       desc_1.4.3         
+#> [19] DBI_1.3.0           bslib_0.12.0        pillar_1.11.1      
+#> [22] rlang_1.3.0         utf8_1.2.6          cachem_1.1.0       
+#> [25] xfun_0.62           fs_2.1.0            sass_0.4.10        
+#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
+#> [34] dbplyr_2.6.0        lifecycle_1.0.5     vctrs_0.7.3        
+#> [37] evaluate_1.0.5      glue_1.8.1          duckdb_1.5.6       
+#> [40] ragg_1.5.2          rmarkdown_2.32      purrr_1.2.2        
+#> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
 ```

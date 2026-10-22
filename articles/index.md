@@ -2,5 +2,5 @@
 
 ### All vignettes
 
-- [Getting Started with omicidx in
-  R](https://omicidx.github.io/omicidxr/articles/introduction.md):
+- [Getting started with
+  omicidxr](https://omicidx.github.io/omicidxr/articles/introduction.md):

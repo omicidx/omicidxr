@@ -35,21 +35,16 @@ geo_search(con, query, limit = 100L)
 ## Value
 
 A tibble of matching studies (`sra_search()`: from `sradb.study`) or
-series (`geo_search()`: from `geometadb.gse`).
+series (`geo_search()`: from `geometadb.gse`). In `geo_search()`
+results, `type`, `bioprojects` and `sra_studies` are list-columns, since
+a series can have several of each; use
+[`tidyr::unnest_longer()`](https://tidyr.tidyverse.org/reference/unnest_longer.html)
+to get one row per value.
 
 ## Examples
 
 ``` r
-# \donttest{
 con <- omicidx_connect()
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl0TUWk/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
 sra_search(con, "single cell%glioma", limit = 5)
 #> # A tibble: 5 × 7
 #>   study_accession study_title              study_type study_abstract center_name
@@ -60,15 +55,17 @@ sra_search(con, "single cell%glioma", limit = 5)
 #> 4 SRP067604       Single cell transcripto… Transcrip… Radiation is … GEO        
 #> 5 SRP081644       An automatec microwell … Other      We report an … GEO        
 #> # ℹ 2 more variables: bioproject_accession <chr>, geo_accession <chr>
-geo_search(con, "glioblastoma", limit = 5)
-#> # A tibble: 5 × 7
-#>   gse       title          type  submission_date summary bioprojects sra_studies
-#>   <chr>     <chr>          <lis> <date>          <chr>   <list>      <list>     
-#> 1 GSE95386  TRIM24 is an … <chr> 2017-02-27      "Aberr… <chr [1]>   <chr [1]>  
-#> 2 GSE96682  Prospective I… <chr> 2017-03-16      "Chara… <chr [1]>   <chr [1]>  
-#> 3 GSE99180  CD133hi, Notc… <chr> 2017-05-22      "CD133… <chr [1]>   <chr [1]>  
-#> 4 GSE165286 MicroRNA-138 … <chr> 2021-01-21      "Micro… <chr [1]>   <chr [1]>  
-#> 5 GSE86511  Genome-wide c… <chr> 2016-09-07      "MYC d… <chr [1]>   <chr [1]>  
+series <- geo_search(con, "glioblastoma", limit = 5)
+if (requireNamespace("tidyr", quietly = TRUE)) {
+    tidyr::unnest_longer(series[c("gse", "sra_studies")], "sra_studies")
+}
+#> # A tibble: 5 × 2
+#>   gse       sra_studies
+#>   <chr>     <chr>      
+#> 1 GSE95386  SRP100743  
+#> 2 GSE96682  SRP101987  
+#> 3 GSE99180  SRP107791  
+#> 4 GSE165286 SRP302777  
+#> 5 GSE86511  SRP087437  
 DBI::dbDisconnect(con)
-# }
 ```
