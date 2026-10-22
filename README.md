@@ -97,6 +97,7 @@ con <- attr(db, "con")     # the DBI connection behind it
 
 ``` r
 con <- omicidx_connect("2026-10")
+omicidx_release(con)$publish_date   # also transform_sha, lake_snapshot_id
 ```
 
 Connecting to a monthly release takes about 30 seconds, since DuckDB
@@ -110,6 +111,7 @@ minutes.
 | Function | Description |
 |----------|-------------|
 | `omicidx_connect(version)` | Connect to an OmicIDX release; returns a DuckDB DBI connection |
+| `omicidx_release(con)` | The release a connection is on: version, publish date, build provenance, row counts |
 | `omicidx_db(con)` | Lazy `dplyr` tables, nested by schema, for tab-completion |
 | `omicidx_tables(con)` | List the tables in a connection |
 | `omicidx_describe(con, table)` | Column names and types of a table |

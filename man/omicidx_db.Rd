@@ -16,9 +16,9 @@ string to open a new one. Defaults to \code{version}.}
 \value{
 An \code{omicidx_db} object: a named list with one element per
 schema, each an environment of lazy tables. The connection is
-available as \code{attr(db, "con")}, and the release manifest (with row
-counts), when available, as \code{attr(db, "manifest")}. All omicidxr
-helpers accept an \code{omicidx_db} in place of a connection.
+available as \code{attr(db, "con")}, and its release, with row counts,
+as \code{omicidx_release(db)}. All omicidxr helpers accept an
+\code{omicidx_db} in place of a connection.
 }
 \description{
 Returns every table in the release as a lazy \code{dplyr} table, nested

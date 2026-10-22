@@ -63,9 +63,9 @@ omicidx_describe <- function(con, table) {
 #'
 #' @return An `omicidx_db` object: a named list with one element per
 #'   schema, each an environment of lazy tables. The connection is
-#'   available as `attr(db, "con")`, and the release manifest (with row
-#'   counts), when available, as `attr(db, "manifest")`. All omicidxr
-#'   helpers accept an `omicidx_db` in place of a connection.
+#'   available as `attr(db, "con")`, and its release, with row counts,
+#'   as `omicidx_release(db)`. All omicidxr helpers accept an
+#'   `omicidx_db` in place of a connection.
 #'
 #' @examples
 #' \donttest{
@@ -93,8 +93,7 @@ omicidx_db <- function(con = NULL, version = "latest") {
     for (name in names) lazy_tbl(env, con, schema, name)
     structure(env, class = "omicidx_schema")
   }, names(by_schema), by_schema)
-  structure(schemas, class = "omicidx_db", con = con,
-            manifest = omicidx_manifest(con))
+  structure(schemas, class = "omicidx_db", con = con)
 }
 
 # dplyr::tbl() on a DBI connection needs dbplyr at run time.
@@ -110,17 +109,17 @@ lazy_tbl <- function(env, con, schema, name) {
 
 #' @export
 print.omicidx_db <- function(x, ...) {
-  manifest <- attr(x, "manifest")
-  version <- omicidx_variable(attr(x, "con"), "omicidx_version")
-  cat("<omicidx_db>", if (!is.null(version)) paste("OmicIDX release", version))
-  if (!is.null(manifest$publish_date)) {
-    cat(" (published ", manifest$publish_date, ")", sep = "")
+  # NULL for connections not opened by omicidx_connect().
+  release <- attr(attr(x, "con"), "omicidx_release")
+  cat("<omicidx_db>", if (!is.null(release)) paste("OmicIDX release", release$version))
+  if (!is.null(release) && !is.na(release$publish_date)) {
+    cat(" (published ", release$publish_date, ")", sep = "")
   }
   cat("\n")
   for (schema in names(x)) {
     tables <- sort(ls(x[[schema]]))
-    rows <- manifest$tables[manifest$tables$schema == schema, ]
-    n <- rows$row_count[match(tables, rows$table)]
+    rows <- release$tables[release$tables$schema == schema, ]
+    n <- if (is.null(rows)) NA else rows$row_count[match(tables, rows$table)]
     n <- ifelse(is.na(n), "", format(n, big.mark = ",", scientific = FALSE))
     cat("\n", schema, "\n", sep = "")
     cat(trimws(sprintf("  %-*s %12s", max(nchar(tables)), tables, n), "right"),
@@ -144,24 +143,4 @@ omicidx_con <- function(con) {
          call. = FALSE)
   }
   con
-}
-
-# Values stored by omicidx_connect(); NULL for other connections.
-omicidx_variable <- function(con, name) {
-  DBI::dbGetQuery(con, "SELECT getvariable(?) AS v", params = list(name))$v[[1]]
-}
-
-# The release's manifest.json: publish_date plus per-table row counts.
-# NULL when unavailable, since it only decorates print().
-omicidx_manifest <- function(con) {
-  url <- omicidx_variable(con, "omicidx_release_url")
-  if (is.null(url) || is.na(url)) return(NULL)
-  tryCatch({
-    tables <- DBI::dbGetQuery(con, "
-      SELECT publish_date::VARCHAR AS publish_date,
-             unnest(tables, recursive := true)
-      FROM read_json(?)", params = list(paste0(url, "manifest.json")))
-    list(publish_date = tables$publish_date[1],
-         tables = tables[c("schema", "table", "row_count")])
-  }, error = function(e) NULL)
 }

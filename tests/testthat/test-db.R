@@ -1,5 +1,8 @@
 test_that("helpers reject things that are not connections", {
   expect_error(omicidx_tables("latest"), "must be a connection")
+  con <- DBI::dbConnect(duckdb::duckdb())
+  on.exit(DBI::dbDisconnect(con))
+  expect_error(omicidx_release(con), "not opened by omicidx_connect")
 })
 
 skip_on_cran()
@@ -30,6 +33,7 @@ test_that("omicidx_db nests lazy tables by schema", {
   out <- db$sradb$study |> dplyr::filter(study_accession == "SRP000001") |>
     dplyr::collect()
   expect_equal(nrow(out), 1L)
+  expect_output(print(db), "OmicIDX release latest \\(published")
   expect_output(print(db), "sradb")
   expect_output(print(db$sradb), "study")
 })
