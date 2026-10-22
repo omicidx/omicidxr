@@ -30,9 +30,9 @@ Imports:
     tools,
     utils
 Suggests:
-    BiocStyle,
     curl,
     knitr,
+    quarto,
     rmarkdown,
     testthat (>= 3.0.0),
     tidyr
@@ -41,6 +41,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/omicidx/omicidxr, https://omicidx.github.io/omicidxr/
 BugReports: https://github.com/omicidx/omicidxr/issues
-VignetteBuilder: knitr
+SystemRequirements: Quarto command line tool
+    (<https://github.com/quarto-dev/quarto-cli>)
+VignetteBuilder: quarto
 biocViews: Software, DataImport, ThirdPartyClient, Sequencing, GeneExpression
 Config/roxygen2/version: 8.1.0
