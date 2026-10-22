@@ -97,6 +97,10 @@ omicidx_db <- function(con = NULL, version = "latest") {
             manifest = omicidx_manifest(con))
 }
 
+# dplyr::tbl() on a DBI connection needs dbplyr at run time.
+#' @importFrom dbplyr in_schema
+NULL
+
 lazy_tbl <- function(env, con, schema, name) {
   force(schema)
   force(name)

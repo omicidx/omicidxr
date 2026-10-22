@@ -17,7 +17,9 @@
 #'   (`omicidx/omicidx@YYYY-MM`). Monthly releases are kept long term
 #'   and are the version to cite. Connecting takes longer (about 30
 #'   seconds) because DuckDB inspects every Parquet file while it
-#'   creates the views.
+#'   creates the views. HuggingFace limits anonymous requests (3000 per
+#'   5 minutes per IP address) and one query can make hundreds, so heavy
+#'   use can fail with HTTP 429 until the window resets.
 #'
 #' Requests carry the User-Agent `omicidxr/<package version>`. The
 #' connection ignores any DuckDB secrets persisted in `~/.duckdb`.

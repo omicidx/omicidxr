@@ -16,15 +16,17 @@ Description: The omicidxr package provides an interface to
     accessing the data.
 License: MIT + file LICENSE
 LicenseFile: LICENSE
+Depends:
+    R (>= 4.1.0)
 Imports:
     duckdb,
     DBI,
     dplyr,
     tibble,
-    dbplyr
+    dbplyr,
+    utils
 Suggests:
     curl,
-    ggplot2,
     knitr,
     quarto,
     testthat (>= 3.0.0)

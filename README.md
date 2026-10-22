@@ -100,7 +100,10 @@ con <- omicidx_connect("2026-10")
 ```
 
 Connecting to a monthly release takes about 30 seconds, since DuckDB
-inspects each Parquet file while it creates the views.
+inspects each Parquet file while it creates the views. HuggingFace
+limits anonymous requests to 3000 per 5 minutes per IP address, and a
+query can make hundreds, so heavy use can fail with HTTP 429 for a few
+minutes.
 
 ## 📚 Main Functions
 
@@ -110,6 +113,27 @@ inspects each Parquet file while it creates the views.
 | `omicidx_db(con)` | Lazy `dplyr` tables, nested by schema, for tab-completion |
 | `omicidx_tables(con)` | List the tables in a connection |
 | `omicidx_describe(con, table)` | Column names and types of a table |
+
+### SRAdb and GEOmetadb helpers
+
+| Function | Description | Replaces |
+|----------|-------------|----------|
+| `sra_convert(con, in_acc, out_type)` | Convert between SRA, GEO, BioSample and BioProject accessions | `SRAdb::sraConvert()` |
+| `geo_convert(con, in_list, out_type)` | The same, defaulting to GEO output types | `GEOmetadb::geoConvert()` |
+| `sra_runs(con, in_acc)` | Runs, with download fields, for studies, experiments, samples or GSEs | `SRAdb::getSRAinfo()`; `listSRAfile()` (gives run accessions for the SRA Toolkit, not file URLs) |
+| `geo_samples(con, gse)` | Samples and platforms of GEO series | joins of `gse_gsm`, `gsm`, `gpl` |
+| `geo_characteristics(con, gsm)` | Sample characteristics as tag/value rows | parsing `characteristics_ch1` |
+| `sra_search(con, query)`, `geo_search(con, query)` | `ILIKE` search of study and series titles and abstracts | `SRAdb::getSRA()` |
+
+``` r
+con <- omicidx_connect()
+sra_convert(con, "GSM4996084", c("gse", "study", "run"))
+sra_runs(con, "GSE164073")
+geo_characteristics(con, "GSM4996084")
+```
+
+Migrating from SRAdb or GEOmetadb? See the "Migrating" section of the
+[Getting Started vignette](https://omicidx.github.io/omicidxr/articles/introduction.html).
 
 ## 🗄️ Database Schemas
 

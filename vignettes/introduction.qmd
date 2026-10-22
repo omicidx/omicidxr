@@ -79,6 +79,84 @@ db$geometadb$gse |>
   dplyr::collect()
 ```
 
+## SRAdb and GEOmetadb helpers
+
+A few helpers cover the common SRAdb and GEOmetadb tasks. Each runs one
+query and returns a tibble.
+
+Convert accessions across SRA, GEO, BioSample and BioProject, in any
+direction:
+
+```{r}
+#| label: convert
+sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
+```
+
+The samples and platform of a GEO series, and the characteristics of
+its samples:
+
+```{r}
+#| label: geo
+geo_samples(con, "GSE164073") |>
+  dplyr::select(gsm, title, gpl, platform_title, sra_experiment) |>
+  head()
+
+geo_characteristics(con, c("GSM4996084", "GSM4996087"))
+```
+
+The runs to download for a study, experiment or GEO series:
+
+```{r}
+#| label: runs
+sra_runs(con, "GSE164073") |>
+  dplyr::select(run_accession, library_layout, spots, bases, instrument_model) |>
+  head()
+```
+
+Search study and series titles and abstracts:
+
+```{r}
+#| label: search
+sra_search(con, "single cell%glioma", limit = 5) |>
+  dplyr::select(study_accession, study_title)
+geo_search(con, "glioblastoma", limit = 5) |>
+  dplyr::select(gse, title)
+```
+
+## Migrating from SRAdb and GEOmetadb
+
+SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
+downloaded whole and are no longer updated. The `sradb` and `geometadb`
+schemas follow their tables, so most code ports by connecting with
+`omicidx_connect()` and prefixing table names with the schema.
+
+| SRAdb / GEOmetadb | omicidxr |
+|---|---|
+| `getSRAdbFile()`, `getSQLiteFile()`, then `dbConnect(SQLite(), ...)` | `con <- omicidx_connect()` |
+| `dbGetQuery(sra_con, "SELECT * FROM study ...")` | `DBI::dbGetQuery(con, "SELECT * FROM sradb.study ...")` |
+| `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
+| `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
+| `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
+| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_list, out_type)` |
+| `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
+| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs |
+| `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
+
+Differences to watch for:
+
+- The connection comes first in every helper, so they work with `|>`.
+- Tables are schema-qualified: `sradb.study`, not `study`.
+- Conversion also covers BioSample and BioProject, but not SRA
+  submissions or GEO DataSets (GDS); the marts have no `submission`,
+  `gds` or `sMatrix` tables.
+- `characteristics_ch1` and `characteristics_ch2` are lists of
+  tag/value pairs rather than `;\t`-separated strings, and array columns
+  such as `gse.pubmed_id` are lists.
+- `sra_search()` is a case-insensitive pattern match, not SQLite
+  full-text search.
+- Pin a monthly release, as this vignette does, where SRAdb code pinned
+  a SQLite file.
+
 ## Disconnecting
 
 ```{r}
