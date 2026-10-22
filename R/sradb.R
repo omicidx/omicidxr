@@ -69,7 +69,8 @@ geo_links <- function(con) {
 #' returns every sample on that platform, which can be large.
 #'
 #' @param con A connection from [omicidx_connect()], or an [omicidx_db()].
-#' @param in_acc character. Accessions to convert.
+#' @param in_acc character. Accessions to convert; `in_list` in
+#'   `GEOmetadb::geoConvert()`.
 #' @param out_type character. Accession types to return.
 #'
 #' @return A tibble with one column per input type present and per
@@ -114,18 +115,17 @@ sra_convert <- function(con,
 }
 
 #' @rdname sra_convert
-#' @param in_list character. Accessions to convert, as in
-#'   `GEOmetadb::geoConvert()`.
 #' @export
-geo_convert <- function(con, in_list, out_type = c("gse", "gpl", "gsm")) {
-  sra_convert(con, in_list, out_type)
+geo_convert <- function(con, in_acc, out_type = c("gse", "gpl", "gsm")) {
+  sra_convert(con, in_acc, out_type)
 }
 
 #' SRA runs for studies, experiments, samples or GEO accessions
 #'
 #' The runs behind each accession, with the fields needed to choose and
 #' download them: pass `run_accession` to `prefetch` or `fasterq-dump`
-#' from the SRA Toolkit.
+#' from the SRA Toolkit. File URLs, sizes and checksums, as given by
+#' `SRAdb::listSRAfile()`, are out of scope.
 #'
 #' @inheritParams sra_convert
 #' @param in_acc character. Accessions of any type [sra_convert()]
@@ -269,12 +269,18 @@ geo_characteristics <- function(con, gsm) {
 #'
 #' @return A tibble of matching studies (`sra_search()`: from
 #'   `sradb.study`) or series (`geo_search()`: from `geometadb.gse`).
+#'   In `geo_search()` results, `type`, `bioprojects` and `sra_studies`
+#'   are list-columns, since a series can have several of each; use
+#'   `tidyr::unnest_longer()` to get one row per value.
 #'
 #' @examples
 #' \donttest{
 #' con <- omicidx_connect()
 #' sra_search(con, "single cell%glioma", limit = 5)
-#' geo_search(con, "glioblastoma", limit = 5)
+#' series <- geo_search(con, "glioblastoma", limit = 5)
+#' if (requireNamespace("tidyr", quietly = TRUE)) {
+#'   tidyr::unnest_longer(series[c("gse", "sra_studies")], "sra_studies")
+#' }
 #' DBI::dbDisconnect(con)
 #' }
 #'

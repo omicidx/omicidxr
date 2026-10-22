@@ -42,7 +42,7 @@ test_that("sra_convert crosses SRA and GEO in both directions", {
 })
 
 test_that("geo_convert maps a series to samples and platforms", {
-  out <- geo_convert(con, "GSE164073")
+  out <- geo_convert(con, in_acc = "GSE164073")
   expect_named(out, c("gse", "gsm", "gpl"))
   expect_equal(nrow(out), 18L)
   expect_equal(unique(out$gpl), "GPL18573")

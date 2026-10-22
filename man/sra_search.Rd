@@ -21,6 +21,9 @@ finds both phrases in that order.}
 \value{
 A tibble of matching studies (\code{sra_search()}: from
 \code{sradb.study}) or series (\code{geo_search()}: from \code{geometadb.gse}).
+In \code{geo_search()} results, \code{type}, \code{bioprojects} and \code{sra_studies}
+are list-columns, since a series can have several of each; use
+\code{tidyr::unnest_longer()} to get one row per value.
 }
 \description{
 Case-insensitive substring search (SQL \code{ILIKE}) over SRA study titles
@@ -32,7 +35,10 @@ not a ranked full-text search.
 \donttest{
 con <- omicidx_connect()
 sra_search(con, "single cell\%glioma", limit = 5)
-geo_search(con, "glioblastoma", limit = 5)
+series <- geo_search(con, "glioblastoma", limit = 5)
+if (requireNamespace("tidyr", quietly = TRUE)) {
+  tidyr::unnest_longer(series[c("gse", "sra_studies")], "sra_studies")
+}
 DBI::dbDisconnect(con)
 }
 

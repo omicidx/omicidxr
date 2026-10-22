@@ -7,17 +7,15 @@
 \usage{
 sra_convert(con, in_acc, out_type = c("study", "sample", "experiment", "run"))
 
-geo_convert(con, in_list, out_type = c("gse", "gpl", "gsm"))
+geo_convert(con, in_acc, out_type = c("gse", "gpl", "gsm"))
 }
 \arguments{
 \item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
 
-\item{in_acc}{character. Accessions to convert.}
+\item{in_acc}{character. Accessions to convert; \code{in_list} in
+\code{GEOmetadb::geoConvert()}.}
 
 \item{out_type}{character. Accession types to return.}
-
-\item{in_list}{character. Accessions to convert, as in
-\code{GEOmetadb::geoConvert()}.}
 }
 \value{
 A tibble with one column per input type present and per

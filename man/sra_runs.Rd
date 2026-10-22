@@ -20,7 +20,8 @@ instrument model and organism.
 \description{
 The runs behind each accession, with the fields needed to choose and
 download them: pass \code{run_accession} to \code{prefetch} or \code{fasterq-dump}
-from the SRA Toolkit.
+from the SRA Toolkit. File URLs, sizes and checksums, as given by
+\code{SRAdb::listSRAfile()}, are out of scope.
 }
 \examples{
 \donttest{

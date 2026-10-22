@@ -123,6 +123,43 @@ geo_search(con, "glioblastoma", limit = 5) |>
   dplyr::select(gse, title)
 ```
 
+### List-columns
+
+Some columns hold several values per row: in `geo_search()` results,
+`type`, `bioprojects` and `sra_studies` are list-columns, as are
+`pubmed_id` and `contributor` in `geometadb.gse`. `tidyr::unnest_longer()`
+gives one row per value. Rows with an empty list, such as series without
+SRA studies, drop out unless you pass `keep_empty = TRUE`:
+
+```{r}
+#| label: list-columns
+geo_search(con, "glioblastoma", limit = 5) |>
+  dplyr::select(gse, sra_studies) |>
+  tidyr::unnest_longer(sra_studies)
+```
+
+## Downloading FASTQs
+
+omicidxr finds runs; the SRA Toolkit downloads them. Write the run
+accessions from `sra_runs()` to a file:
+
+```{r}
+#| label: fastq
+#| eval: false
+runs <- sra_runs(con, "GSE164073")
+writeLines(runs$run_accession, "runs.txt")
+```
+
+then fetch and convert them in a shell:
+
+```sh
+prefetch --option-file runs.txt
+fasterq-dump --split-files SRR13332242
+```
+
+File URLs, sizes and checksums, as given by SRAdb's `listSRAfile()`,
+are out of scope.
+
 ## Migrating from SRAdb and GEOmetadb
 
 SRAdb and GEOmetadb are deprecated. Their SQLite files had to be
@@ -137,9 +174,9 @@ schemas follow their tables, so most code ports by connecting with
 | `dbGetQuery(geo_con, "SELECT * FROM gsm ...")` | `DBI::dbGetQuery(con, "SELECT * FROM geometadb.gsm ...")` |
 | `dbListTables()`, `dbListFields()` | `omicidx_tables(con)`, `omicidx_describe(con, "sradb.run")` |
 | `sraConvert(in_acc, out_type, sra_con)` | `sra_convert(con, in_acc, out_type)` |
-| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_list, out_type)` |
+| `geoConvert(in_list, out_type, geo_con)` | `geo_convert(con, in_acc, out_type)` |
 | `getSRA(search_terms, out_types, sra_con)` | `sra_search(con, query)` |
-| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs |
+| `getSRAinfo()`, `listSRAfile()` | `sra_runs(con, in_acc)`: run accessions for the SRA Toolkit, not file URLs (see Downloading FASTQs) |
 | `characteristics_ch1` parsed by hand | `geo_characteristics(con, gsm)` |
 
 Differences to watch for:
