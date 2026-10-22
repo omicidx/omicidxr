@@ -5,12 +5,10 @@ author:
   email: seandavi@gmail.com
 date: today
 date-format: long
-format:
-  biocstyle-html:
-    embed-resources: true
+format: html
 vignette: >
   %\VignetteIndexEntry{Getting started with omicidxr}
-  %\VignetteEngine{quarto::format}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 knitr:
   opts_chunk:
@@ -34,7 +32,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("omicidxr")
 ```
 
-Until omicidxr is in Bioconductor, `BiocManager::install("omicidx/omicidxr")`
+Until omicidxr is in Bioconductor, `BiocManager::install("seandavi/omicidxr")`
 installs it from GitHub.
 
 # Connecting

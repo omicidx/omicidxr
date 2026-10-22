@@ -3,4 +3,3 @@
 *_files
 
 /.quarto/
-!_extensions/**/*.html
