@@ -1,37 +1,3 @@
-#' Connect to the Omicidx DuckDB Database
-#' 
-#' Establishes a connection to the public Omicidx DuckDB database
-#' hosted on an S3-compatible object store. The database is attached
-#' to a DuckDB instance, which can be either in-memory or backed by
-#' a local file.
-#' 
-#' @param db_path character(1) Path passed to DuckDB as `dbdir`.
-#'  Use `":memory:"` for an in-memory database (default).
-#' 
-#' @return A DuckDB connection object.
-#' @examples
-#' con <- connect_omicidx()
-#' DBI::dbListTables(con)
-#' # or use dplyr
-#' # dplyr::tbl(con, "some_table")
-#'
-#' @importFrom DBI dbConnect dbExecute
-#' @import duckdb
-#' @import dbplyr
-#' @export
-connect_omicidx <- function(db_path = ":memory:") {
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = FALSE)
-  DBI::dbExecute(con, "install httpfs; load httpfs;")
-  DBI::dbExecute(con,
-    "attach 'https://data-omicidx.cancerdatasci.org/duckdb/omicidx.duckdb' as omicidx; 
-    use omicidx;")
-  DBI::dbExecute(con, "SET autoinstall_known_extensions = true;")
-  DBI::dbExecute(con, "SET autoload_known_extensions = true;")
-  return(con)
-}
-
-
-
 #' List Tables in a DuckDB Connection
 #'
 #' Retrieves a list of all tables available in a DuckDB connection,
@@ -42,7 +8,7 @@ connect_omicidx <- function(db_path = ":memory:") {
 #' @importFrom dplyr filter
 #'
 #' @param con A DuckDB database connection object
-#'   created by [connect_omicidx()].
+#'   created by [omicidx_connect()].
 #' @param database A character string specifying the database name to filter by.
 #'   If `NA` (default), all databases are included.
 #' @param schema A character string specifying the schema name to filter by.
@@ -52,7 +18,7 @@ connect_omicidx <- function(db_path = ":memory:") {
 #'   with columns for database, schema, table name, and other metadata.
 #'
 #' @examples
-#' con <- connect_omicidx()
+#' con <- omicidx_connect()
 #' # List all tables
 #' list_tables(con)
 #'
@@ -86,6 +52,7 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' @importFrom DBI dbGetQuery dbExecute dbDisconnect
 #' @importFrom tibble as_tibble
 #' @import duckdb
+#' @import dbplyr
 #' @details 
 #' The `OmicidxClient` class uses R6 to encapsulate
 #' the functionality for connecting to and querying the Omicidx
@@ -106,10 +73,6 @@ list_tables <- function(con, database = NA, schema = NA) {
 #' object store, but the client abstracts away the details of connecting
 #' to the database. The database does not need to be downloaded locally;
 #' the data are also stored in the cloud and queried remotely via DuckDB.
-#' 
-#' If you want to persist the DuckDB instance locally (e.g., to cache
-#' query results), you can provide a local file path when creating
-#' the OmicidxClient object. 
 #' 
 #' @examples
 #' oidx <- OmicidxClient$new()
@@ -157,20 +120,13 @@ OmicidxClient <- R6::R6Class(
     #' Populated during initialization.
     tbls = NULL,
     
-    #' @field db_path The path to the DuckDB database file.
-    #' If `":memory:"`, the database is in-memory.
-    #' 
-    db_path = NULL,
-
     #' @description
     #' Create a new OmicidxClient.
     #' @return A new `OmicidxClient` object.
     #'
-    #' @param db_path character(1) Path passed to DuckDB as `dbdir`.
-    #' The default is to use `":memory:"`.
-    initialize = function(db_path = ":memory:") {
-      self$con <- connect_omicidx(db_path)
-      self$db_path <- db_path
+    #' @param version character(1) OmicIDX release; see [omicidx_connect()].
+    initialize = function(version = "latest") {
+      self$con <- omicidx_connect(version)
       self$tbls <- list()
     },
 

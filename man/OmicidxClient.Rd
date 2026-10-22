@@ -4,11 +4,6 @@
 \alias{OmicidxClient}
 \title{Omicidx DuckDB Client (R6)}
 \description{
-Omicidx DuckDB Client (R6)
-
-Omicidx DuckDB Client (R6)
-}
-\details{
 This is the main class for interacting with the OmicIDX data resource.
 It provides methods for connecting to the Omicidx DuckDB database,
 listing tables, retrieving \code{dplyr} table references,
@@ -34,10 +29,6 @@ The underlying DuckDB database is actually stored on an S3-compatible
 object store, but the client abstracts away the details of connecting
 to the database. The database does not need to be downloaded locally;
 the data are also stored in the cloud and queried remotely via DuckDB.
-
-If you want to persist the DuckDB instance locally (e.g., to cache
-query results), you can provide a local file path when creating
-the OmicidxClient object.
 }
 \examples{
 oidx <- OmicidxClient$new()
@@ -76,213 +67,225 @@ head(geo_series_by_year_df)
 
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{con}}{A DuckDB connection object.}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{con}}{A DuckDB connection object.}
 
-\item{\code{tbls}}{A named list of lazy \code{dplyr} table references.
+    \item{\code{tbls}}{A named list of lazy \code{dplyr} table references.
 Populated during initialization.}
-
-\item{\code{db_path}}{The path to the DuckDB database file.
-If \code{":memory:"}, the database is in-memory.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-OmicidxClient-new}{\code{OmicidxClient$new()}}
-\item \href{#method-OmicidxClient-connection}{\code{OmicidxClient$connection()}}
-\item \href{#method-OmicidxClient-list_tables}{\code{OmicidxClient$list_tables()}}
-\item \href{#method-OmicidxClient-table_names}{\code{OmicidxClient$table_names()}}
-\item \href{#method-OmicidxClient-tbl}{\code{OmicidxClient$tbl()}}
-\item \href{#method-OmicidxClient-query}{\code{OmicidxClient$query()}}
-\item \href{#method-OmicidxClient-describe_table}{\code{OmicidxClient$describe_table()}}
-\item \href{#method-OmicidxClient-execute}{\code{OmicidxClient$execute()}}
-\item \href{#method-OmicidxClient-clone}{\code{OmicidxClient$clone()}}
-}
+  \itemize{
+    \item \href{#method-OmicidxClient-initialize}{\code{OmicidxClient$new()}}
+    \item \href{#method-OmicidxClient-connection}{\code{OmicidxClient$connection()}}
+    \item \href{#method-OmicidxClient-list_tables}{\code{OmicidxClient$list_tables()}}
+    \item \href{#method-OmicidxClient-table_names}{\code{OmicidxClient$table_names()}}
+    \item \href{#method-OmicidxClient-tbl}{\code{OmicidxClient$tbl()}}
+    \item \href{#method-OmicidxClient-query}{\code{OmicidxClient$query()}}
+    \item \href{#method-OmicidxClient-describe_table}{\code{OmicidxClient$describe_table()}}
+    \item \href{#method-OmicidxClient-execute}{\code{OmicidxClient$execute()}}
+    \item \href{#method-OmicidxClient-clone}{\code{OmicidxClient$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OmicidxClient-new"></a>}}
-\if{latex}{\out{\hypertarget{method-OmicidxClient-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new OmicidxClient.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$new(db_path = ":memory:")}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-OmicidxClient-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-OmicidxClient-initialize}{}}}
+\subsection{\code{OmicidxClient$new()}}{
+  Create a new OmicidxClient.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$new(version = "latest")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{version}}{character(1) OmicIDX release; see \code{\link[=omicidx_connect]{omicidx_connect()}}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{OmicidxClient} object.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{db_path}}{character(1) Path passed to DuckDB as \code{dbdir}.
-The default is to use \code{":memory:"}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new \code{OmicidxClient} object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-connection"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-connection}{}}}
-\subsection{Method \code{connection()}}{
-Get the underlying DuckDB connection.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$connection()}\if{html}{\out{</div>}}
+\subsection{\code{OmicidxClient$connection()}}{
+  Get the underlying DuckDB connection.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$connection()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A DuckDB connection object.
+  }
 }
 
-\subsection{Returns}{
-A DuckDB connection object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-list_tables"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-list_tables}{}}}
-\subsection{Method \code{list_tables()}}{
-List tables in the Omicidx database.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$list_tables(schema = NA, database = NA)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{schema}}{character(1) Schema name to filter by. Use \code{NA} (default)
+\subsection{\code{OmicidxClient$list_tables()}}{
+  List tables in the Omicidx database.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$list_tables(schema = NA, database = NA)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{schema}}{character(1) Schema name to filter by. Use \code{NA} (default)
 for all schemas.}
-
-\item{\code{database}}{character(1) Database name to filter by. Use \code{NA}
+      \item{\code{database}}{character(1) Database name to filter by. Use \code{NA}
 (default) for all databases.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A tibble containing information about tables in the database.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A tibble containing information about tables in the database.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-table_names"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-table_names}{}}}
-\subsection{Method \code{table_names()}}{
-Get fully qualified table names as a named character vector.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$table_names(schema = NA, database = NA)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{schema}}{character(1) Schema name to filter by. Use \code{NA} (default)
+\subsection{\code{OmicidxClient$table_names()}}{
+  Get fully qualified table names as a named character vector.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$table_names(schema = NA, database = NA)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{schema}}{character(1) Schema name to filter by. Use \code{NA} (default)
 for all schemas.}
-
-\item{\code{database}}{character(1) Database name to filter by. Use \code{NA}
+      \item{\code{database}}{character(1) Database name to filter by. Use \code{NA}
 (default) for all databases.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A named character vector of fully qualified table names.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A named character vector of fully qualified table names.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-tbl"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-tbl}{}}}
-\subsection{Method \code{tbl()}}{
-Get a \code{dplyr} table reference for a specific table.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$tbl(table_name)}\if{html}{\out{</div>}}
+\subsection{\code{OmicidxClient$tbl()}}{
+  Get a \code{dplyr} table reference for a specific table.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$tbl(table_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{table_name}}{character(1) A table name (optionally schema-qualified)
+to reference.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{dplyr} table reference.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{table_name}}{character(1) A table name (optionally schema-qualified)
-to reference.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{dplyr} table reference.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-query"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-query}{}}}
-\subsection{Method \code{query()}}{
-Execute an arbitrary SQL query (as a string) against the database.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$query(sql)}\if{html}{\out{</div>}}
+\subsection{\code{OmicidxClient$query()}}{
+  Execute an arbitrary SQL query (as a string) against the database.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$query(sql)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{sql}}{character(1) A SQL string to execute via \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A data frame containing the query result.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sql}}{character(1) A SQL string to execute via \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A data frame containing the query result.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-describe_table"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-describe_table}{}}}
-\subsection{Method \code{describe_table()}}{
-Describe the schema of a specific table
+\subsection{\code{OmicidxClient$describe_table()}}{
+  Describe the schema of a specific table
 using the duckdb DESCRIBE command.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$describe_table(table_name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{table_name}}{character(1) A table name
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$describe_table(table_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{table_name}}{character(1) A table name
 (optionally schema-qualified)
 to describe.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A data frame containing the table schema.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A data frame containing the table schema.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-execute"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-execute}{}}}
-\subsection{Method \code{execute()}}{
-Execute a SQL command against the database.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$execute(sql)}\if{html}{\out{</div>}}
+\subsection{\code{OmicidxClient$execute()}}{
+  Execute a SQL command against the database.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$execute(sql)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{sql}}{character(1) A SQL string to execute via \code{\link[DBI:dbExecute]{DBI::dbExecute()}}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An integer indicating the number of rows affected.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{sql}}{character(1) A SQL string to execute via \code{\link[DBI:dbExecute]{DBI::dbExecute()}}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An integer indicating the number of rows affected.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-OmicidxClient-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-OmicidxClient-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OmicidxClient$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{OmicidxClient$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{OmicidxClient$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

@@ -8,7 +8,7 @@ list_tables(con, database = NA, schema = NA)
 }
 \arguments{
 \item{con}{A DuckDB database connection object
-created by \code{\link[=connect_omicidx]{connect_omicidx()}}.}
+created by \code{\link[=omicidx_connect]{omicidx_connect()}}.}
 
 \item{database}{A character string specifying the database name to filter by.
 If \code{NA} (default), all databases are included.}
@@ -25,7 +25,7 @@ Retrieves a list of all tables available in a DuckDB connection,
 with optional filtering by database and/or schema.
 }
 \examples{
-con <- connect_omicidx()
+con <- omicidx_connect()
 # List all tables
 list_tables(con)
 
