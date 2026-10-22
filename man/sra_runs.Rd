@@ -7,9 +7,12 @@
 sra_runs(con, in_acc)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}}.}
 
-\item{in_acc}{character. Accessions of any type \code{\link[=sra_convert]{sra_convert()}}
+\item{in_acc}{character. Accessions of any type
+\code{\link[=sra_convert]{sra_convert()}}
 supports, for example studies, experiments or GSEs.}
 }
 \value{
@@ -19,14 +22,14 @@ instrument model and organism.
 }
 \description{
 The runs behind each accession, with the fields needed to choose and
-download them: pass \code{run_accession} to \code{prefetch} or \code{fasterq-dump}
-from the SRA Toolkit.
+download them: pass \code{run_accession} to \code{prefetch} or
+\code{fasterq-dump}
+from the SRA Toolkit. File URLs, sizes and checksums, as given by
+\code{SRAdb::listSRAfile()}, are out of scope.
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 sra_runs(con, "SRP000001")
 DBI::dbDisconnect(con)
-}
 
 }

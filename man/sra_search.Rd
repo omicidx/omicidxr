@@ -10,7 +10,9 @@ sra_search(con, query, limit = 100L)
 geo_search(con, query, limit = 100L)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}}.}
 
 \item{query}{character(1). Text to find. \verb{\%} matches any run of
 characters and \verb{_} any single character, so \code{"single cell\%glioma"}
@@ -21,6 +23,10 @@ finds both phrases in that order.}
 \value{
 A tibble of matching studies (\code{sra_search()}: from
 \code{sradb.study}) or series (\code{geo_search()}: from \code{geometadb.gse}).
+In \code{geo_search()} results, \code{type}, \code{bioprojects} and
+\code{sra_studies}
+are list-columns, since a series can have several of each; use
+\code{tidyr::unnest_longer()} to get one row per value.
 }
 \description{
 Case-insensitive substring search (SQL \code{ILIKE}) over SRA study titles
@@ -29,11 +35,12 @@ and abstracts, or GEO series titles and summaries. The successor to
 not a ranked full-text search.
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 sra_search(con, "single cell\%glioma", limit = 5)
-geo_search(con, "glioblastoma", limit = 5)
-DBI::dbDisconnect(con)
+series <- geo_search(con, "glioblastoma", limit = 5)
+if (requireNamespace("tidyr", quietly = TRUE)) {
+    tidyr::unnest_longer(series[c("gse", "sra_studies")], "sra_studies")
 }
+DBI::dbDisconnect(con)
 
 }

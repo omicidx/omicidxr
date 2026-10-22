@@ -13,6 +13,8 @@ omicidx_connect(version = "latest")
 \value{
 A DuckDB \link[DBI:DBIConnection-class]{DBI::DBIConnection}. Close it with
 \code{\link[DBI:dbDisconnect]{DBI::dbDisconnect()}}.
+\code{\link[=omicidx_release]{omicidx_release()}} tells which release it is
+connected to.
 }
 \description{
 Opens an in-memory DuckDB database and makes an OmicIDX release
@@ -22,8 +24,9 @@ groups they need.
 }
 \details{
 After connecting, tables are referenced as \code{schema.table}, for
-example \code{sradb.study} or \code{geometadb.gsm}. Use \code{\link[=omicidx_tables]{omicidx_tables()}} to
-list them and \code{\link[=omicidx_db]{omicidx_db()}} for tab-completable \code{dplyr} tables.
+example \code{sradb.study} or \code{geometadb.gsm}. Use
+\code{\link[=omicidx_tables]{omicidx_tables()}} to list them and
+\code{\link[=omicidx_db]{omicidx_db()}} for tab-completable \code{dplyr} tables.
 }
 \section{Versions}{
 
@@ -40,15 +43,15 @@ creates the views. HuggingFace limits anonymous requests (3000 per
 use can fail with HTTP 429 until the window resets.
 }
 
-Requests carry the User-Agent \verb{omicidxr/<package version>}. The
-connection ignores any DuckDB secrets persisted in \verb{~/.duckdb}.
+Requests carry the User-Agent \verb{omicidxr/<package version>}. DuckDB
+extensions (\code{httpfs}, \code{json}) are downloaded once and cached in
+\code{tools::R_user_dir("omicidxr", "cache")}. The connection neither uses
+\verb{~/.duckdb} nor reads DuckDB secrets persisted there.
 }
 
 \examples{
-\donttest{
 con <- omicidx_connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
 DBI::dbDisconnect(con)
-}
 
 }

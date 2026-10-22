@@ -26,26 +26,18 @@ Metadata coverage of over 40 million SRA experiments, 8 million GEO samples, and
 
 ## 📦 Installation
 
-You can install the development version of omicidxr from GitHub:
+Install the development version from GitHub with `pak`:
 
 ``` r
-# install.packages("pak")
+install.packages("pak")
 pak::pak("omicidx/omicidxr")
 ```
 
-Or using `remotes`:
-
-``` r
-# install.packages("remotes")
-remotes::install_github("omicidx/omicidxr")
-```
-
-or using 'BiocManager':
-
-``` r
-# install.packages("BiocManager")
-BiocManager::install("omicidx/omicidxr")
-```
+omicidxr needs the `duckdb` package. CRAN has `duckdb` binaries for
+Windows and macOS; on Linux it compiles from source, which can take
+20 minutes or more, unless your repository serves Linux binaries (for
+example [Posit Public Package
+Manager](https://packagemanager.posit.co/)).
 
 ## 🚀 Quick Start
 
@@ -97,6 +89,7 @@ con <- attr(db, "con")     # the DBI connection behind it
 
 ``` r
 con <- omicidx_connect("2026-10")
+omicidx_release(con)$publish_date   # also transform_sha, lake_snapshot_id
 ```
 
 Connecting to a monthly release takes about 30 seconds, since DuckDB
@@ -110,6 +103,7 @@ minutes.
 | Function | Description |
 |----------|-------------|
 | `omicidx_connect(version)` | Connect to an OmicIDX release; returns a DuckDB DBI connection |
+| `omicidx_release(con)` | The release a connection is on: version, publish date, build provenance, row counts |
 | `omicidx_db(con)` | Lazy `dplyr` tables, nested by schema, for tab-completion |
 | `omicidx_tables(con)` | List the tables in a connection |
 | `omicidx_describe(con, table)` | Column names and types of a table |
@@ -119,8 +113,8 @@ minutes.
 | Function | Description | Replaces |
 |----------|-------------|----------|
 | `sra_convert(con, in_acc, out_type)` | Convert between SRA, GEO, BioSample and BioProject accessions | `SRAdb::sraConvert()` |
-| `geo_convert(con, in_list, out_type)` | The same, defaulting to GEO output types | `GEOmetadb::geoConvert()` |
-| `sra_runs(con, in_acc)` | Runs, with download fields, for studies, experiments, samples or GSEs | `SRAdb::getSRAinfo()`; `listSRAfile()` (gives run accessions for the SRA Toolkit, not file URLs) |
+| `geo_convert(con, in_acc, out_type)` | The same, defaulting to GEO output types | `GEOmetadb::geoConvert()` |
+| `sra_runs(con, in_acc)` | Runs, with download fields, for studies, experiments, samples or GSEs | `SRAdb::getSRAinfo()`; `listSRAfile()` (gives run accessions for the SRA Toolkit's `prefetch`/`fasterq-dump`; file URLs are out of scope) |
 | `geo_samples(con, gse)` | Samples and platforms of GEO series | joins of `gse_gsm`, `gsm`, `gpl` |
 | `geo_characteristics(con, gsm)` | Sample characteristics as tag/value rows | parsing `characteristics_ch1` |
 | `sra_search(con, query)`, `geo_search(con, query)` | `ILIKE` search of study and series titles and abstracts | `SRAdb::getSRA()` |

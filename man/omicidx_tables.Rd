@@ -7,8 +7,9 @@
 omicidx_tables(con)
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or an \code{\link[=omicidx_db]{omicidx_db()}}
-object.}
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or an
+\code{\link[=omicidx_db]{omicidx_db()}} object.}
 }
 \value{
 A tibble with columns \code{schema}, \code{table} and \code{type} (\code{"VIEW"}
@@ -18,10 +19,8 @@ or \code{"BASE TABLE"}), one row per table.
 List the tables in an OmicIDX connection
 }
 \examples{
-\donttest{
 con <- omicidx_connect()
 omicidx_tables(con)
 DBI::dbDisconnect(con)
-}
 
 }

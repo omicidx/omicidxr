@@ -7,7 +7,8 @@
 omicidx_db(con = NULL, version = "latest")
 }
 \arguments{
-\item{con}{A connection from \code{\link[=omicidx_connect]{omicidx_connect()}}, or a version
+\item{con}{A connection from
+\code{\link[=omicidx_connect]{omicidx_connect()}}, or a version
 string to open a new one. Defaults to \code{version}.}
 
 \item{version}{character(1). Release to connect to when \code{con} is
@@ -16,25 +17,24 @@ string to open a new one. Defaults to \code{version}.}
 \value{
 An \code{omicidx_db} object: a named list with one element per
 schema, each an environment of lazy tables. The connection is
-available as \code{attr(db, "con")}, and the release manifest (with row
-counts), when available, as \code{attr(db, "manifest")}. All omicidxr
-helpers accept an \code{omicidx_db} in place of a connection.
+available as \code{attr(db, "con")}, and its release, with row counts,
+as \code{omicidx_release(db)}. All omicidxr helpers accept an
+\code{omicidx_db} in place of a connection.
 }
 \description{
 Returns every table in the release as a lazy \code{dplyr} table, nested
 by schema, so that \verb{db$sradb$<TAB>} completes table names. Each
 table is built the first time it is accessed, and no data are read
-until a query is run (for example with \code{\link[dplyr:collect]{dplyr::collect()}}).
+until a query is run (for example with
+\code{\link[dplyr:collect]{dplyr::collect()}}).
 }
 \examples{
-\donttest{
 db <- omicidx_db()
 db
 db$sradb$study |>
-  dplyr::count(study_type, sort = TRUE) |>
-  head() |>
-  dplyr::collect()
+    dplyr::count(study_type, sort = TRUE) |>
+    head() |>
+    dplyr::collect()
 DBI::dbDisconnect(attr(db, "con"))
-}
 
 }
