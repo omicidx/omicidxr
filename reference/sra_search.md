@@ -59,13 +59,10 @@ series <- geo_search(con, "glioblastoma", limit = 5)
 if (requireNamespace("tidyr", quietly = TRUE)) {
     tidyr::unnest_longer(series[c("gse", "sra_studies")], "sra_studies")
 }
-#> # A tibble: 5 × 2
+#> # A tibble: 2 × 2
 #>   gse       sra_studies
 #>   <chr>     <chr>      
-#> 1 GSE95386  SRP100743  
-#> 2 GSE96682  SRP101987  
-#> 3 GSE99180  SRP107791  
-#> 4 GSE165286 SRP302777  
-#> 5 GSE86511  SRP087437  
+#> 1 GSE102136 SRP114556  
+#> 2 GSE108013 SRP126639  
 DBI::dbDisconnect(con)
 ```

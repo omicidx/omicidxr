@@ -1,4 +1,14 @@
+# 
+
 # Getting started with omicidxr
+
+Author
+
+Sean Davis [](mailto:seandavi@gmail.com)
+
+Published
+
+October 22, 2026
 
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those
@@ -211,10 +221,10 @@ sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
 #> # A tibble: 4 × 5
 #>   study     experiment run         gse       gsm       
 #>   <chr>     <chr>      <chr>       <chr>     <chr>     
-#> 1 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
-#> 2 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
-#> 3 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
-#> 4 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 1 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
+#> 2 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
+#> 3 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 4 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
 ```
 
 The samples and platform of a GEO series, and the characteristics of its
@@ -414,22 +424,16 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] omicidxr_0.99.0  BiocStyle_2.40.0
+#> [1] omicidxr_0.99.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] jsonlite_2.0.0      dplyr_1.2.1         compiler_4.6.1     
-#>  [4] BiocManager_1.30.27 tidyselect_1.2.1    blob_1.3.0         
-#>  [7] tidyr_1.3.2         jquerylib_0.1.4     systemfonts_1.3.2  
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
-#> [13] R6_2.6.1            generics_0.1.4      knitr_1.52         
-#> [16] tibble_3.3.1        bookdown_0.48       desc_1.4.3         
-#> [19] DBI_1.3.0           bslib_0.12.0        pillar_1.11.1      
-#> [22] rlang_1.3.0         utf8_1.2.6          cachem_1.1.0       
-#> [25] xfun_0.62           fs_2.1.0            sass_0.4.10        
-#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
-#> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
-#> [34] dbplyr_2.6.0        lifecycle_1.0.5     vctrs_0.7.3        
-#> [37] evaluate_1.0.5      glue_1.8.1          duckdb_1.5.6       
-#> [40] ragg_1.5.2          rmarkdown_2.32      purrr_1.2.2        
-#> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
+#>  [1] vctrs_0.7.3      cli_3.6.6        knitr_1.52       rlang_1.3.0     
+#>  [5] xfun_0.62        DBI_1.3.0        otel_0.2.0       purrr_1.2.2     
+#>  [9] generics_0.1.4   jsonlite_2.0.0   glue_1.8.1       dbplyr_2.6.0    
+#> [13] htmltools_0.5.9  rmarkdown_2.32   evaluate_1.0.5   tibble_3.3.1    
+#> [17] fastmap_1.2.0    yaml_2.3.12      lifecycle_1.0.5  duckdb_1.5.6    
+#> [21] compiler_4.6.1   dplyr_1.2.1      blob_1.3.0       pkgconfig_2.0.3 
+#> [25] tidyr_1.3.2      digest_0.6.39    R6_2.6.1         utf8_1.2.6      
+#> [29] tidyselect_1.2.1 pillar_1.11.1    magrittr_2.0.5   withr_3.0.3     
+#> [33] tools_4.6.1
 ```
