@@ -16,6 +16,8 @@ knitr:
     comment: "#>"
 ---
 
+# Introduction
+
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those files,
 so you can query tens of millions of records with SQL or `dplyr` without
@@ -41,15 +43,31 @@ installs it from GitHub.
 `version` argument picks the release: `"latest"` (the nightly build, the
 default), a dated nightly build `"YYYY-MM-DD"` (kept for 30 days), or a
 monthly release `"YYYY-MM"`, which is kept long term and is the one to
-cite. This vignette pins the October 2026 monthly release so its results
-are reproducible.
+cite. This vignette uses `"latest"`, so its output changes as the
+databases grow.
 
 ```{r}
 #| label: connect
 #| message: false
 library(omicidxr)
 
-con <- omicidx_connect("2026-10")
+con <- omicidx_connect()
+```
+
+Query `"latest"` and dated builds in place. Monthly releases live on
+HuggingFace, which rate-limits requests, so copy one to a local DuckDB
+file and query that; setting `HF_TOKEN` to a HuggingFace access token
+raises the limit. A whole release is about 75 GB of Parquet, and the
+DuckDB file several times larger, so copy only the tables you need,
+here the `sradb` marts:
+
+```{r}
+#| label: download
+#| eval: false
+path <- omicidx_download(
+    "2026-10", "omicidx-sradb-2026-10.duckdb", tables = "sradb"
+)
+local_con <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
 ```
 
 `omicidx_release()` reports which release a connection is on, with the
@@ -61,9 +79,10 @@ release <- omicidx_release(con)
 release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
 ```
 
-To cite OmicIDX, cite the DOI of the monthly release you used, listed on
-the [HuggingFace dataset page](https://huggingface.co/datasets/seandavis/omicidx)
-for its tag, and state the tag (`2026-10`).
+To cite OmicIDX, cite the DOI of the monthly release you used, listed
+for its tag on the
+[HuggingFace dataset page](https://huggingface.co/datasets/seandavis/omicidx),
+and state the tag, such as `2026-10`.
 
 # What is in a release
 
@@ -234,8 +253,8 @@ Differences to watch for:
     such as `gse.pubmed_id` are lists.
 - `sra_search()` is a case-insensitive pattern match, not SQLite
     full-text search.
-- Pin a monthly release, as this vignette does, where SRAdb code pinned
-    a SQLite file.
+- Download a monthly release with `omicidx_download()` where SRAdb code
+    pinned a SQLite file.
 
 # Disconnecting
 

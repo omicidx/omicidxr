@@ -12,6 +12,8 @@ permissions: read-all
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+    # A stalled network read must not hold a runner for hours (#16).
+    timeout-minutes: 45
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
@@ -65,6 +67,7 @@ jobs:
 
   BiocCheck:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
