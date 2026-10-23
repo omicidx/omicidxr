@@ -35,7 +35,7 @@ example \code{sradb.study} or \code{geometadb.gsm}. Use
 \verb{https://omicidx.cancerdatasci.org/data/latest/}.
 \item \code{"YYYY-MM-DD"}: a dated nightly build, kept for 30 days.
 \item \code{"YYYY-MM"}: a monthly release on HuggingFace
-(\code{omicidx/omicidx@YYYY-MM}). Monthly releases are kept long term
+(\code{seandavis/omicidx@YYYY-MM}). Monthly releases are kept long term
 and are the version to cite. Connecting takes longer (about 30
 seconds) because DuckDB inspects every Parquet file while it
 creates the views. HuggingFace limits anonymous requests (3000 per
