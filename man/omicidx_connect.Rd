@@ -36,12 +36,41 @@ example \code{sradb.study} or \code{geometadb.gsm}. Use
 \item \code{"YYYY-MM-DD"}: a dated nightly build, kept for 30 days.
 \item \code{"YYYY-MM"}: a monthly release on HuggingFace
 (\code{seandavis/omicidx@YYYY-MM}). Monthly releases are kept long term
-and are the version to cite. Connecting takes longer (about 30
-seconds) because DuckDB inspects every Parquet file while it
-creates the views. HuggingFace limits anonymous requests (3000 per
-5 minutes per IP address) and one query can make hundreds, so heavy
-use can fail with HTTP 429 until the window resets.
+and are the version to cite.
 }
+
+Query \code{"latest"} and dated builds in place: they are served without
+rate limits. Treat monthly releases as the archive: copy one with
+\code{omicidx_download("YYYY-MM", path)} and query the local file.
+Connecting to a monthly release in place works, but takes about 30
+seconds (DuckDB inspects every Parquet file while it creates the
+views) and runs into HuggingFace's rate limits.
+}
+
+\section{HuggingFace rate limits}{
+
+HuggingFace allows 3000 anonymous requests per 5 minutes per IP
+address, and connecting to a monthly release or running one query can
+make hundreds, so heavy use, or a shared IP address, fails with HTTP
+429 (Too Many Requests) until the window resets. To avoid it:
+\itemize{
+\item Download the release with
+\code{\link[=omicidx_download]{omicidx_download()}}, which waits
+out the limit, and query the local copy.
+\item Set the environment variable \code{HF_TOKEN} to a HuggingFace access
+token, which raises the limit to that of a signed-in user.
+\item Within 30 days of a monthly release, connect to the dated build it
+was published from (\code{omicidx_release(con)$publish_date}), which
+holds the same data.
+}
+}
+
+\section{Timeouts}{
+
+Each HTTP request times out after 30 seconds and is retried up to 4
+times, after waits of 0, 1, 4 and 16 seconds, which also rides out a
+brief HTTP 429. If connecting still fails, \code{omicidx_connect()} stops
+with an error naming the release URL.
 
 Requests carry the User-Agent \verb{omicidxr/<package version>}. DuckDB
 extensions (\code{httpfs}, \code{json}) are downloaded once and cached in

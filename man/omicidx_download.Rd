@@ -4,13 +4,18 @@
 \alias{omicidx_download}
 \title{Download an OmicIDX release into a local DuckDB file}
 \usage{
-omicidx_download(version = "latest", path)
+omicidx_download(version = "latest", path, tables = NULL)
 }
 \arguments{
 \item{version}{character(1). \code{"latest"} (default), a date
 \code{"YYYY-MM-DD"} or a month \code{"YYYY-MM"}. See the Versions section.}
 
 \item{path}{character(1). The DuckDB file to create. It must not exist.}
+
+\item{tables}{character. The tables to copy, as \code{"schema.table"} (for
+example \code{"sradb.study"} or \code{"main.sra_runs"}) or whole schemas (for
+example \code{"sradb"}). \code{NULL} (default) copies every table.
+\code{\link[=omicidx_tables]{omicidx_tables()}} lists them.}
 }
 \value{
 \code{path}, invisibly. Open it with
@@ -18,20 +23,31 @@ omicidx_download(version = "latest", path)
 for example \code{sradb.study}.
 }
 \description{
-Copies every table of a release into a new DuckDB database file, so it
+Copies the tables of a release into a new DuckDB database file, so they
 can be queried offline and at local-disk speed. The copy is checked
 against the row counts in the release's \code{manifest.json}. This is the R
 counterpart of the \code{restore.sql} published with each nightly build.
 }
 \details{
-A full release is large (tens of GB) and takes a while to copy.
+A full release is large: about 75 GB of Parquet, which becomes a DuckDB
+file about 5 times that size (400 GB for \code{"2026-10"}), and took about
+an hour to copy. Pass \code{tables} to copy only what you need,
+such as the \code{"sradb"} or \code{"geometadb"} marts. Before copying,
+\code{omicidx_download()} reports the size of the Parquet it will read.
+
+Tables are copied one at a time. Copying a monthly release makes tens
+of thousands of requests to HuggingFace, more than its rate limit
+allows in 5 minutes (see
+\code{\link[=omicidx_connect]{omicidx_connect()}}), so each request is
+retried for up to 6 minutes and the copy pauses while the limit
+resets. Setting \code{HF_TOKEN} raises the limit.
 }
 \examples{
-\dontrun{
-path <- omicidx_download("2026-10", "omicidx-2026-10.duckdb")
+path <- omicidx_download(
+    "latest", tempfile(fileext = ".duckdb"), tables = "geometadb.gpl"
+)
 con <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
-DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
+DBI::dbGetQuery(con, "SELECT count(*) AS n FROM geometadb.gpl")
 DBI::dbDisconnect(con)
-}
 
 }

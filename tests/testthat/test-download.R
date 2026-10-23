@@ -49,23 +49,54 @@ test_that("copy_release fails and removes the file on a row-count mismatch", {
     expect_false(file.exists(path))
 })
 
+test_that("select_tables picks tables by name or schema", {
+    all <- tibble::tibble(
+        schema = c("main", "sradb", "sradb"),
+        table = c("sra_runs", "study", "run")
+    )
+    expect_identical(select_tables(all, NULL), all)
+    expect_equal(select_tables(all, "sradb")$table, c("study", "run"))
+    expect_equal(
+        select_tables(all, c("main.sra_runs", "sradb.run"))$table,
+        c("sra_runs", "run")
+    )
+    expect_error(select_tables(all, c("sra_runs", "geometadb")),
+        "Not tables or schemas of this release: sra_runs, geometadb"
+    )
+})
+
+test_that("parquet_bytes sums the Parquet files behind the views", {
+    dir <- tempfile()
+    dir.create(dir)
+    con <- fake_release(dir)
+    on.exit(DBI::dbDisconnect(con))
+    tables <- omicidx_tables(con)
+    files <- file.path(dir, c("sra_runs.parquet", "sradb.study.parquet"))
+    one <- parquet_bytes(con, tables[tables$table == "study", ])
+    expect_gt(one, 0)
+    expect_lte(one, file.size(files[2]))
+    expect_equal(parquet_bytes(con, tables), 2 * one)
+})
+
 test_that("omicidx_download refuses to overwrite a file", {
     path <- tempfile()
     file.create(path)
     expect_error(omicidx_download("latest", path), "already exists")
 })
 
-test_that("copy_release copies tables of the latest release", {
+test_that("omicidx_download copies chosen tables of the latest release", {
     skip_on_cran()
     skip_if_offline()
-    con <- omicidx_connect()
-    on.exit(DBI::dbDisconnect(con))
     path <- tempfile(fileext = ".duckdb")
-    small <- omicidx_tables(con)
-    small <- small[small$table %in% c("geo_platforms", "gpl"), ]
-    suppressMessages(copy_release(con, path, small))
+    expect_message(
+        omicidx_download(
+            "latest", path, tables = c("geometadb.gpl", "main.geo_platforms")
+        ),
+        "Copying 2 tables, about [0-9.]+ GB of Parquet"
+    )
     local <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
-    on.exit(DBI::dbDisconnect(local), add = TRUE)
+    on.exit(DBI::dbDisconnect(local))
+    expect_equal(nrow(omicidx_tables(local)), 2L)
     n <- DBI::dbGetQuery(local, "SELECT count(*) AS n FROM geometadb.gpl")$n
     expect_gt(n, 0)
 })

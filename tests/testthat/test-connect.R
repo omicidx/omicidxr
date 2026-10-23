@@ -51,9 +51,9 @@ test_that("omicidx_release reads the manifest of each kind of release", {
         omicidx_release_url(latest$publish_date)
     )
     expect_equal(dated$transform_sha, latest$transform_sha)
-    monthly <- read_release(con, "2026-10", omicidx_release_url("2026-10"))
-    expect_equal(monthly$publish_date, "2026-10-20")
-    missing <- read_release(con, "2000-01", omicidx_release_url("2000-01"))
+    missing <- read_release(
+        con, "2000-01-01", omicidx_release_url("2000-01-01")
+    )
     expect_true(is.na(missing$publish_date))
     expect_null(missing$tables)
 })
@@ -62,5 +62,34 @@ test_that("omicidx_connect explains an aged-out dated release", {
     skip_on_cran()
     skip_if_offline()
     expect_error(omicidx_connect("2000-01-01"), "monthly release")
-    expect_error(omicidx_connect("2000-01"), "not found")
+})
+
+test_that("stop_release_error names the URL and suggests what to do", {
+    err <- function(msg, version = "2026-10-01") {
+        tryCatch(
+            stop_release_error(version, "https://x/", simpleError(msg)),
+            error = conditionMessage
+        )
+    }
+    expect_match(err("HTTP 429 Too Many Requests"), "at https://x/")
+    expect_match(err("HTTP 429 Too Many Requests"), "HF_TOKEN")
+    expect_match(err("HTTP 404 Not Found"), "omicidx_download")
+    expect_no_match(err("HTTP 404 Not Found", "2026-10"), "omicidx_download")
+    expect_no_match(err("timed out"), "HF_TOKEN|omicidx_download")
+})
+
+# HuggingFace rate-limits anonymous requests, so monthly releases are only
+# tested with a token, never on CI or Bioconductor builders.
+test_that("monthly releases on HuggingFace connect with HF_TOKEN", {
+    skip_on_cran()
+    skip_if(!nzchar(Sys.getenv("HF_TOKEN")), "HF_TOKEN is not set")
+    con <- omicidx_connect("2026-10")
+    on.exit(DBI::dbDisconnect(con))
+    expect_equal(omicidx_release(con)$publish_date, "2026-10-20")
+    secrets <- DBI::dbGetQuery(con, "SELECT name FROM duckdb_secrets()")
+    expect_true("omicidx_hf" %in% secrets$name)
+    expect_gt(
+        DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")$n, 0
+    )
+    expect_error(omicidx_connect("2000-01"), "404")
 })
