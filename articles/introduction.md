@@ -1,5 +1,7 @@
 # Getting started with omicidxr
 
+## Introduction
+
 OmicIDX collects metadata from SRA, GEO, BioSample and BioProject and
 publishes it as Parquet files. `omicidxr` connects DuckDB to those
 files, so you can query tens of millions of records with SQL or `dplyr`
@@ -25,14 +27,28 @@ returns an ordinary DuckDB DBI connection. The `version` argument picks
 the release: `"latest"` (the nightly build, the default), a dated
 nightly build `"YYYY-MM-DD"` (kept for 30 days), or a monthly release
 `"YYYY-MM"`, which is kept long term and is the one to cite. This
-vignette pins the October 2026 monthly release so its results are
-reproducible.
+vignette uses `"latest"`, so its output changes as the databases grow.
 
 ``` r
 
 library(omicidxr)
 
-con <- omicidx_connect("2026-10")
+con <- omicidx_connect()
+```
+
+Query `"latest"` and dated builds in place. Monthly releases live on
+HuggingFace, which rate-limits requests, so copy one to a local DuckDB
+file and query that; setting `HF_TOKEN` to a HuggingFace access token
+raises the limit. A whole release is about 75 GB of Parquet, and the
+DuckDB file several times larger, so copy only the tables you need, here
+the `sradb` marts:
+
+``` r
+
+path <- omicidx_download(
+    "2026-10", "omicidx-sradb-2026-10.duckdb", tables = "sradb"
+)
+local_con <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
 ```
 
 [`omicidx_release()`](https://seandavi.github.io/omicidxr/reference/omicidx_release.md)
@@ -44,42 +60,42 @@ release’s `manifest.json`:
 release <- omicidx_release(con)
 release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
 #> $version
-#> [1] "2026-10"
+#> [1] "latest"
 #> 
 #> $publish_date
-#> [1] "2026-10-20"
+#> [1] "2026-10-23"
 #> 
 #> $transform_sha
-#> [1] "90688e92966330aac9ecd5a4fb8dc1d126f7982f"
+#> [1] "2a999e937697b61bfdb3294de36582dd1cc5ab1f"
 #> 
 #> $lake_snapshot_id
-#> [1] 4171
+#> [1] 4239
 ```
 
-To cite OmicIDX, cite the DOI of the monthly release you used, listed on
-the [HuggingFace dataset
-page](https://huggingface.co/datasets/seandavis/omicidx) for its tag,
-and state the tag (`2026-10`).
+To cite OmicIDX, cite the DOI of the monthly release you used, listed
+for its tag on the [HuggingFace dataset
+page](https://huggingface.co/datasets/seandavis/omicidx), and state the
+tag, such as `2026-10`.
 
 ## What is in a release
 
 ``` r
 
 omicidx_tables(con)
-#> # A tibble: 28 × 3
-#>    schema    table                  type 
-#>    <chr>     <chr>                  <chr>
-#>  1 geometadb geo_supplemental_files VIEW 
-#>  2 geometadb gpl                    VIEW 
-#>  3 geometadb gse                    VIEW 
-#>  4 geometadb gse_gpl                VIEW 
-#>  5 geometadb gse_gsm                VIEW 
-#>  6 geometadb gsm                    VIEW 
-#>  7 main      bioprojects            VIEW 
-#>  8 main      biosamples             VIEW 
-#>  9 main      geo_platforms          VIEW 
-#> 10 main      geo_samples            VIEW 
-#> # ℹ 18 more rows
+#> # A tibble: 29 × 3
+#>    schema    table                  type      
+#>    <chr>     <chr>                  <chr>     
+#>  1 geometadb geo_supplemental_files VIEW      
+#>  2 geometadb gpl                    VIEW      
+#>  3 geometadb gse                    VIEW      
+#>  4 geometadb gse_gpl                VIEW      
+#>  5 geometadb gse_gsm                VIEW      
+#>  6 geometadb gsm                    VIEW      
+#>  7 main      bioprojects            VIEW      
+#>  8 main      biosamples             VIEW      
+#>  9 main      db_creation_metadata   BASE TABLE
+#> 10 main      geo_platforms          VIEW      
+#> # ℹ 19 more rows
 ```
 
 The `sradb` and `geometadb` schemas follow the tables of the SRAdb and
@@ -146,41 +162,42 @@ used, and nothing is read until `collect()`.
 
 db <- omicidx_db(con)
 db
-#> <omicidx_db> OmicIDX release 2026-10 (published 2026-10-20)
+#> <omicidx_db> OmicIDX release latest (published 2026-10-23)
 #> 
 #> geometadb
-#>   geo_supplemental_files    7,026,380
-#>   gpl                          28,819
-#>   gse                         293,571
-#>   gse_gpl                     341,054
-#>   gse_gsm                  10,447,481
-#>   gsm                       8,678,255
+#>   geo_supplemental_files    7,098,064
+#>   gpl                          29,060
+#>   gse                         298,108
+#>   gse_gpl                     345,076
+#>   gse_gsm                  10,562,000
+#>   gsm                       8,774,090
 #> 
 #> main
-#>   bioprojects
-#>   biosamples
-#>   geo_platforms
-#>   geo_samples
-#>   geo_series
-#>   geo_series_with_rnaseq_counts
-#>   pubmed_articles
-#>   sra_accessions
-#>   sra_experiments
-#>   sra_runs
-#>   sra_samples
-#>   sra_studies
+#>   bioprojects                      1,130,284
+#>   biosamples                      60,484,224
+#>   db_creation_metadata
+#>   geo_platforms                       29,060
+#>   geo_samples                      8,774,090
+#>   geo_series                         298,108
+#>   geo_series_with_rnaseq_counts       27,714
+#>   pubmed_articles                 41,275,240
+#>   sra_accessions                 162,991,962
+#>   sra_experiments                 42,655,706
+#>   sra_runs                        45,553,970
+#>   sra_samples                     44,670,639
+#>   sra_studies                        775,372
 #> 
 #> sradb
-#>   experiment       42,615,764
-#>   human_runs        8,535,912
-#>   mouse_runs        4,413,081
-#>   rnaseq_runs       9,046,637
-#>   run              45,638,775
-#>   run_with_study   45,638,775
-#>   sample           44,636,830
-#>   sra              45,638,775
-#>   study               774,584
-#>   wgs_runs          9,589,280
+#>   experiment       42,655,706
+#>   human_runs        8,540,117
+#>   mouse_runs        4,415,567
+#>   rnaseq_runs       9,054,381
+#>   run              45,699,354
+#>   run_with_study   45,699,354
+#>   sample           44,670,639
+#>   sra              45,699,354
+#>   study               775,372
+#>   wgs_runs          9,601,400
 #> 
 #> Tables: db$<schema>$<table>. Connection: attr(db, "con").
 
@@ -193,10 +210,10 @@ db$geometadb$gse |>
 #>   gse       title                                                submission_date
 #>   <chr>     <chr>                                                <date>         
 #> 1 GSE240638 Gene expression profile at the single cell level of… 2023-08-10     
-#> 2 GSE241743 The single cell transcriptomic profiling in iPSC de… 2023-08-26     
-#> 3 GSE241996 Single cell RNA sequencing monitoring the developme… 2023-08-30     
-#> 4 GSE241997 Single cell RNA sequencing of the in vivo mouse TME  2023-08-30     
-#> 5 GSE242428 Characterization of CD4+ and CD8+ T cells responses… 2023-09-06
+#> 2 GSE241996 Single cell RNA sequencing monitoring the developme… 2023-08-30     
+#> 3 GSE241997 Single cell RNA sequencing of the in vivo mouse TME  2023-08-30     
+#> 4 GSE242428 Characterization of CD4+ and CD8+ T cells responses… 2023-09-06     
+#> 5 GSE242556 Simultaneous estimation of gene regulatory network … 2023-09-07
 ```
 
 ## SRAdb and GEOmetadb helpers
@@ -213,10 +230,10 @@ sra_convert(con, "GSM4996084", c("gse", "study", "experiment", "run"))
 #> # A tibble: 4 × 5
 #>   study     experiment run         gse       gsm       
 #>   <chr>     <chr>      <chr>       <chr>     <chr>     
-#> 1 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
-#> 2 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
-#> 3 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
-#> 4 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 1 SRP299835 SRX9759115 SRR13332242 GSE164073 GSM4996084
+#> 2 SRP299835 SRX9759115 SRR13332244 GSE164073 GSM4996084
+#> 3 SRP299835 SRX9759115 SRR13332245 GSE164073 GSM4996084
+#> 4 SRP299835 SRX9759115 SRR13332243 GSE164073 GSM4996084
 ```
 
 The samples and platform of a GEO series, and the characteristics of its
@@ -380,8 +397,9 @@ Differences to watch for:
   `gse.pubmed_id` are lists.
 - [`sra_search()`](https://seandavi.github.io/omicidxr/reference/sra_search.md)
   is a case-insensitive pattern match, not SQLite full-text search.
-- Pin a monthly release, as this vignette does, where SRAdb code pinned
-  a SQLite file.
+- Download a monthly release with
+  [`omicidx_download()`](https://seandavi.github.io/omicidxr/reference/omicidx_download.md)
+  where SRAdb code pinned a SQLite file.
 
 ## Disconnecting
 

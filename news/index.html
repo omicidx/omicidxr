@@ -51,12 +51,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.99.0" id="omicidxr-0990">omicidxr 0.99.0<a class="anchor" aria-label="anchor" href="#omicidxr-0990"></a></h2>
 <ul><li>Bioconductor submission.</li>
+<li>Network reads are bounded: <code><a href="../reference/omicidx_connect.html">omicidx_connect()</a></code> sets DuckDB’s <code>http_timeout</code> (30 s) and retries each request up to 4 times with backoff, including on HTTP 429, and a failed connect names the release URL and suggests what to do (<a href="https://github.com/seandavi/omicidxr/issues/16" class="external-link">#16</a>). <code><a href="../reference/omicidx_download.html">omicidx_download()</a></code> retries for up to 6 minutes so a copy of a monthly release waits out HuggingFace’s rate limit.</li>
+<li>Monthly releases use <code>HF_TOKEN</code>, if set, for HuggingFace’s higher signed-in rate limit. <code><a href="../reference/omicidx_connect.html">?omicidx_connect</a></code>, the README and the vignette recommend querying <code>"latest"</code> or dated builds in place and downloading monthly releases with <code><a href="../reference/omicidx_download.html">omicidx_download()</a></code>.</li>
+<li>The vignette and tests use <code>"latest"</code> rather than HuggingFace, so builds do not fail on HuggingFace’s rate limit.</li>
 <li>
 <code>omicidx_connect(version)</code> opens a DuckDB connection to an OmicIDX release: <code>"latest"</code>, a dated nightly build <code>"YYYY-MM-DD"</code> or a monthly release <code>"YYYY-MM"</code>. Nothing is downloaded up front, and DuckDB extensions are cached in <code>tools::R_user_dir("omicidxr", "cache")</code> rather than <code>~/.duckdb</code>.</li>
 <li>
 <code><a href="../reference/omicidx_release.html">omicidx_release()</a></code> reports a connection’s release and its provenance from <code>manifest.json</code>.</li>
 <li>
-<code>omicidx_download(version, path)</code> copies a release into a local DuckDB file for offline use, checked against <code>manifest.json</code> row counts.</li>
+<code>omicidx_download(version, path, tables)</code> copies a release, or only the chosen tables or schemas, into a local DuckDB file for offline use, checked against <code>manifest.json</code> row counts. It reports the size of the Parquet it will read before it starts.</li>
 <li>
 <code><a href="../reference/omicidx_tables.html">omicidx_tables()</a></code>, <code><a href="../reference/omicidx_describe.html">omicidx_describe()</a></code> and <code><a href="../reference/omicidx_db.html">omicidx_db()</a></code> list, describe and wrap the release’s tables as tab-completable lazy <code>dplyr</code> tables.</li>
 <li>SRAdb and GEOmetadb successors: <code><a href="../reference/sra_convert.html">sra_convert()</a></code>, <code><a href="../reference/sra_convert.html">geo_convert()</a></code>, <code><a href="../reference/sra_runs.html">sra_runs()</a></code>, <code><a href="../reference/geo_samples.html">geo_samples()</a></code>, <code><a href="../reference/geo_characteristics.html">geo_characteristics()</a></code>, <code><a href="../reference/sra_search.html">sra_search()</a></code> and <code><a href="../reference/sra_search.html">geo_search()</a></code>.</li>

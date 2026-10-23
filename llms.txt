@@ -98,17 +98,28 @@ con <- attr(db, "con")     # the DBI connection behind it
 | `"YYYY-MM-DD"` | a dated nightly build, kept for 30 days |
 | `"YYYY-MM"` | the monthly HuggingFace release `seandavis/omicidx@YYYY-MM`; long term and citable |
 
+Query `"latest"` and dated builds in place; they are served without rate
+limits. Monthly releases are the archive: HuggingFace limits anonymous
+requests to 3000 per 5 minutes per IP address, and a query can make
+hundreds, so querying one in place fails with HTTP 429 under heavy use.
+Copy a monthly release to a local DuckDB file instead (the copy waits
+out the rate limit) and query that. A whole release is about 75 GB of
+Parquet and a DuckDB file about 5 times larger, so copy only the tables
+you need, such as the `geometadb` marts (about 4 GB of Parquet):
+
 ``` r
 
-con <- omicidx_connect("2026-10")
-omicidx_release(con)$publish_date   # also transform_sha, lake_snapshot_id
+path <- omicidx_download(
+    "2026-10", "omicidx-geometadb-2026-10.duckdb", tables = "geometadb"
+)
+con <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
 ```
 
-Connecting to a monthly release takes about 30 seconds, since DuckDB
-inspects each Parquet file while it creates the views. HuggingFace
-limits anonymous requests to 3000 per 5 minutes per IP address, and a
-query can make hundreds, so heavy use can fail with HTTP 429 for a few
-minutes.
+Setting `HF_TOKEN` to a HuggingFace access token raises the limit. On a
+connection from
+[`omicidx_connect()`](https://seandavi.github.io/omicidxr/reference/omicidx_connect.md),
+`omicidx_release(con)` reports the `publish_date`, `transform_sha` and
+`lake_snapshot_id` to cite.
 
 ## 📚 Main Functions
 
@@ -190,7 +201,7 @@ full license text.
 - **Bug reports**: [GitHub
   Issues](https://github.com/seandavi/omicidxr/issues)
 - **Questions**: Open a
-  [discussion](https://github.com/omicidx/omicidx/discussions) or reach
+  [discussion](https://github.com/seandavi/omicidx/discussions) or reach
   out via email
 
 # Package index

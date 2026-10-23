@@ -45,11 +45,39 @@ for tab-completable `dplyr` tables.
 
 - `"YYYY-MM"`: a monthly release on HuggingFace
   (`seandavis/omicidx@YYYY-MM`). Monthly releases are kept long term and
-  are the version to cite. Connecting takes longer (about 30 seconds)
-  because DuckDB inspects every Parquet file while it creates the views.
-  HuggingFace limits anonymous requests (3000 per 5 minutes per IP
-  address) and one query can make hundreds, so heavy use can fail with
-  HTTP 429 until the window resets.
+  are the version to cite.
+
+Query `"latest"` and dated builds in place: they are served without rate
+limits. Treat monthly releases as the archive: copy one with
+`omicidx_download("YYYY-MM", path)` and query the local file. Connecting
+to a monthly release in place works, but takes about 30 seconds (DuckDB
+inspects every Parquet file while it creates the views) and runs into
+HuggingFace's rate limits.
+
+## HuggingFace rate limits
+
+HuggingFace allows 3000 anonymous requests per 5 minutes per IP address,
+and connecting to a monthly release or running one query can make
+hundreds, so heavy use, or a shared IP address, fails with HTTP 429 (Too
+Many Requests) until the window resets. To avoid it:
+
+- Download the release with
+  [`omicidx_download()`](https://seandavi.github.io/omicidxr/reference/omicidx_download.md),
+  which waits out the limit, and query the local copy.
+
+- Set the environment variable `HF_TOKEN` to a HuggingFace access token,
+  which raises the limit to that of a signed-in user.
+
+- Within 30 days of a monthly release, connect to the dated build it was
+  published from (`omicidx_release(con)$publish_date`), which holds the
+  same data.
+
+## Timeouts
+
+Each HTTP request times out after 30 seconds and is retried up to 4
+times, after waits of 0, 1, 4 and 16 seconds, which also rides out a
+brief HTTP 429. If connecting still fails, `omicidx_connect()` stops
+with an error naming the release URL.
 
 Requests carry the User-Agent `omicidxr/<package version>`. DuckDB
 extensions (`httpfs`, `json`) are downloaded once and cached in

@@ -165,10 +165,13 @@
 </tr>
 </tbody>
 </table>
+<p>Query <code>"latest"</code> and dated builds in place; they are served without rate limits. Monthly releases are the archive: HuggingFace limits anonymous requests to 3000 per 5 minutes per IP address, and a query can make hundreds, so querying one in place fails with HTTP 429 under heavy use. Copy a monthly release to a local DuckDB file instead (the copy waits out the rate limit) and query that. A whole release is about 75 GB of Parquet and a DuckDB file about 5 times larger, so copy only the tables you need, such as the <code>geometadb</code> marts (about 4 GB of Parquet):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_connect.html">omicidx_connect</a></span><span class="op">(</span><span class="st">"2026-10"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/omicidx_release.html">omicidx_release</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span><span class="op">$</span><span class="va">publish_date</span>   <span class="co"># also transform_sha, lake_snapshot_id</span></span></code></pre></div>
-<p>Connecting to a monthly release takes about 30 seconds, since DuckDB inspects each Parquet file while it creates the views. HuggingFace limits anonymous requests to 3000 per 5 minutes per IP address, and a query can make hundreds, so heavy use can fail with HTTP 429 for a few minutes.</p>
+<code class="sourceCode R"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/omicidx_download.html">omicidx_download</a></span><span class="op">(</span></span>
+<span>    <span class="st">"2026-10"</span>, <span class="st">"omicidx-geometadb-2026-10.duckdb"</span>, tables <span class="op">=</span> <span class="st">"geometadb"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">path</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Setting <code>HF_TOKEN</code> to a HuggingFace access token raises the limit. On a connection from <code><a href="reference/omicidx_connect.html">omicidx_connect()</a></code>, <code>omicidx_release(con)</code> reports the <code>publish_date</code>, <code>transform_sha</code> and <code>lake_snapshot_id</code> to cite.</p>
 </div>
 </div>
 <div class="section level2">
@@ -323,7 +326,7 @@
 <strong>Bug reports</strong>: <a href="https://github.com/seandavi/omicidxr/issues" class="external-link">GitHub Issues</a>
 </li>
 <li>
-<strong>Questions</strong>: Open a <a href="https://github.com/omicidx/omicidx/discussions" class="external-link">discussion</a> or reach out via email</li>
+<strong>Questions</strong>: Open a <a href="https://github.com/seandavi/omicidx/discussions" class="external-link">discussion</a> or reach out via email</li>
 </ul>
 </div>
 </div>
