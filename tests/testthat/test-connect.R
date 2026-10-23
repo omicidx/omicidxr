@@ -9,7 +9,7 @@ test_that("omicidx_release_url maps versions to release folders", {
     )
     expect_equal(
         omicidx_release_url("2026-10"),
-        "https://huggingface.co/datasets/omicidx/omicidx/resolve/2026-10/"
+        "https://huggingface.co/datasets/seandavis/omicidx/resolve/2026-10/"
     )
     expect_error(omicidx_release_url("2026"), "must be")
     expect_error(omicidx_release_url("v2026-10-20"), "must be")

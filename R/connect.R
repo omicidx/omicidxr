@@ -15,7 +15,7 @@
 #'   `https://omicidx.cancerdatasci.org/data/latest/`.
 #' * `"YYYY-MM-DD"`: a dated nightly build, kept for 30 days.
 #' * `"YYYY-MM"`: a monthly release on HuggingFace
-#'   (`omicidx/omicidx@YYYY-MM`). Monthly releases are kept long term
+#'   (`seandavis/omicidx@YYYY-MM`). Monthly releases are kept long term
 #'   and are the version to cite. Connecting takes longer (about 30
 #'   seconds) because DuckDB inspects every Parquet file while it
 #'   creates the views. HuggingFace limits anonymous requests (3000 per
@@ -170,7 +170,7 @@ omicidx_release_url <- function(version) {
     }
     if (grepl("^\\d{4}-\\d{2}$", version)) {
         return(sprintf(
-            "https://huggingface.co/datasets/omicidx/omicidx/resolve/%s/",
+            "https://huggingface.co/datasets/seandavis/omicidx/resolve/%s/",
             version
         ))
     }
