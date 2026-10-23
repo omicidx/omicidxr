@@ -57,7 +57,9 @@ release[c("version", "publish_date", "transform_sha", "lake_snapshot_id")]
 ```
 
 To cite OmicIDX, cite the DOI of the monthly release you used, listed on
-the HuggingFace dataset page for its tag, and state the tag (`2026-10`).
+the [HuggingFace dataset
+page](https://huggingface.co/datasets/seandavis/omicidx) for its tag,
+and state the tag (`2026-10`).
 
 ## What is in a release
 

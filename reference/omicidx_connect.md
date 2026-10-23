@@ -44,7 +44,7 @@ for tab-completable `dplyr` tables.
 - `"YYYY-MM-DD"`: a dated nightly build, kept for 30 days.
 
 - `"YYYY-MM"`: a monthly release on HuggingFace
-  (`omicidx/omicidx@YYYY-MM`). Monthly releases are kept long term and
+  (`seandavis/omicidx@YYYY-MM`). Monthly releases are kept long term and
   are the version to cite. Connecting takes longer (about 30 seconds)
   because DuckDB inspects every Parquet file while it creates the views.
   HuggingFace limits anonymous requests (3000 per 5 minutes per IP
@@ -62,6 +62,6 @@ extensions (`httpfs`, `json`) are downloaded once and cached in
 con <- omicidx_connect()
 DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
 #>        n
-#> 1 775033
+#> 1 775372
 DBI::dbDisconnect(con)
 ```

@@ -38,7 +38,7 @@ place of a connection.
 ``` r
 db <- omicidx_db()
 db
-#> <omicidx_db> OmicIDX release latest (published 2026-10-22)
+#> <omicidx_db> OmicIDX release latest (published 2026-10-23)
 #> 
 #> geometadb
 #>   geo_supplemental_files    7,098,064
@@ -56,24 +56,24 @@ db
 #>   geo_samples                      8,774,090
 #>   geo_series                         298,108
 #>   geo_series_with_rnaseq_counts       27,714
-#>   pubmed_articles                 41,274,751
-#>   sra_accessions                 162,921,096
-#>   sra_experiments                 42,637,450
-#>   sra_runs                        45,520,469
-#>   sra_samples                     44,658,230
-#>   sra_studies                        775,033
+#>   pubmed_articles                 41,275,240
+#>   sra_accessions                 162,991,962
+#>   sra_experiments                 42,655,706
+#>   sra_runs                        45,553,970
+#>   sra_samples                     44,670,639
+#>   sra_studies                        775,372
 #> 
 #> sradb
-#>   experiment       42,637,450
-#>   human_runs        8,537,731
-#>   mouse_runs        4,414,102
-#>   rnaseq_runs       9,049,700
-#>   run              45,665,853
-#>   run_with_study   45,665,853
-#>   sample           44,658,230
-#>   sra              45,665,853
-#>   study               775,033
-#>   wgs_runs          9,598,079
+#>   experiment       42,655,706
+#>   human_runs        8,540,117
+#>   mouse_runs        4,415,567
+#>   rnaseq_runs       9,054,381
+#>   run              45,699,354
+#>   run_with_study   45,699,354
+#>   sample           44,670,639
+#>   sra              45,699,354
+#>   study               775,372
+#>   wgs_runs          9,601,400
 #> 
 #> Tables: db$<schema>$<table>. Connection: attr(db, "con").
 db$sradb$study |>
@@ -83,10 +83,10 @@ db$sradb$study |>
 #> # A tibble: 6 × 2
 #>   study_type                   n
 #>   <chr>                    <dbl>
-#> 1 Other                   443432
-#> 2 Transcriptome Analysis  129552
-#> 3 Whole Genome Sequencing 128263
-#> 4 Metagenomics             71387
+#> 1 Other                   443600
+#> 2 Transcriptome Analysis  129664
+#> 3 Whole Genome Sequencing 128310
+#> 4 Metagenomics             71399
 #> 5 Population Genomics        836
 #> 6 Epigenetics                707
 DBI::dbDisconnect(attr(db, "con"))

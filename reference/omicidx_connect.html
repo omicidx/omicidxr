@@ -98,7 +98,7 @@ example <code>sradb.study</code> or <code>geometadb.gsm</code>. Use
 <code>https://omicidx.cancerdatasci.org/data/latest/</code>.</p></li>
 <li><p><code>"YYYY-MM-DD"</code>: a dated nightly build, kept for 30 days.</p></li>
 <li><p><code>"YYYY-MM"</code>: a monthly release on HuggingFace
-(<code>omicidx/omicidx@YYYY-MM</code>). Monthly releases are kept long term
+(<code>seandavis/omicidx@YYYY-MM</code>). Monthly releases are kept long term
 and are the version to cite. Connecting takes longer (about 30
 seconds) because DuckDB inspects every Parquet file while it
 creates the views. HuggingFace limits anonymous requests (3000 per
@@ -115,7 +115,7 @@ extensions (<code>httpfs</code>, <code>json</code>) are downloaded once and cach
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">omicidx_connect</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT count(*) AS n FROM sradb.study"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 775033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 775372</span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

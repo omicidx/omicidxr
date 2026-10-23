@@ -96,7 +96,7 @@ con <- attr(db, "con")     # the DBI connection behind it
 |----|----|
 | `"latest"` (default) | the nightly build at `omicidx.cancerdatasci.org/data/latest/` |
 | `"YYYY-MM-DD"` | a dated nightly build, kept for 30 days |
-| `"YYYY-MM"` | the monthly HuggingFace release `omicidx/omicidx@YYYY-MM`; long term and citable |
+| `"YYYY-MM"` | the monthly HuggingFace release `seandavis/omicidx@YYYY-MM`; long term and citable |
 
 ``` r
 
