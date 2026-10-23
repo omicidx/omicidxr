@@ -8,6 +8,8 @@
   rather than `~/.duckdb`.
 * `omicidx_release()` reports a connection's release and its provenance
   from `manifest.json`.
+* `omicidx_download(version, path)` copies a release into a local DuckDB
+  file for offline use, checked against `manifest.json` row counts.
 * `omicidx_tables()`, `omicidx_describe()` and `omicidx_db()` list,
   describe and wrap the release's tables as tab-completable lazy `dplyr`
   tables.

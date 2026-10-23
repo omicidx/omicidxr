@@ -133,6 +133,102 @@ omicidx_release <- function(con) {
     release
 }
 
+#' Download an OmicIDX release into a local DuckDB file
+#'
+#' Copies every table of a release into a new DuckDB database file, so it
+#' can be queried offline and at local-disk speed. The copy is checked
+#' against the row counts in the release's `manifest.json`. This is the R
+#' counterpart of the `restore.sql` published with each nightly build.
+#'
+#' A full release is large (tens of GB) and takes a while to copy.
+#'
+#' @inheritParams omicidx_connect
+#' @param path character(1). The DuckDB file to create. It must not exist.
+#'
+#' @return `path`, invisibly. Open it with
+#'   `DBI::dbConnect(duckdb::duckdb(), path)`; tables keep their names,
+#'   for example `sradb.study`.
+#'
+#' @examples
+#' \dontrun{
+#' path <- omicidx_download("2026-10", "omicidx-2026-10.duckdb")
+#' con <- DBI::dbConnect(duckdb::duckdb(), path, read_only = TRUE)
+#' DBI::dbGetQuery(con, "SELECT count(*) AS n FROM sradb.study")
+#' DBI::dbDisconnect(con)
+#' }
+#'
+#' @export
+omicidx_download <- function(version = "latest", path) {
+    stopifnot(is.character(path), length(path) == 1L, !is.na(path))
+    if (file.exists(path)) {
+        stop("`path` already exists: ", path, call. = FALSE)
+    }
+    con <- omicidx_connect(version)
+    on.exit(DBI::dbDisconnect(con), add = TRUE)
+    copy_release(con, path)
+    invisible(path)
+}
+
+# Copy `tables` (from omicidx_tables()) of a connected release into a new
+# DuckDB file at `path`, then check row counts against the manifest. The file
+# is removed if anything fails.
+copy_release <- function(con, path, tables = omicidx_tables(con)) {
+    manifest <- omicidx_release(con)$tables
+    DBI::dbExecute(con, paste0(
+        "ATTACH ", DBI::dbQuoteString(con, path), " AS omicidx_local"
+    ))
+    ok <- FALSE
+    on.exit({
+        DBI::dbExecute(con, "DETACH omicidx_local")
+        if (!ok) unlink(path)
+    }, add = TRUE)
+    for (schema in setdiff(unique(tables$schema), "main")) {
+        DBI::dbExecute(con, paste0(
+            "CREATE SCHEMA omicidx_local.", DBI::dbQuoteIdentifier(con, schema)
+        ))
+    }
+    for (i in seq_len(nrow(tables))) {
+        name <- paste(
+            DBI::dbQuoteIdentifier(con, c(tables$schema[i], tables$table[i])),
+            collapse = "."
+        )
+        message("Copying ", tables$schema[i], ".", tables$table[i])
+        DBI::dbExecute(con, paste0(
+            "CREATE TABLE omicidx_local.", name, " AS SELECT * FROM ", name
+        ))
+    }
+    check_row_counts(con, tables, manifest)
+    ok <- TRUE
+    invisible(path)
+}
+
+check_row_counts <- function(con, tables, manifest) {
+    if (is.null(manifest)) {
+        warning("manifest.json could not be read; row counts not checked.",
+            call. = FALSE
+        )
+        return(invisible())
+    }
+    expected <- merge(tables, manifest, by = c("schema", "table"))
+    local_n <- vapply(seq_len(nrow(expected)), function(i) {
+        name <- paste(DBI::dbQuoteIdentifier(
+            con, c("omicidx_local", expected$schema[i], expected$table[i])
+        ), collapse = ".")
+        as.numeric(DBI::dbGetQuery(
+            con, paste("SELECT count(*) AS n FROM", name)
+        )$n)
+    }, numeric(1))
+    bad <- local_n != expected$row_count
+    if (any(bad)) {
+        stop("Row counts differ from manifest.json: ",
+            paste0(expected$schema[bad], ".", expected$table[bad],
+                collapse = ", "
+            ),
+            call. = FALSE
+        )
+    }
+}
+
 # The release's manifest.json describes the data but is not needed to query
 # it, so an unreadable manifest leaves NA fields instead of failing.
 read_release <- function(con, version, url) {
