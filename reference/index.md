@@ -12,6 +12,8 @@
   : Tab-completable lazy tables for an OmicIDX release
 - [`omicidx_describe()`](https://seandavi.github.io/omicidxr/reference/omicidx_describe.md)
   : Describe the columns of an OmicIDX table
+- [`omicidx_download()`](https://seandavi.github.io/omicidxr/reference/omicidx_download.md)
+  : Download an OmicIDX release into a local DuckDB file
 - [`omicidx_release()`](https://seandavi.github.io/omicidxr/reference/omicidx_release.md)
   : Which OmicIDX release a connection is on
 - [`omicidx_tables()`](https://seandavi.github.io/omicidxr/reference/omicidx_tables.md)

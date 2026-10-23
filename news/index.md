@@ -11,6 +11,8 @@
 - [`omicidx_release()`](https://seandavi.github.io/omicidxr/reference/omicidx_release.md)
   reports a connection’s release and its provenance from
   `manifest.json`.
+- `omicidx_download(version, path)` copies a release into a local DuckDB
+  file for offline use, checked against `manifest.json` row counts.
 - [`omicidx_tables()`](https://seandavi.github.io/omicidxr/reference/omicidx_tables.md),
   [`omicidx_describe()`](https://seandavi.github.io/omicidxr/reference/omicidx_describe.md)
   and
